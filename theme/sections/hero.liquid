@@ -1,0 +1,115 @@
+{%- comment -%}
+  Hero: headline, body, two buttons and a collage of real product photos.
+  The first image is preloaded (LCP) with fetchpriority="high".
+{%- endcomment -%}
+{%- liquid
+  assign image_ids = ''
+  for block in section.blocks
+    if block.type == 'image'
+      if block.settings.image != blank or request.design_mode
+        assign image_ids = image_ids | append: block.id | append: ','
+      endif
+    endif
+  endfor
+  assign image_id_list = image_ids | split: ','
+  assign images = section.blocks | where: 'type', 'image'
+  assign image_count = image_id_list.size
+-%}
+<section class="hero{% if section.settings.show_stripe %} hero--stripe{% endif %}{% if image_count == 0 %} hero--text-only{% endif %}" aria-labelledby="HeroHeading-{{ section.id }}">
+  <div class="container hero__grid">
+    <div class="hero__copy reveal">
+      {%- if section.settings.eyebrow != blank -%}<p class="eyebrow eyebrow--light">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      {%- if request.page_type == 'index' and section.index == 1 -%}
+        <h1 class="hero__heading" id="HeroHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h1>
+      {%- else -%}
+        <h2 class="hero__heading" id="HeroHeading-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      <p class="hero__text">{{ section.settings.text | escape }}</p>
+      <div class="hero__actions">
+        {%- if section.settings.button_1_label != blank -%}
+          <a href="{{ section.settings.button_1_link | default: routes.all_products_collection_url }}" class="button button--yellow button--large">{{ section.settings.button_1_label | escape }}</a>
+        {%- endif -%}
+        {%- if section.settings.button_2_label != blank -%}
+          <a href="{{ section.settings.button_2_link | default: '/pages/visit-our-shop' }}" class="button button--ghost button--large">{% render 'icon', name: 'pin' %} {{ section.settings.button_2_label | escape }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if image_count > 0 -%}
+    {%- assign shown = 0 -%}
+    <div class="hero__collage hero__collage--{{ image_count | at_most: 4 }}">
+      {%- for block in images -%}
+        {%- unless image_id_list contains block.id -%}{%- continue -%}{%- endunless -%}
+        {%- assign shown = shown | plus: 1 -%}
+        <figure class="hero__tile" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {%- if shown == 1 -%}
+              {{ block.settings.image | image_url: width: 1200 | image_tag:
+                widths: '300, 400, 600, 800, 1000, 1200',
+                sizes: '(min-width: 990px) 34vw, 62vw',
+                loading: 'eager',
+                fetchpriority: 'high',
+                preload: true,
+                alt: block.settings.image.alt,
+                class: 'hero__img'
+              }}
+            {%- else -%}
+              {{ block.settings.image | image_url: width: 800 | image_tag:
+                widths: '200, 300, 400, 600, 800',
+                sizes: '(min-width: 990px) 17vw, 32vw',
+                loading: 'lazy',
+                alt: block.settings.image.alt,
+                class: 'hero__img'
+              }}
+            {%- endif -%}
+          {%- else -%}
+            {{ 'product-' | append: shown | placeholder_svg_tag: 'hero__img placeholder-svg' }}
+          {%- endif -%}
+          {%- if block.settings.price_label != blank -%}
+            <figcaption class="hero__price-tag">{{ block.settings.price_label | escape }}</figcaption>
+          {%- endif -%}
+        </figure>
+      {%- endfor -%}
+    </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "class": "section-hero",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Liverpool's treasure-hunt bargain shop" },
+    { "type": "text", "id": "heading", "label": "Headline", "default": "Big bargains. Small prices." },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Discover great-value bags, shoes, jewellery, home essentials and everyday finds at GBG Bargain Shop. Shop online or visit our Liverpool store."
+    },
+    { "type": "text", "id": "button_1_label", "label": "First button label", "default": "Shop All Bargains" },
+    { "type": "url", "id": "button_1_link", "label": "First button link" },
+    { "type": "text", "id": "button_2_label", "label": "Second button label", "default": "Visit Our Shop" },
+    { "type": "url", "id": "button_2_link", "label": "Second button link" },
+    { "type": "checkbox", "id": "show_stripe", "label": "Show bargain stripe", "default": true }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Product photo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo of a real GBG product", "info": "Real stock only – no stock photography. Square, at least 1200px." },
+        { "type": "text", "id": "price_label", "label": "Price tag (optional)", "info": "Must be the real current price, e.g. £4.99" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [{ "type": "image" }, { "type": "image" }, { "type": "image" }, { "type": "image" }]
+    }
+  ]
+}
+{% endschema %}

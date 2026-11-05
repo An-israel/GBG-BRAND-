@@ -1,0 +1,98 @@
+{%- comment -%}
+  Visit us block: address, directions, hours, collection details, store photo
+  and a click-to-load map (no third-party map loads until the visitor asks).
+{%- endcomment -%}
+{%- assign map_q = settings.map_embed_query | url_encode -%}
+<section class="section visit" aria-labelledby="Title-{{ section.id }}">
+  <div class="container visit__grid">
+    <div class="visit__info reveal">
+      {%- if section.settings.eyebrow != blank -%}<p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
+      <h2 class="section-title" id="Title-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.text != blank -%}<p class="visit__text">{{ section.settings.text | escape }}</p>{%- endif -%}
+
+      <div class="visit__cols">
+        <div class="visit__item">
+          <h3 class="visit__label">{% render 'icon', name: 'pin' %} Address</h3>
+          {%- render 'address' -%}
+          <a href="{% render 'directions-url' %}" class="button button--small" target="_blank" rel="noopener" data-track="directions_click">Get directions<span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>
+        </div>
+        <div class="visit__item">
+          <h3 class="visit__label">{% render 'icon', name: 'clock' %} Opening hours</h3>
+          {%- render 'opening-hours' -%}
+        </div>
+        {%- if section.settings.show_collection -%}
+          <div class="visit__item visit__item--wide">
+            <h3 class="visit__label">{% render 'icon', name: 'store' %} Click &amp; Collect</h3>
+            <p>{{ section.settings.collection_text | escape }}
+              {%- if settings.pickup_ready_time != blank %} {{ settings.pickup_ready_time | escape }}{% endif -%}
+            </p>
+            {%- if section.settings.collection_page != blank -%}
+              <a href="{{ section.settings.collection_page.url }}" class="link-arrow">How collection works {% render 'icon', name: 'arrow' %}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+        <div class="visit__item visit__item--wide">
+          <h3 class="visit__label">{% render 'icon', name: 'phone' %} Questions?</h3>
+          <p><a href="tel:+{{ settings.phone_international }}" data-track="contact">{{ settings.phone | escape }}</a>
+            {%- if settings.whatsapp_enabled %} · <a href="https://wa.me/{{ settings.phone_international }}" target="_blank" rel="noopener" data-track="whatsapp_click">WhatsApp us</a>{% endif -%}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="visit__media">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1000 | image_tag:
+          widths: '360, 540, 720, 1000',
+          sizes: '(min-width: 990px) 45vw, 100vw',
+          loading: 'lazy',
+          alt: section.settings.image.alt | default: 'Inside GBG Bargain Shop',
+          class: 'visit__photo'
+        }}
+      {%- elsif request.design_mode -%}
+        <div class="visit__photo visit__photo--placeholder">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}<p class="placeholder-note">Add a real photo of the shop.</p></div>
+      {%- endif -%}
+
+      {%- if section.settings.show_map -%}
+        <div class="map" data-map>
+          <div class="map__consent">
+            <p>The map is provided by Google. Loading it shares data with Google.</p>
+            <button type="button" class="button button--small button--secondary" data-load-map
+              data-src="https://www.google.com/maps?q={{ map_q }}&output=embed">Show map</button>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+{%- if section.settings.structured_data -%}{%- render 'structured-data-store' -%}{%- endif -%}
+
+{% schema %}
+{
+  "name": "Visit us",
+  "class": "section-visit-us",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Visit the shop" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Come and see the bargains in person" },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "New stock lands all the time, and there's always more on the shelves than online. Find us inside Stanley Meat Market on Prescot Road."
+    },
+    { "type": "paragraph", "content": "Address, phone and hours are edited in Theme settings → Shop details." },
+    { "type": "image_picker", "id": "image", "label": "Shop photo", "info": "A real photo of the shop entrance or shelves." },
+    { "type": "checkbox", "id": "show_collection", "label": "Show Click & Collect details", "default": true },
+    {
+      "type": "text",
+      "id": "collection_text",
+      "label": "Click & Collect text",
+      "default": "Order online, choose Pickup at checkout and collect free from Unit M10. We'll email you when it's ready."
+    },
+    { "type": "page", "id": "collection_page", "label": "Click & Collect page" },
+    { "type": "checkbox", "id": "show_map", "label": "Show click-to-load map", "default": true },
+    { "type": "checkbox", "id": "structured_data", "label": "Output store data for search engines", "default": false, "info": "Already included on the home page. Turn on for the Visit Our Shop page." }
+  ],
+  "presets": [{ "name": "Visit us" }]
+}
+{% endschema %}

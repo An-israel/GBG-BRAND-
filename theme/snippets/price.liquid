@@ -1,0 +1,36 @@
+{%- comment -%}
+  Price display. Compare-at price is only shown when it is genuinely higher
+  than the selling price (staff must only enter substantiated was-prices).
+  Params: product (required), variant (optional), size: 'card' | 'large'
+{%- endcomment -%}
+{%- liquid
+  assign target = variant | default: product.selected_or_first_available_variant
+  assign price = target.price
+  assign compare_at = target.compare_at_price
+  assign on_sale = false
+  if compare_at > price
+    assign on_sale = true
+  endif
+  assign varies = false
+  if variant == blank and product.price_varies
+    assign varies = true
+  endif
+-%}
+<div class="price price--{{ size | default: 'card' }}{% if on_sale %} price--sale{% endif %}{% unless target.available %} price--sold-out{% endunless %}" data-price>
+  {%- if on_sale -%}
+    <span class="visually-hidden">Sale price</span>
+    <span class="price__tag">
+      {%- if varies %}From {% endif -%}
+      {{- price | money -}}
+    </span>
+    <span class="visually-hidden">Regular price</span>
+    <s class="price__compare">{{ compare_at | money }}</s>
+    {%- assign saving = compare_at | minus: price -%}
+    <span class="price__saving">Save {{ saving | money }}</span>
+  {%- else -%}
+    <span class="price__regular">
+      {%- if varies %}<span class="price__from">From</span> {% endif -%}
+      {{- price | money -}}
+    </span>
+  {%- endif -%}
+</div>

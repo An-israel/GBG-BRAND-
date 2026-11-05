@@ -1,0 +1,44 @@
+{%- comment -%}
+  Condition label badge (custom.condition metafield).
+  Params: product, explain (boolean – also print the plain-English meaning)
+{%- endcomment -%}
+{%- assign condition = product.metafields.custom.condition.value -%}
+{%- if condition != blank -%}
+  {%- liquid
+    case condition
+      when 'New'
+        assign meaning = 'Unused, in original condition.'
+        assign tone = 'new'
+      when 'New with tags'
+        assign meaning = 'Unused, with the original tags attached.'
+        assign tone = 'new'
+      when 'Open box'
+        assign meaning = 'Unused, but the packaging has been opened or is damaged.'
+        assign tone = 'open'
+      when 'Customer return'
+        assign meaning = 'Returned by a customer and checked by our team. Any issues are listed below.'
+        assign tone = 'open'
+      when 'Used'
+        assign meaning = 'Previously used. The condition notes describe any wear.'
+        assign tone = 'used'
+      when 'Unchecked'
+        assign meaning = 'Not tested or inspected in detail and sold as seen. This does not affect your statutory rights.'
+        assign tone = 'used'
+      else
+        assign meaning = ''
+        assign tone = 'open'
+    endcase
+  -%}
+  {%- if explain -%}
+    <div class="condition">
+      <span class="badge badge--condition badge--{{ tone }}">{{ condition | escape }}</span>
+      {%- if meaning != blank -%}
+        <p class="condition__meaning">{{ meaning }}
+          {%- if settings.conditions_page != blank %} <a href="{{ settings.conditions_page.url }}">What our condition labels mean</a>{% endif -%}
+        </p>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <span class="badge badge--condition badge--{{ tone }}">{{ condition | escape }}</span>
+  {%- endif -%}
+{%- endif -%}

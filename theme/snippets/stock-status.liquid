@@ -1,0 +1,19 @@
+{%- comment -%}
+  Honest stock status. Params: variant
+  "Only 1 left" uses the real tracked quantity – no invented urgency.
+{%- endcomment -%}
+{%- liquid
+  assign tracked = false
+  if variant.inventory_management == 'shopify'
+    assign tracked = true
+  endif
+-%}
+<p class="stock" data-stock>
+  {%- if variant.available == false -%}
+    <span class="stock__dot stock__dot--out" aria-hidden="true"></span> Sold out
+  {%- elsif tracked and variant.inventory_quantity == 1 -%}
+    <span class="stock__dot stock__dot--low" aria-hidden="true"></span> Only 1 left
+  {%- else -%}
+    <span class="stock__dot stock__dot--in" aria-hidden="true"></span> In stock
+  {%- endif -%}
+</p>

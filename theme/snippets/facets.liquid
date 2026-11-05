@@ -1,0 +1,124 @@
+{%- comment -%}
+  Shopify Search & Discovery filters + sort. Filters only show when the data
+  exists (Shopify only returns filters with values). Works without JS: the
+  form submits normally; theme.js auto-submits on change.
+  Params: results (collection or search), sort_by, url (base url), terms (search only)
+{%- endcomment -%}
+{%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
+<div class="facets" data-facets>
+  <div class="facets__bar">
+    {%- if results.filters.size > 0 -%}
+      <button type="button" class="button button--secondary button--small facets__open" data-open-dialog="FacetsDrawer" aria-haspopup="dialog">
+        {% render 'icon', name: 'filter' %} Filter
+      </button>
+    {%- endif -%}
+    <form class="facets__sort" data-facets-sort>
+      {%- if terms -%}<input type="hidden" name="q" value="{{ terms | escape }}"><input type="hidden" name="options[prefix]" value="last">{%- endif -%}
+      {%- for filter in results.filters -%}
+        {%- for value in filter.active_values -%}<input type="hidden" name="{{ value.param_name }}" value="{{ value.value | escape }}">{%- endfor -%}
+        {%- if filter.type == 'price_range' -%}
+          {%- if filter.min_value.value -%}<input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | remove: ',' }}">{%- endif -%}
+          {%- if filter.max_value.value -%}<input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | remove: ',' }}">{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      <label for="SortBy" class="facets__sort-label">Sort</label>
+      <select id="SortBy" name="sort_by" class="select" data-autosubmit>
+        {%- assign sort_options = 'created-descending:Newest,price-ascending:Price: low to high,price-descending:Price: high to low' | split: ',' -%}
+        {%- if terms -%}
+          <option value="relevance"{% if sort_by == 'relevance' %} selected{% endif %}>Most relevant</option>
+        {%- else -%}
+          <option value="manual"{% if sort_by == 'manual' %} selected{% endif %}>Featured</option>
+        {%- endif -%}
+        {%- for opt in sort_options -%}
+          {%- assign parts = opt | split: ':' -%}
+          <option value="{{ parts[0] }}"{% if sort_by == parts[0] %} selected{% endif %}>{{ parts[1] }}</option>
+        {%- endfor -%}
+      </select>
+      <noscript><button type="submit" class="button button--small">Sort</button></noscript>
+    </form>
+  </div>
+
+  {%- comment -%} Active filter chips {%- endcomment -%}
+  {%- liquid
+    assign has_active = false
+    for filter in results.filters
+      if filter.active_values.size > 0
+        assign has_active = true
+      endif
+      if filter.type == 'price_range'
+        if filter.min_value.value != nil or filter.max_value.value != nil
+          assign has_active = true
+        endif
+      endif
+    endfor
+  -%}
+  {%- if has_active -%}
+    <ul class="facets__active" role="list">
+      {%- for filter in results.filters -%}
+        {%- for value in filter.active_values -%}
+          <li><a href="{{ value.url_to_remove }}" class="chip chip--remove">{{ filter.label | escape }}: {{ value.label | escape }} {% render 'icon', name: 'close' %}<span class="visually-hidden">Remove filter</span></a></li>
+        {%- endfor -%}
+        {%- if filter.type == 'price_range' -%}
+          {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+            <li><a href="{{ filter.url_to_remove }}" class="chip chip--remove">
+              Price: {% if filter.min_value.value %}{{ filter.min_value.value | money }}{% else %}{{ 0 | money }}{% endif %}–{% if filter.max_value.value %}{{ filter.max_value.value | money }}{% else %}{{ filter.range_max | money }}{% endif %}
+              {% render 'icon', name: 'close' %}<span class="visually-hidden">Remove filter</span></a></li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      <li><a href="{{ url }}{% if terms %}?q={{ terms | url_encode }}&options%5Bprefix%5D=last{% endif %}" class="link">Clear all</a></li>
+    </ul>
+  {%- endif -%}
+</div>
+
+{%- if results.filters.size > 0 -%}
+<dialog class="drawer drawer--left" id="FacetsDrawer" aria-labelledby="FacetsTitle">
+  <form class="drawer__inner facets__form" data-facets-form>
+    <div class="drawer__header">
+      <h2 class="drawer__title" id="FacetsTitle">Filter</h2>
+      <button type="button" class="icon-button" data-close-dialog aria-label="Close filters">{% render 'icon', name: 'close' %}</button>
+    </div>
+    <div class="drawer__body">
+      {%- if terms -%}<input type="hidden" name="q" value="{{ terms | escape }}"><input type="hidden" name="options[prefix]" value="last">{%- endif -%}
+      <input type="hidden" name="sort_by" value="{{ sort_by }}">
+      {%- for filter in results.filters -%}
+        <details class="facet" {% if filter.active_values.size > 0 or forloop.index <= 2 %}open{% endif %}>
+          <summary class="facet__summary">{{ filter.label | escape }} {% render 'icon', name: 'chevron' %}</summary>
+          {%- case filter.type -%}
+            {%- when 'list', 'boolean' -%}
+              <fieldset class="facet__values">
+                <legend class="visually-hidden">{{ filter.label | escape }}</legend>
+                {%- for value in filter.values -%}
+                  <label class="checkbox{% if value.count == 0 and value.active == false %} checkbox--disabled{% endif %}">
+                    <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}"
+                      {% if value.active %}checked{% endif %}
+                      {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+                    <span>{{ value.label | escape }}</span>
+                    <span class="checkbox__count">({{ value.count }})</span>
+                  </label>
+                {%- endfor -%}
+              </fieldset>
+            {%- when 'price_range' -%}
+              <div class="facet__price">
+                <label>
+                  <span>From £</span>
+                  <input class="input" type="number" inputmode="decimal" name="{{ filter.min_value.param_name }}" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                    {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"{% endif %} placeholder="0">
+                </label>
+                <label>
+                  <span>To £</span>
+                  <input class="input" type="number" inputmode="decimal" name="{{ filter.max_value.param_name }}" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                    {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"{% endif %} placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}">
+                </label>
+              </div>
+          {%- endcase -%}
+        </details>
+      {%- endfor -%}
+    </div>
+    <div class="drawer__footer">
+      <a href="{{ url }}{% if terms %}?q={{ terms | url_encode }}&options%5Bprefix%5D=last{% endif %}" class="button button--secondary">Clear</a>
+      <button type="submit" class="button">Show results</button>
+    </div>
+  </form>
+</dialog>
+{%- endif -%}

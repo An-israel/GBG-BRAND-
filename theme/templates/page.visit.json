@@ -1,0 +1,55 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {}
+    },
+    "visit": {
+      "type": "visit-us",
+      "settings": {
+        "eyebrow": "Unit M10, Stanley Meat Market",
+        "heading": "How to find us",
+        "show_map": true,
+        "show_collection": true,
+        "structured_data": true
+      }
+    },
+    "photos": {
+      "type": "photo-gallery",
+      "blocks": {
+        "p1": {
+          "type": "photo",
+          "settings": {
+            "caption": "The shop entrance"
+          }
+        },
+        "p2": {
+          "type": "photo",
+          "settings": {
+            "caption": "Inside the shop"
+          }
+        },
+        "p3": {
+          "type": "photo",
+          "settings": {
+            "caption": "The collection point"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "settings": {
+        "heading": "Inside the shop",
+        "background": "paper"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "visit",
+    "photos"
+  ]
+}

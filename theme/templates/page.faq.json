@@ -1,0 +1,87 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {}
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "What do your condition labels mean?",
+            "answer": "<p><strong>New</strong> – unused, original condition. <strong>New with tags</strong> – unused, original tags attached. <strong>Open box</strong> – unused; the packaging has been opened or is damaged. <strong>Customer return</strong> – returned by a customer and checked; any issues are listed on the product page. <strong>Used</strong> – previously used; the condition notes describe any wear. <strong>Unchecked</strong> – not tested or inspected in detail and sold as seen. This never affects your statutory rights.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I collect my order from the shop?",
+            "answer": "<p>Yes, where an item shows free collection. Choose <strong>Pickup</strong> at checkout and we'll email you when your order is ready at Unit M10, Stanley Meat Market, Prescot Road, Liverpool L13 3AS. Please bring your order confirmation email or order number.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "How much is delivery?",
+            "answer": "<p>The delivery cost for your order is shown at checkout before you pay. Some large items are collection only because they are too big to post – this is shown clearly on the product page.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "Can I return something?",
+            "answer": "<p>If you buy online you can cancel within 14 days of receiving your item under the Consumer Contracts Regulations. If an item is faulty, not as described or not fit for purpose, you have rights under the Consumer Rights Act 2015 – this includes clearance and customer-return items. See our returns policy for how to return an item.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "question": "Are the online prices the same as in the shop?",
+            "answer": "<p>[TO CONFIRM with owner] We'll confirm our pricing policy for online and in-store items here.</p>"
+          }
+        },
+        "q6": {
+          "type": "question",
+          "settings": {
+            "question": "Is everything in the shop online?",
+            "answer": "<p>No – new stock arrives all the time and there's always more on the shelves than online. Visit us to see the full range.</p>"
+          }
+        },
+        "q7": {
+          "type": "question",
+          "settings": {
+            "question": "How do I pay?",
+            "answer": "<p>You can pay securely online with the payment methods shown at checkout. Checkout is run by Shopify and your card details are never stored by us.</p>"
+          }
+        },
+        "q8": {
+          "type": "question",
+          "settings": {
+            "question": "How can I contact you?",
+            "answer": "<p>Call us on 07344 670317 or use the contact form. [TO CONFIRM reply-time promise]</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7",
+        "q8"
+      ],
+      "settings": {
+        "heading": "Frequently asked questions",
+        "background": "white"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "faq"
+  ]
+}

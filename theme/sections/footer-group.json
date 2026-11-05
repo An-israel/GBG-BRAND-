@@ -1,0 +1,42 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "menu-shop": {
+          "type": "menu",
+          "settings": {
+            "heading": "Shop",
+            "menu": "footer-shop"
+          }
+        },
+        "menu-help": {
+          "type": "menu",
+          "settings": {
+            "heading": "Customer care",
+            "menu": "footer"
+          }
+        },
+        "hours": {
+          "type": "hours",
+          "settings": {
+            "heading": "Opening hours"
+          }
+        }
+      },
+      "block_order": [
+        "menu-shop",
+        "menu-help",
+        "hours"
+      ],
+      "settings": {
+        "tagline": "Big bargains. Small prices. Bags, shoes, jewellery, homeware and everyday finds in Liverpool."
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

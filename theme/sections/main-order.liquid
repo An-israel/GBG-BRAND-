@@ -1,0 +1,37 @@
+<div class="section account">
+  <div class="container">
+    <p><a href="{{ routes.account_url }}" class="link">← Back to your account</a></p>
+    <h1 class="page-title">Order {{ order.name }}</h1>
+    <p>Placed on {{ order.created_at | date: '%-d %B %Y' }}</p>
+    {%- if order.cancelled -%}<p class="form-message form-message--error">This order was cancelled on {{ order.cancelled_at | date: '%-d %B %Y' }}.</p>{%- endif -%}
+    <table class="table">
+      <thead><tr><th scope="col">Item</th><th scope="col">Qty</th><th scope="col">Total</th></tr></thead>
+      <tbody>
+        {%- for item in order.line_items -%}
+          <tr>
+            <td>{{ item.title | escape }}{% if item.fulfillment %}<br><small>Sent {{ item.fulfillment.created_at | date: '%-d %b %Y' }}{% if item.fulfillment.tracking_url %} – <a href="{{ item.fulfillment.tracking_url }}">track parcel</a>{% endif %}</small>{% endif %}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.final_line_price | money }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+      <tfoot>
+        <tr><th scope="row" colspan="2">Subtotal</th><td>{{ order.line_items_subtotal_price | money }}</td></tr>
+        {%- for shipping_method in order.shipping_methods -%}
+          <tr><th scope="row" colspan="2">{{ shipping_method.title | escape }}</th><td>{{ shipping_method.price | money }}</td></tr>
+        {%- endfor -%}
+        {%- for tax_line in order.tax_lines -%}
+          <tr><th scope="row" colspan="2">{{ tax_line.title }} ({{ tax_line.rate_percentage }}%)</th><td>{{ tax_line.price | money }}</td></tr>
+        {%- endfor -%}
+        <tr><th scope="row" colspan="2">Total</th><td><strong>{{ order.total_price | money_with_currency }}</strong></td></tr>
+      </tfoot>
+    </table>
+    <div class="account__grid">
+      {%- if order.billing_address -%}<div><h2 class="h3">Billing address</h2>{{ order.billing_address | format_address }}</div>{%- endif -%}
+      {%- if order.shipping_address -%}<div><h2 class="h3">Delivery address</h2>{{ order.shipping_address | format_address }}</div>{%- endif -%}
+    </div>
+  </div>
+</div>
+{% schema %}
+{ "name": "Order", "class": "section-order", "settings": [] }
+{% endschema %}

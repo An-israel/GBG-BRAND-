@@ -1,0 +1,42 @@
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign condition = product.metafields.custom.condition.value
+  assign item_condition = 'https://schema.org/NewCondition'
+  case condition
+    when 'Open box', 'Customer return', 'Used', 'Unchecked'
+      assign item_condition = 'https://schema.org/UsedCondition'
+  endcase
+-%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": {{ product.title | json }},
+    "url": {{ request.origin | append: product.url | json }},
+    {%- if product.featured_media %}
+    "image": [
+      {%- for media in product.media limit: 5 -%}
+        {{ media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ],
+    {%- endif %}
+    "description": {{ product.description | strip_html | strip_newlines | truncate: 500 | json }},
+    {%- if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
+    {%- if variant.barcode != blank %}"gtin": {{ variant.barcode | json }},{% endif %}
+    {%- if product.vendor != blank and product.vendor != shop.name %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
+    "offers": [
+      {%- for v in product.variants -%}
+      {
+        "@type": "Offer",
+        {%- if v.sku != blank %}"sku": {{ v.sku | json }},{% endif %}
+        "url": {{ request.origin | append: v.url | json }},
+        "price": {{ v.price | divided_by: 100.0 | json }},
+        "priceCurrency": {{ cart.currency.iso_code | json }},
+        "itemCondition": {{ item_condition | json }},
+        "availability": "https://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}",
+        "seller": { "@type": "Organization", "name": {{ settings.shop_display_name | default: shop.name | json }} }
+      }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>

@@ -1,0 +1,48 @@
+{
+  "name": "gbg-bargain-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GBG Bargain Shop – Shopify theme, admin scripts, tests and docs",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "theme:check": "node scripts/theme-check.mjs theme",
+    "theme:dev": "shopify theme dev --path theme",
+    "theme:push": "shopify theme push --path theme --unpublished --json",
+    "theme:pull": "shopify theme pull --path theme",
+    "theme:zip": "node scripts/build-zip.mjs",
+    "fonts": "node scripts/copy-fonts.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "setup:store": "tsx scripts/setup-store.ts",
+    "validate": "tsx scripts/validate-products.ts",
+    "images": "tsx scripts/prepare-images.ts",
+    "import": "tsx scripts/import-products.ts",
+    "report:weekly": "tsx scripts/weekly-report.ts",
+    "backup": "tsx scripts/backup-export.ts",
+    "audit:dbs": "tsx scripts/dbs-audit.ts",
+    "smoke": "tsx scripts/smoke-test.ts",
+    "redirects": "tsx scripts/import-redirects.ts"
+  },
+  "devDependencies": {
+    "@fontsource/archivo": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@playwright/test": "^1.63.0",
+    "@shopify/theme-check-node": "^3.31.0",
+    "@types/node": "^26.6.6",
+    "archiver": "^8.0.0",
+    "liquidjs": "^10.30.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "csv-parse": "^7.0.3",
+    "csv-stringify": "^6.9.0",
+    "dotenv": "^18.0.9",
+    "sharp": "^0.35.5"
+  }
+}

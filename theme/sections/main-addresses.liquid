@@ -1,0 +1,36 @@
+<div class="section account">
+  <div class="container container--form">
+    <p><a href="{{ routes.account_url }}" class="link">← Back to your account</a></p>
+    <h1 class="page-title">Your addresses</h1>
+    {%- paginate customer.addresses by 10 -%}
+      {%- for address in customer.addresses -%}
+        <div class="address-card">
+          {%- if address == customer.default_address -%}<p class="badge badge--outline">Default</p>{%- endif -%}
+          {{ address | format_address }}
+          <details>
+            <summary class="link">Edit</summary>
+            {%- form 'customer_address', address, class: 'form-stack' -%}
+              {%- render 'address-fields', form: form, id: address.id -%}
+              <button type="submit" class="button">Save address</button>
+            {%- endform -%}
+          </details>
+          <form method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}" class="address-card__delete">
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="link" data-confirm="Delete this address?">Delete</button>
+          </form>
+        </div>
+      {%- endfor -%}
+      {%- if paginate.pages > 1 -%}{{ paginate | default_pagination }}{%- endif -%}
+    {%- endpaginate -%}
+    <details class="address-card">
+      <summary class="button button--secondary">Add a new address</summary>
+      {%- form 'customer_address', customer.new_address, class: 'form-stack' -%}
+        {%- render 'address-fields', form: form, id: 'new' -%}
+        <button type="submit" class="button">Add address</button>
+      {%- endform -%}
+    </details>
+  </div>
+</div>
+{% schema %}
+{ "name": "Addresses", "class": "section-addresses", "settings": [] }
+{% endschema %}

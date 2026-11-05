@@ -1,0 +1,62 @@
+{%- liquid
+  assign links = ''
+  for block in section.blocks
+    if block.settings.collection != blank and block.settings.collection.products_count > 0
+      assign links = links | append: block.id | append: ','
+    endif
+  endfor
+-%}
+{%- if links != blank -%}
+<section class="clearance" aria-labelledby="Title-{{ section.id }}">
+  <div class="container clearance__inner reveal">
+    <div class="clearance__copy">
+      <span class="badge badge--clearance badge--large">Clearance</span>
+      <h2 class="clearance__heading" id="Title-{{ section.id }}">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.text != blank -%}<p class="clearance__text">{{ section.settings.text | escape }}</p>{%- endif -%}
+    </div>
+    <ul class="clearance__links" role="list">
+      {%- for block in section.blocks -%}
+        {%- assign c = block.settings.collection -%}
+        {%- if c == blank or c.products_count == 0 -%}{%- continue -%}{%- endif -%}
+        <li {{ block.shopify_attributes }}>
+          <a href="{{ c.url }}" class="clearance__link">
+            <span class="clearance__link-title">{{ block.settings.label | default: c.title | escape }}</span>
+            <span class="clearance__link-meta">{{ c.products_count }} {{ c.products_count | pluralize: 'item', 'items' }} {% render 'icon', name: 'arrow' %}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Clearance banner",
+  "class": "section-clearance",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Last chance to grab a bargain" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Clearance stock is clearly labelled with its condition. Your statutory rights always apply." }
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "shortcut",
+      "name": "Shortcut",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label" },
+        { "type": "collection", "id": "collection", "label": "Collection" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Clearance banner",
+      "blocks": [
+        { "type": "shortcut", "settings": { "label": "Under £5" } },
+        { "type": "shortcut", "settings": { "label": "Last Chance" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

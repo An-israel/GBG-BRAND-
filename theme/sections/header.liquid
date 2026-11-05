@@ -1,0 +1,174 @@
+{%- liquid
+  assign menu = section.settings.menu
+  assign cart_url = routes.cart_url
+-%}
+<header class="header" data-header>
+  <div class="container header__row">
+    <button type="button" class="icon-button header__menu-btn" aria-label="Open menu" aria-haspopup="dialog" aria-controls="MenuSheet" data-open-dialog="MenuSheet">
+      {%- render 'icon', name: 'menu' -%}
+    </button>
+
+    <div class="header__logo">
+      <a href="{{ routes.root_url }}" class="header__logo-link">
+        {%- if settings.logo != blank -%}
+          {%- assign logo_h = settings.logo_width | divided_by: settings.logo.aspect_ratio | round -%}
+          {{ settings.logo | image_url: width: 520 | image_tag:
+            widths: '160, 260, 390, 520',
+            sizes: '(min-width: 990px) var(--logo-width), 120px',
+            width: settings.logo_width,
+            height: logo_h,
+            alt: shop.name,
+            loading: 'eager',
+            class: 'header__logo-img'
+          }}
+        {%- else -%}
+          <span class="logo-text"><span class="logo-text__mark">GBG</span><span class="logo-text__word">Bargain Shop</span></span>
+        {%- endif -%}
+      </a>
+    </div>
+
+    <predictive-search class="header__search" data-predictive-search>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+        <label for="HeaderSearch" class="visually-hidden">Search products</label>
+        <input id="HeaderSearch" class="search-form__input" type="search" name="q" value="{{ search.terms | escape }}"
+          placeholder="{{ section.settings.search_placeholder | escape }}" autocomplete="off"
+          role="combobox" aria-expanded="false" aria-owns="PredictiveResults" aria-controls="PredictiveResults" aria-haspopup="listbox" aria-autocomplete="list">
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="submit" class="search-form__btn" aria-label="Search">{% render 'icon', name: 'search' %}</button>
+        <div class="predictive" id="PredictiveResults" data-predictive-results hidden></div>
+      </form>
+    </predictive-search>
+
+    <div class="header__icons">
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="icon-button header__account" aria-label="{% if customer %}Your account{% else %}Log in{% endif %}">
+          {%- render 'icon', name: 'account' -%}
+        </a>
+      {%- endif -%}
+      <a href="{{ cart_url }}" class="icon-button header__cart" data-cart-toggle aria-label="Basket, {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}" aria-haspopup="dialog">
+        {%- render 'icon', name: 'basket' -%}
+        <span class="header__cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+      </a>
+    </div>
+  </div>
+
+  {%- if menu != blank -%}
+    <nav class="header__nav" aria-label="Main">
+      <ul class="container nav" role="list">
+        {%- for link in menu.links -%}
+          {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if link.links.size > 0 -%}
+            {%- assign has_grandchildren = false -%}
+            {%- for child in link.links -%}{%- if child.links.size > 0 -%}{%- assign has_grandchildren = true -%}{%- endif -%}{%- endfor -%}
+            <li class="nav__item nav__item--parent">
+              <details class="nav__details" data-nav-details>
+                <summary class="nav__link{% if link.child_active or link.active %} nav__link--active{% endif %}">{{ link.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
+                <div class="nav__panel{% if has_grandchildren %} nav__panel--mega{% endif %}">
+                  <ul class="{% if has_grandchildren %}container mega{% else %}dropdown{% endif %}" role="list">
+                    {%- for child in link.links -%}
+                      {%- if child.type == 'collection_link' and child.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+                      <li class="{% if has_grandchildren %}mega__col{% else %}dropdown__item{% endif %}">
+                        <a href="{{ child.url }}" class="{% if has_grandchildren %}mega__heading{% else %}dropdown__link{% endif %}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
+                        {%- if child.links.size > 0 -%}
+                          <ul class="mega__list" role="list">
+                            {%- for grandchild in child.links -%}
+                              {%- if grandchild.type == 'collection_link' and grandchild.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+                              <li><a href="{{ grandchild.url }}" class="mega__link"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              </details>
+            </li>
+          {%- else -%}
+            <li class="nav__item">
+              <a href="{{ link.url }}" class="nav__link{% if link.active %} nav__link--active{% endif %}{% if link.handle contains 'clearance' %} nav__link--promo{% endif %}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </nav>
+  {%- endif -%}
+</header>
+
+{%- comment -%} Mobile bottom-sheet menu {%- endcomment -%}
+<dialog class="sheet" id="MenuSheet" aria-label="Menu" data-menu-sheet>
+  <div class="sheet__inner">
+    <div class="sheet__handle" aria-hidden="true"></div>
+    <div class="sheet__header">
+      <p class="sheet__title">Menu</p>
+      <button type="button" class="icon-button" data-close-dialog aria-label="Close menu">{% render 'icon', name: 'close' %}</button>
+    </div>
+    {%- if menu != blank -%}
+      <ul class="sheet__list" role="list">
+        {%- for link in menu.links -%}
+          {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          <li>
+            {%- if link.links.size > 0 -%}
+              <details class="sheet__details">
+                <summary class="sheet__link">{{ link.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
+                <ul class="sheet__sublist" role="list">
+                  {%- for child in link.links -%}
+                    {%- if child.type == 'collection_link' and child.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+                    <li>
+                      {%- if child.links.size > 0 -%}
+                        <details class="sheet__details">
+                          <summary class="sheet__sublink">{{ child.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
+                          <ul class="sheet__sublist" role="list">
+                            <li><a class="sheet__sublink" href="{{ child.url }}">All {{ child.title | escape }}</a></li>
+                            {%- for grandchild in child.links -%}
+                              {%- if grandchild.type == 'collection_link' and grandchild.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+                              <li><a class="sheet__sublink" href="{{ grandchild.url }}">{{ grandchild.title | escape }}</a></li>
+                            {%- endfor -%}
+                          </ul>
+                        </details>
+                      {%- else -%}
+                        <a class="sheet__sublink" href="{{ child.url }}">{{ child.title | escape }}</a>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- else -%}
+              <a class="sheet__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+    <div class="sheet__footer">
+      <a href="tel:+{{ settings.phone_international }}" class="sheet__contact">{% render 'icon', name: 'phone' %} {{ settings.phone | escape }}</a>
+      {%- if settings.whatsapp_enabled -%}
+        <a href="https://wa.me/{{ settings.phone_international }}" class="sheet__contact" target="_blank" rel="noopener" data-track="whatsapp_click">{% render 'icon', name: 'whatsapp' %} WhatsApp us</a>
+      {%- endif -%}
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="sheet__contact">{% render 'icon', name: 'account' %} {% if customer %}Your account{% else %}Log in{% endif %}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</dialog>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Collections with no products are hidden automatically."
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search bags, shoes, homeware…"
+    }
+  ]
+}
+{% endschema %}

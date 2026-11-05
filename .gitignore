@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+logs/
+reports/
+backup/
+dist/
+photos/
+prepared-images/
+failed_rows.csv
+.import-state.json
+tools/preview/out/
+tools/preview/screens/
+test-results/
+playwright-report/
+.lighthouseci/

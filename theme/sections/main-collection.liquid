@@ -1,0 +1,61 @@
+{%- comment -%}
+  Collection page: breadcrumbs, title, intro, product count, filters, sort,
+  product grid and a "Load more" button (not endless scroll – the footer stays reachable).
+{%- endcomment -%}
+{%- paginate collection.products by section.settings.per_page -%}
+<div class="collection" data-section-id="{{ section.id }}">
+  <div class="collection__hero">
+    <div class="container">
+      {%- render 'breadcrumbs' -%}
+      <h1 class="page-title">{{ collection.title | escape }}</h1>
+      {%- if collection.description != blank and current_page == 1 -%}
+        <div class="collection__intro rte">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="collection__toolbar">
+      <p class="collection__count" role="status">
+        {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
+      </p>
+      {%- render 'facets', results: collection, url: collection.url -%}
+    </div>
+
+    {%- if collection.products.size > 0 -%}
+      <ul class="product-grid" role="list" data-product-grid id="ProductGrid-{{ section.id }}">
+        {%- for product in collection.products -%}
+          <li class="product-grid__item">
+            {%- liquid
+              assign lazy = true
+              if forloop.index <= 2 and current_page == 1
+                assign lazy = false
+              endif
+              render 'product-card', product: product, lazy: lazy, heading_level: 'h2'
+            -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if paginate.next -%}
+        <div class="load-more" data-load-more-wrap>
+          <p class="load-more__status">Showing {{ paginate.current_offset | plus: collection.products.size }} of {{ paginate.items }}</p>
+          <a href="{{ paginate.next.url }}" class="button button--secondary button--large" data-load-more data-grid="ProductGrid-{{ section.id }}" data-section="{{ section.id }}">Load more</a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      {%- render 'empty-state', heading: 'No products match those filters', text: 'Try removing a filter, or browse our bargains and newest stock.' -%}
+    {%- endif -%}
+  </div>
+</div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Collection products",
+  "class": "section-main-collection",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Products per load", "min": 12, "max": 48, "step": 4, "default": 24 }
+  ]
+}
+{% endschema %}

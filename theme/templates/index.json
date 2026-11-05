@@ -1,0 +1,187 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "blocks": {
+        "img-1": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        },
+        "img-2": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        },
+        "img-3": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        },
+        "img-4": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        }
+      },
+      "block_order": [
+        "img-1",
+        "img-2",
+        "img-3",
+        "img-4"
+      ],
+      "settings": {
+        "eyebrow": "Liverpool's treasure-hunt bargain shop",
+        "heading": "Big bargains. Small prices.",
+        "text": "Discover great-value bags, shoes, jewellery, home essentials and everyday finds at GBG Bargain Shop. Shop online or visit our Liverpool store.",
+        "button_1_label": "Shop All Bargains",
+        "button_1_link": "/collections/all",
+        "button_2_label": "Visit Our Shop",
+        "button_2_link": "/pages/visit-our-shop",
+        "show_stripe": true
+      }
+    },
+    "value-strip": {
+      "type": "value-strip",
+      "settings": {}
+    },
+    "categories": {
+      "type": "category-grid",
+      "blocks": {
+        "cat-bags-accessories": {
+          "type": "category",
+          "settings": {
+            "collection": "bags-accessories",
+            "label": "Bags"
+          }
+        },
+        "cat-shoes": {
+          "type": "category",
+          "settings": {
+            "collection": "shoes",
+            "label": "Shoes"
+          }
+        },
+        "cat-jewellery-watches": {
+          "type": "category",
+          "settings": {
+            "collection": "jewellery-watches",
+            "label": "Jewellery"
+          }
+        },
+        "cat-fashion": {
+          "type": "category",
+          "settings": {
+            "collection": "fashion",
+            "label": "Fashion"
+          }
+        },
+        "cat-home-kitchen": {
+          "type": "category",
+          "settings": {
+            "collection": "home-kitchen",
+            "label": "Home & Kitchen"
+          }
+        },
+        "cat-electronics-gadgets": {
+          "type": "category",
+          "settings": {
+            "collection": "electronics-gadgets",
+            "label": "Electronics"
+          }
+        }
+      },
+      "block_order": [
+        "cat-bags-accessories",
+        "cat-shoes",
+        "cat-jewellery-watches",
+        "cat-fashion",
+        "cat-home-kitchen",
+        "cat-electronics-gadgets"
+      ],
+      "settings": {
+        "heading": "Shop by category",
+        "background": "white"
+      }
+    },
+    "featured": {
+      "type": "featured-products",
+      "blocks": {
+        "tab-bargains": {
+          "type": "tab",
+          "settings": {
+            "label": "Best Bargains",
+            "collection": "bargains"
+          }
+        },
+        "tab-new": {
+          "type": "tab",
+          "settings": {
+            "label": "New Arrivals",
+            "collection": "new-arrivals"
+          }
+        }
+      },
+      "block_order": [
+        "tab-bargains",
+        "tab-new"
+      ],
+      "settings": {
+        "heading": "Today's finds",
+        "products_to_show": 8,
+        "background": "paper"
+      }
+    },
+    "visit": {
+      "type": "visit-us",
+      "settings": {
+        "show_map": true,
+        "show_collection": true,
+        "structured_data": false
+      }
+    },
+    "clearance": {
+      "type": "clearance-banner",
+      "blocks": {
+        "under-5": {
+          "type": "shortcut",
+          "settings": {
+            "label": "Under £5",
+            "collection": "under-5"
+          }
+        },
+        "last-chance": {
+          "type": "shortcut",
+          "settings": {
+            "label": "Last Chance",
+            "collection": "last-chance"
+          }
+        }
+      },
+      "block_order": [
+        "under-5",
+        "last-chance"
+      ],
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "background": "gold-soft"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "value-strip",
+    "categories",
+    "featured",
+    "visit",
+    "clearance",
+    "newsletter"
+  ]
+}

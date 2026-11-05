@@ -1,0 +1,8 @@
+{%- liquid
+  if settings.directions_url != blank
+    echo settings.directions_url
+  else
+    assign q = settings.address_line_1 | append: ', ' | append: settings.address_line_2 | append: ', ' | append: settings.address_city | append: ' ' | append: settings.address_postcode | url_encode
+    echo 'https://www.google.com/maps/dir/?api=1&destination=' | append: q
+  endif
+-%}

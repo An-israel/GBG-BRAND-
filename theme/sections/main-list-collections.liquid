@@ -1,0 +1,26 @@
+<div class="section">
+  <div class="container">
+    <h1 class="page-title">Shop by category</h1>
+    <ul class="category-grid" role="list">
+      {%- for c in collections -%}
+        {%- if c.products_count == 0 or c.handle == 'all' or c.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
+        <li class="category-tile">
+          <a href="{{ c.url }}" class="category-tile__link">
+            <span class="category-tile__media">
+              {%- if c.featured_image -%}
+                {{ c.featured_image | image_url: width: 600 | image_tag: widths: '160, 320, 480, 600', sizes: '(min-width: 990px) 15vw, 45vw', loading: 'lazy', alt: '', class: 'category-tile__img' }}
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'category-tile__img placeholder-svg' }}
+              {%- endif -%}
+            </span>
+            <span class="category-tile__label">{{ c.title | escape }} {% render 'icon', name: 'arrow' %}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Collections list", "class": "section-list-collections", "settings": [] }
+{% endschema %}

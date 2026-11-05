@@ -1,0 +1,86 @@
+{%- comment -%}
+  Product card. Params:
+  - product (required)
+  - lazy (boolean, default true) – set false for cards above the fold
+  - heading_level (default 'h3')
+{%- endcomment -%}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign heading_tag = heading_level | default: 'h3'
+  assign loading = 'lazy'
+  if lazy == false
+    assign loading = 'eager'
+  endif
+  assign second_image = nil
+  if settings.card_show_second_image and product.media.size > 1
+    assign second_image = product.media[1].preview_image
+  endif
+  assign only_one = false
+  if product.has_only_default_variant and variant.inventory_management == 'shopify' and variant.inventory_quantity == 1 and product.available
+    assign only_one = true
+  endif
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+<article class="card{% unless product.available %} card--sold-out{% endunless %}" data-product-card>
+  <a href="{{ product.url }}" class="card__media{% if second_image %} card__media--swap{% endif %}" tabindex="-1" aria-hidden="true">
+    {%- if product.featured_media -%}
+      {{- product.featured_media.preview_image
+        | image_url: width: 720
+        | image_tag:
+          loading: loading,
+          widths: '180, 260, 360, 480, 720',
+          sizes: '(min-width: 1200px) 280px, (min-width: 750px) calc((100vw - 96px) / 3), calc((100vw - 44px) / 2)',
+          alt: product.featured_media.alt,
+          class: 'card__img card__img--primary'
+      -}}
+      {%- if second_image -%}
+        {{- second_image
+          | image_url: width: 720
+          | image_tag:
+            loading: 'lazy',
+            widths: '180, 260, 360, 480, 720',
+            sizes: '(min-width: 1200px) 280px, (min-width: 750px) calc((100vw - 96px) / 3), calc((100vw - 44px) / 2)',
+            alt: '',
+            class: 'card__img card__img--secondary'
+        -}}
+      {%- endif -%}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'card__img placeholder-svg' }}
+    {%- endif -%}
+  </a>
+
+  <div class="card__badges">
+    {%- unless product.available -%}
+      <span class="badge badge--sold">Sold out</span>
+    {%- else -%}
+      {%- if on_sale -%}<span class="badge badge--tag">Sale</span>{%- endif -%}
+      {%- if product.tags contains 'clearance' -%}<span class="badge badge--clearance">Clearance</span>{%- endif -%}
+    {%- endunless -%}
+  </div>
+
+  <div class="card__body">
+    <div class="card__meta">
+      {%- render 'condition-badge', product: product -%}
+      {%- if product.metafields.custom.collection_only.value == true -%}
+        <span class="badge badge--outline">Collection only</span>
+      {%- endif -%}
+    </div>
+    <{{ heading_tag }} class="card__title">
+      <a href="{{ product.url }}" class="card__link">{{ product.title | escape }}</a>
+    </{{ heading_tag }}>
+    {%- render 'price', product: product -%}
+    {%- if only_one -%}<p class="card__low">Only 1 left</p>{%- endif -%}
+
+    {%- if settings.card_quick_add and product.has_only_default_variant and product.available -%}
+      {%- form 'product', product, class: 'card__quick-add', data-quick-add: '' -%}
+        <input type="hidden" name="id" value="{{ variant.id }}">
+        <button type="submit" class="button button--small button--secondary card__quick-btn">
+          <span>Add<span class="visually-hidden"> {{ product.title | escape }}</span> to basket</span>
+        </button>
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+</article>

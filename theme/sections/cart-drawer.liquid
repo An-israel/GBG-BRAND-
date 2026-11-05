@@ -1,0 +1,4 @@
+{%- comment -%} Render target for the Section Rendering API (?sections=cart-drawer). {%- endcomment -%}
+<div id="CartDrawerContents" data-cart-contents data-count="{{ cart.item_count }}">
+  {%- render 'cart-items' -%}
+</div>

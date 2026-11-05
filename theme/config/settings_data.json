@@ -1,0 +1,15 @@
+{
+  "current": "Default",
+  "presets": {
+    "Default": {
+      "logo_width": 150,
+      "whatsapp_enabled": false,
+      "claim_value": true,
+      "claim_secure_checkout": true,
+      "claim_uk_delivery": false,
+      "claim_free_collection": false,
+      "cart_type": "drawer",
+      "newsletter_popup_enabled": false
+    }
+  }
+}

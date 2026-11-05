@@ -1,0 +1,37 @@
+{%- comment -%} Trust claims. Each one only renders when switched on in Theme settings → Trust claims. {%- endcomment -%}
+{%- capture items -%}
+  {%- if settings.claim_value -%}
+    <li class="value-strip__item">{% render 'icon', name: 'tag' %}<span><strong>Great value</strong> {{ section.settings.value_text | escape }}</span></li>
+  {%- endif -%}
+  {%- if settings.claim_secure_checkout -%}
+    <li class="value-strip__item">{% render 'icon', name: 'lock' %}<span><strong>Secure checkout</strong> {{ section.settings.secure_text | escape }}</span></li>
+  {%- endif -%}
+  {%- if settings.claim_uk_delivery -%}
+    <li class="value-strip__item">{% render 'icon', name: 'truck' %}<span><strong>UK delivery</strong> {{ section.settings.delivery_text | escape }}</span></li>
+  {%- endif -%}
+  {%- if settings.claim_free_collection -%}
+    <li class="value-strip__item">{% render 'icon', name: 'store' %}<span><strong>Free Liverpool collection</strong> {{ section.settings.collection_text | escape }}</span></li>
+  {%- endif -%}
+{%- endcapture -%}
+{%- if items != blank -%}
+  <section class="value-strip" aria-label="Why shop with us">
+    <ul class="container value-strip__list" role="list">{{ items }}</ul>
+  </section>
+{%- elsif request.design_mode -%}
+  <p class="container placeholder-note">Value strip hidden: switch claims on in Theme settings → Trust claims once they are set up.</p>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Value strip",
+  "class": "section-value-strip",
+  "settings": [
+    { "type": "paragraph", "content": "Claims are switched on and off in Theme settings → Trust claims." },
+    { "type": "text", "id": "value_text", "label": "Great value text", "default": "on every shelf" },
+    { "type": "text", "id": "secure_text", "label": "Secure checkout text", "default": "powered by Shopify" },
+    { "type": "text", "id": "delivery_text", "label": "UK delivery text", "default": "cost shown before you pay" },
+    { "type": "text", "id": "collection_text", "label": "Collection text", "default": "from Unit M10" }
+  ],
+  "presets": [{ "name": "Value strip" }]
+}
+{% endschema %}

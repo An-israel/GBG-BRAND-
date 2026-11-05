@@ -1,0 +1,47 @@
+{%- comment -%} Rendered by /search/suggest?section_id=predictive-search {%- endcomment -%}
+{%- if predictive_search.performed -%}
+  {%- assign res = predictive_search.resources -%}
+  {%- assign total = res.products.size | plus: res.collections.size | plus: res.queries.size -%}
+  <div class="predictive__inner" data-predictive-count="{{ total }}">
+    {%- if total > 0 -%}
+      {%- if res.queries.size > 0 -%}
+        <ul class="predictive__queries" role="listbox" aria-label="Suggestions">
+          {%- for q in res.queries -%}
+            <li role="option" id="pq-{{ forloop.index }}"><a href="{{ q.url }}" class="predictive__query">{% render 'icon', name: 'search' %} {{ q.styled_text }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if res.collections.size > 0 -%}
+        <p class="predictive__heading">Categories</p>
+        <ul class="predictive__chips" role="list">
+          {%- for c in res.collections -%}
+            {%- if c.products_count > 0 -%}<li><a href="{{ c.url }}" class="chip">{{ c.title | escape }}</a></li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if res.products.size > 0 -%}
+        <p class="predictive__heading">Products</p>
+        <ul class="predictive__products" role="listbox" aria-label="Products">
+          {%- for p in res.products -%}
+            <li role="option" id="pp-{{ forloop.index }}">
+              <a href="{{ p.url }}" class="predictive__product">
+                {%- if p.featured_media -%}
+                  {{ p.featured_media.preview_image | image_url: width: 120 | image_tag: loading: 'lazy', width: 60, height: 60, alt: '' }}
+                {%- endif -%}
+                <span class="predictive__product-text">
+                  <span class="predictive__product-title">{{ p.title | escape }}</span>
+                  <span class="predictive__product-price">{% unless p.available %}Sold out · {% endunless %}{{ p.price | money }}</span>
+                </span>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <a href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&options%5Bprefix%5D=last" class="predictive__all">
+        See all results for “{{ predictive_search.terms | escape }}” {% render 'icon', name: 'arrow' %}
+      </a>
+    {%- else -%}
+      <p class="predictive__empty">No matches for “{{ predictive_search.terms | escape }}”. Try a simpler word like “bag” or “mug”.</p>
+    {%- endif -%}
+  </div>
+{%- endif -%}

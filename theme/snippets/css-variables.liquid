@@ -1,0 +1,26 @@
+{%- comment -%}
+  Design tokens. Colours come from Theme settings → Colours so the owner can
+  adjust them; fonts are self-hosted open-licence (SIL OFL) files in /assets.
+{%- endcomment -%}
+<style>
+  @font-face { font-family: 'Archivo'; font-weight: 700; font-style: normal; font-display: swap; src: url('{{ 'archivo-700.woff2' | asset_url }}') format('woff2'); }
+  @font-face { font-family: 'Archivo'; font-weight: 800; font-style: normal; font-display: swap; src: url('{{ 'archivo-800.woff2' | asset_url }}') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 400; font-style: normal; font-display: swap; src: url('{{ 'inter-400.woff2' | asset_url }}') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 500; font-style: normal; font-display: swap; src: url('{{ 'inter-500.woff2' | asset_url }}') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 600; font-style: normal; font-display: swap; src: url('{{ 'inter-600.woff2' | asset_url }}') format('woff2'); }
+
+  :root {
+    --navy: {{ settings.color_navy }};
+    --navy-700: {{ settings.color_navy_700 }};
+    --gold: {{ settings.color_gold }};
+    --gold-soft: {{ settings.color_gold_soft }};
+    --yellow: {{ settings.color_yellow }};
+    --white: {{ settings.color_white }};
+    --paper: {{ settings.color_paper }};
+    --ink: {{ settings.color_ink }};
+    --muted: {{ settings.color_muted }};
+    --success: {{ settings.color_success }};
+    --error: {{ settings.color_error }};
+    --logo-width: {{ settings.logo_width }}px;
+  }
+</style>

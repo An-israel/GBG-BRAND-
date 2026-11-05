@@ -1,0 +1,18 @@
+{%- comment -%}
+  Opening hours from Theme settings → Shop details. Never invented: if the
+  owner has not confirmed hours, visitors are asked to call before visiting.
+{%- endcomment -%}
+{%- if settings.opening_hours != blank -%}
+  {%- assign lines = settings.opening_hours | newline_to_br | split: '<br />' -%}
+  <ul class="hours" role="list">
+    {%- for line in lines -%}
+      {%- assign line = line | strip -%}
+      {%- if line != blank -%}<li>{{ line | escape }}</li>{%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- else -%}
+  {%- if request.design_mode -%}
+    <p class="placeholder-note">[TO CONFIRM] Add the shop opening hours in Theme settings → Shop details.</p>
+  {%- endif -%}
+  <p class="hours hours--unconfirmed">Please call <a href="tel:+{{ settings.phone_international }}">{{ settings.phone }}</a> to check opening times before you visit.</p>
+{%- endif -%}

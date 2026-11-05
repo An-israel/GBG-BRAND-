@@ -1,0 +1,26 @@
+{%- comment -%}
+  Shopify customer form. Consent is given by the visitor actively submitting
+  the form after reading the wording – there is no pre-ticked box.
+{%- endcomment -%}
+{%- assign form_id = 'NewsletterForm' | append: id -%}
+{%- form 'customer', id: form_id, class: 'newsletter-form' -%}
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  {%- if form.posted_successfully? -%}
+    <p class="form-message form-message--success" role="status" tabindex="-1" autofocus>{% render 'icon', name: 'check' %} Thanks – you're on the list. Check your inbox for a welcome email.</p>
+  {%- else -%}
+    <div class="newsletter-form__row">
+      <label for="NewsletterEmail{{ id }}" class="visually-hidden">Email address</label>
+      <input id="NewsletterEmail{{ id }}" type="email" name="contact[email]" class="input" autocomplete="email" required
+        placeholder="Your email address" aria-describedby="NewsletterConsent{{ id }}{% if form.errors %} NewsletterError{{ id }}{% endif %}"
+        {% if form.errors %}aria-invalid="true"{% endif %}>
+      <button type="submit" class="button">Sign up</button>
+    </div>
+    {%- if form.errors -%}
+      <p class="form-message form-message--error" id="NewsletterError{{ id }}">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+    {%- endif -%}
+    <p class="newsletter-form__consent" id="NewsletterConsent{{ id }}">
+      By signing up you agree to receive marketing emails from {{ settings.shop_display_name | default: shop.name | escape }} about new stock and offers.
+      You can unsubscribe at any time using the link in every email. See our <a href="{{ shop.privacy_policy.url | default: routes.root_url }}">privacy policy</a>.
+    </p>
+  {%- endif -%}
+{%- endform -%}

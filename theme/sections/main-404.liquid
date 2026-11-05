@@ -1,0 +1,23 @@
+<div class="section not-found">
+  <div class="container container--narrow">
+    {%- render 'empty-state', heading: 'Sorry, we can’t find that page', text: 'It may have sold out or moved. Search for what you need, or try one of these.', show_search: true -%}
+    {%- if section.settings.menu != blank -%}
+      <ul class="chips" role="list">
+        {%- for link in section.settings.menu.links -%}
+          {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          <li><a href="{{ link.url }}" class="chip">{{ link.title | escape }}</a></li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page not found",
+  "class": "section-404",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Popular categories menu", "default": "footer-shop" }
+  ]
+}
+{% endschema %}

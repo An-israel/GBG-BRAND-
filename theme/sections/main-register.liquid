@@ -1,0 +1,20 @@
+<div class="section account">
+  <div class="container container--form">
+    <h1 class="page-title">Create an account</h1>
+    {%- form 'create_customer', novalidate: 'novalidate', class: 'form-stack' -%}
+      {%- if form.errors -%}<div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+      <div class="field"><label for="RegFirst">First name</label><input class="input" type="text" name="customer[first_name]" id="RegFirst" autocomplete="given-name"></div>
+      <div class="field"><label for="RegLast">Last name</label><input class="input" type="text" name="customer[last_name]" id="RegLast" autocomplete="family-name"></div>
+      <div class="field"><label for="RegEmail">Email</label><input class="input" type="email" name="customer[email]" id="RegEmail" autocomplete="email" required></div>
+      <div class="field"><label for="RegPassword">Password</label><input class="input" type="password" name="customer[password]" id="RegPassword" autocomplete="new-password" required></div>
+      <label class="checkbox">
+        <input type="checkbox" name="customer[accepts_marketing]" value="true">
+        <span>Email me about new stock and offers. I can unsubscribe at any time.</span>
+      </label>
+      <button type="submit" class="button button--full button--large">Create account</button>
+    {%- endform -%}
+  </div>
+</div>
+{% schema %}
+{ "name": "Create account", "class": "section-register", "settings": [] }
+{% endschema %}

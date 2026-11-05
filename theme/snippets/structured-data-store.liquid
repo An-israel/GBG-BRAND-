@@ -1,0 +1,29 @@
+{%- comment -%} Store / LocalBusiness data for the home and Visit Us pages. {%- endcomment -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": {{ settings.shop_display_name | default: shop.name | json }},
+    "url": {{ request.origin | append: routes.root_url | json }},
+    {%- if settings.logo %}"image": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }},{% endif %}
+    {%- if settings.phone_international != blank %}"telephone": {{ '+' | append: settings.phone_international | json }},{% endif %}
+    {%- if settings.email != blank %}"email": {{ settings.email | json }},{% endif %}
+    "priceRange": "£",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": {{ settings.address_line_1 | append: ', ' | append: settings.address_line_2 | json }},
+      "addressLocality": {{ settings.address_city | json }},
+      "postalCode": {{ settings.address_postcode | json }},
+      "addressCountry": "GB"
+    }
+    {%- if settings.geo_lat != blank and settings.geo_lng != blank -%}
+    ,"geo": { "@type": "GeoCoordinates", "latitude": {{ settings.geo_lat | json }}, "longitude": {{ settings.geo_lng | json }} }
+    {%- endif -%}
+    {%- if settings.opening_hours_schema != blank -%}
+    {%- assign hours_list = settings.opening_hours_schema | split: ',' -%}
+    ,"openingHours": [
+      {%- for h in hours_list -%}{{ h | strip | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}
+    ]
+    {%- endif %}
+  }
+</script>
