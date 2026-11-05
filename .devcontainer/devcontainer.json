@@ -1,0 +1,7 @@
+{
+  "name": "GBG Bargain Shop",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "postCreateCommand": "npm ci && npm install -g @shopify/cli@3 && npx playwright install --with-deps chromium",
+  "customizations": { "vscode": { "extensions": ["Shopify.theme-check-vscode", "dbaeumer.vscode-eslint"] } },
+  "forwardPorts": [9292, 4321]
+}

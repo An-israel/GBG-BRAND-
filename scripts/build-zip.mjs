@@ -2,13 +2,13 @@
 // Shopify admin → Online Store → Themes → Add theme → Upload zip file.
 import fs from 'node:fs';
 import path from 'node:path';
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 fs.mkdirSync('dist', { recursive: true });
 const out = path.join('dist', `gbg-bargain-shop-theme-v${pkg.version}.zip`);
 const output = fs.createWriteStream(out);
-const archive = archiver('zip', { zlib: { level: 9 } });
+const archive = new ZipArchive({ zlib: { level: 9 } });
 archive.pipe(output);
 for (const dir of ['assets', 'blocks', 'config', 'layout', 'locales', 'sections', 'snippets', 'templates']) {
   const full = path.join('theme', dir);

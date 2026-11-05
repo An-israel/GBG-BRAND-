@@ -114,3 +114,15 @@ test('empty search has a helpful on-brand state', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'No results found' })).toBeVisible();
   await expect(page.locator('.empty-state__actions a').first()).toBeVisible();
 });
+
+test('sticky add-to-basket bar appears once the main button scrolls away', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'mobile only');
+  await page.goto(LIVE ? url('/collections/all') : '/product');
+  if (LIVE) await page.locator('.card:not(.card--sold-out) a.card__link').first().click();
+  const bar = page.locator('[data-sticky-atc]');
+  await expect(bar).not.toHaveClass(/is-visible/);
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect(bar).toHaveClass(/is-visible/);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(bar).not.toHaveClass(/is-visible/);
+});

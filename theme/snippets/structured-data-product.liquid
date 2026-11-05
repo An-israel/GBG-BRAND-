@@ -23,7 +23,7 @@
     "description": {{ product.description | strip_html | strip_newlines | truncate: 500 | json }},
     {%- if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
     {%- if variant.barcode != blank %}"gtin": {{ variant.barcode | json }},{% endif %}
-    {%- if product.vendor != blank and product.vendor != shop.name %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
+    {%- if product.vendor != blank and product.vendor != shop.name and product.vendor != settings.shop_display_name %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
     "offers": [
       {%- for v in product.variants -%}
       {

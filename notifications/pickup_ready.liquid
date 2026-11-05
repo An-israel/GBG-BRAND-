@@ -1,0 +1,59 @@
+{%- assign email_title = 'Your order is ready to collect' -%}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ email_title }}</title>
+</head>
+<body style="margin:0;padding:0;background:#F7F7F5;font-family:Inter,Arial,Helvetica,sans-serif;color:#16181D;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F7F5;">
+    <tr><td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden;">
+        <tr><td style="background:#0B1F3A;padding:20px 28px;border-bottom:4px solid #C9A227;">
+          {%- if shop.email_logo_url -%}
+            <img src="{{ shop.email_logo_url }}" alt="GBG Bargain Shop" width="{{ shop.email_logo_width | default: 150 }}" style="display:block;border:0;max-width:200px;height:auto;">
+          {%- else -%}
+            <span style="display:inline-block;background:#C9A227;color:#0B1F3A;font:800 20px Arial,sans-serif;padding:6px 8px;border-radius:4px;">GBG</span>
+            <span style="color:#ffffff;font:700 18px Arial,sans-serif;padding-left:6px;">Bargain Shop</span>
+          {%- endif -%}
+        </td></tr>
+        <tr><td style="padding:28px;">
+<h1 style="margin:0 0 12px;font:800 26px/1.15 Arial,Helvetica,sans-serif;color:#0B1F3A;">Your order is ready to collect</h1>
+<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#16181D;">Good news, {{ customer.first_name | default: 'there' }} – order <strong>{{ order_name }}</strong> is waiting for you at the shop.</p>
+<p style="margin:0 0 16px;padding:14px 16px;background:#F3E7C1;border-left:4px solid #C9A227;border-radius:6px;font-size:15px;line-height:1.5;color:#16181D;"><strong>Where:</strong> GBG Bargain Shop, Unit M10, Stanley Meat Market, Prescot Road, Liverpool, L13 3AS (inside Stanley Meat Market).<br>
+<strong>When:</strong> during our opening hours [TO CONFIRM hours] – please collect within [TO CONFIRM] days.<br>
+<strong>Bring:</strong> your order number <strong>{{ order_name }}</strong> (this email is fine) and photo ID if someone is collecting for you.</p>
+{%- if pickup_instructions != blank -%}<p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#16181D;">{{ pickup_instructions }}</p>{%- endif -%}
+<p style="margin:0 0 24px;"><a href="https://www.google.com/maps/dir/?api=1&destination=Stanley%20Meat%20Market%2C%20Prescot%20Road%2C%20Liverpool%20L13%203AS" style="display:inline-block;background:#0B1F3A;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:999px;font-size:16px;">Get directions</a></p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 16px;border-top:1px solid #E3E5EA;">
+  {%- for line in line_items -%}
+  <tr>
+    <td width="72" style="padding:12px 0;border-bottom:1px solid #E3E5EA;">
+      {%- if line.image -%}<img src="{{ line | img_url: 'compact_cropped' }}" alt="" width="60" height="60" style="display:block;border:1px solid #E3E5EA;border-radius:6px;">{%- endif -%}
+    </td>
+    <td style="padding:12px 8px;border-bottom:1px solid #E3E5EA;font-size:15px;line-height:1.4;">
+      {{ line.title }}{% if line.quantity > 1 %} × {{ line.quantity }}{% endif %}
+      {%- if line.variant_title != blank and line.variant_title != 'Default Title' -%}<br><span style="color:#5D6470;font-size:13px;">{{ line.variant_title }}</span>{%- endif -%}
+    </td>
+    <td align="right" style="padding:12px 0;border-bottom:1px solid #E3E5EA;font:800 16px Arial,sans-serif;color:#0B1F3A;white-space:nowrap;">{{ line.final_line_price | money }}</td>
+  </tr>
+  {%- endfor -%}
+</table>
+
+<p style="margin:0;font-size:14px;color:#5D6470;">Questions? Call 07344 670317.</p>
+
+        </td></tr>
+        <tr><td style="background:#0B1F3A;color:#DCE3EE;padding:22px 28px;font-size:13px;line-height:1.6;">
+          <strong style="color:#ffffff;">GBG Bargain Shop</strong><br>
+          Unit M10, Stanley Meat Market, Prescot Road, Liverpool, L13 3AS<br>
+          Phone <a href="tel:+447344670317" style="color:#ffffff;">07344 670317</a>
+          {%- if shop.email %} · <a href="mailto:{{ shop.email }}" style="color:#ffffff;">{{ shop.email }}</a>{% endif %}<br>
+          <a href="{{ shop.url }}" style="color:#FFD60A;">gbgbargainshop.co.uk</a>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

@@ -345,16 +345,21 @@
     // Sticky add-to-basket once the main button scrolls away
     const sticky = $('[data-sticky-atc]', root);
     const main = $('[data-main-atc]', root);
-    if (sticky && main && 'IntersectionObserver' in window) {
+    if (sticky && main) {
+      // A passive scroll check (rAF-throttled) is used instead of IntersectionObserver,
+      // which misses the change when the page jumps past the button in one scroll.
       sticky.hidden = false;
-      const io = new IntersectionObserver(([en]) => {
-        const show = !en.isIntersecting && en.boundingClientRect.top < 0;
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const show = main.getBoundingClientRect().bottom < 0;
+        if (show === sticky.classList.contains('is-visible')) return;
         sticky.classList.toggle('is-visible', show);
         sticky.setAttribute('aria-hidden', String(!show));
         if (stickyBtn) stickyBtn.tabIndex = show ? 0 : -1;
-      });
-      io.observe(main);
-      signal.addEventListener('abort', () => io.disconnect());
+      };
+      window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true, signal });
+      update();
     }
     return ac;
   }

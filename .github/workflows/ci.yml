@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Theme Check, types, unit tests, audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Theme Check (zero errors required)
+        run: npm run theme:check
+      - run: npm run typecheck
+      - run: npm test
+      - name: npm audit (high and above)
+        run: npm audit --audit-level=high --omit=dev
+      - name: No "DBS" in theme, content or notifications
+        run: |
+          if grep -rniw "dbs" theme content notifications --include=*.liquid --include=*.json --include=*.html; then
+            echo "::error::Old DBS branding found"; exit 1; fi
+
+  e2e-offline:
+    name: Playwright (offline design preview)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: playwright-report-offline, path: playwright-report }
+
+  deploy-preview:
+    name: Push to the UNPUBLISHED preview theme
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.SHOPIFY_PREVIEW_THEME_ID != ''
+    needs: [checks, e2e-offline]
+    runs-on: ubuntu-latest
+    environment: preview
+    env:
+      SHOPIFY_FLAG_STORE: ${{ vars.SHOPIFY_STORE_DOMAIN }}
+      SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install -g @shopify/cli@3
+      # Deploys ONLY to the unpublished preview theme. The live theme is published by hand after sign-off.
+      - run: shopify theme push --path theme --theme ${{ vars.SHOPIFY_PREVIEW_THEME_ID }} --nodelete --json
+
+  lighthouse:
+    name: Lighthouse CI (preview theme)
+    if: vars.PREVIEW_URL != ''
+    needs: [deploy-preview]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx @lhci/cli@0.14.x autorun --config=lighthouserc.cjs
+        env:
+          PREVIEW_URL: ${{ vars.PREVIEW_URL }}
+          LHCI_PRODUCT_PATH: ${{ vars.LHCI_PRODUCT_PATH }}
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  e2e-preview:
+    name: Playwright (real preview theme)
+    if: vars.PREVIEW_URL != ''
+    needs: [deploy-preview]
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_URL: ${{ vars.PREVIEW_URL }}
+      STOREFRONT_PASSWORD: ${{ secrets.STOREFRONT_PASSWORD }}
+      SOLD_OUT_PRODUCT_PATH: ${{ vars.SOLD_OUT_PRODUCT_PATH }}
+      COLLECTION_ONLY_PRODUCT_PATH: ${{ vars.COLLECTION_ONLY_PRODUCT_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: playwright-report-preview, path: playwright-report }
