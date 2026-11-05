@@ -177,7 +177,7 @@ textarea.input { min-height: 140px; resize: vertical; }
 .price--large .price__regular, .price--large .price__tag { font-size: clamp(2rem, 7vw, 2.5rem); }
 .price--large .price__compare { font-size: 1.0625rem; }
 .price--large .price__saving { font-size: 0.9375rem; }
-.price--sold-out { opacity: 0.75; }
+.price--sold-out .price__regular, .price--sold-out .price__tag { color: var(--muted); }
 
 .stock { display: flex; align-items: center; gap: 8px; font-weight: 600; margin: 8px 0 16px; }
 .stock__dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -670,3 +670,5 @@ dialog::backdrop { background: rgb(11 31 58 / 0.55); backdrop-filter: blur(2px);
 .template-gift-card .logo-text__word { color: var(--navy); }
 @media (min-width: 990px) { .hero--text-only .hero__grid { grid-template-columns: 1fr; max-width: 900px; } }
 .card__quick-btn { padding-left: 10px; padding-right: 10px; font-size: 0.875rem; }
+.footer .hours a, .hours--unconfirmed a { text-decoration: underline; }
+.price--sold-out .price__tag { background: var(--paper); }
