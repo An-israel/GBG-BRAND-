@@ -26,7 +26,7 @@ Items 2, 3, 4, 5, 6, 8, 9 and 11 were built after the first audit (2026-11-06). 
 | 5 | Branded default social image | `theme/assets/og-default.png` (1200 × 630, GBG fonts/colours), used when no other image is set. |
 | 6 | Last Chance "inventory 1" | Optional rule (`lastChanceIncludesStockOfOne` in `config/collections.json`), off by default because one-off items would all qualify. Unit tested. |
 | 8 | Monthly backup | `.github/workflows/monthly-backup.yml`, 1st of each month, private 90-day artifact. |
-| 9 | Git tag | `v1.0.0` tagged. |
+| 9 | Git tag | `v1.0.0` created on commit 12d7663. GitHub refused the tag push from this session, so add it on GitHub: Releases → Draft a new release → tag `v1.0.0` → target branch `gbg-shopify-theme-v1`. |
 | 11 | Launch Pack copy | "Find something you love?…" above Add to basket (editable); "Check our opening hours before visiting." in Visit Us. |
 
 ## Built, but never run against a real store 🔒
