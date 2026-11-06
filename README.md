@@ -66,6 +66,7 @@ No store needed – renders the actual Liquid with labelled sample products:
 node tools/preview/render.mjs            # → tools/preview/out/*.html
 node tools/preview/screenshots.mjs       # 360 / 390 / 768 / 1440 px → tools/preview/screens/
 node tools/preview/states.mjs            # menu sheet, drawers, sticky bar
+node tools/og-image.mjs                  # rebuild the default social preview image (theme/assets/og-default.png)
 ```
 
 ## Admin scripts
@@ -106,6 +107,7 @@ GitHub Actions (`.github/workflows/`):
   **unpublished** preview theme (needs `SHOPIFY_PREVIEW_THEME_ID` variable + `SHOPIFY_CLI_THEME_TOKEN` secret), then Lighthouse CI
   (budgets: perf ≥ 90, a11y/BP/SEO ≥ 95, LCP < 2.5 s, CLS < 0.05) and Playwright against the preview.
 - **weekly.yml** – Monday report + smoke test.
+- **monthly-backup.yml** – store export on the 1st of each month (private artifact, 90 days).
 - Dependabot keeps dependencies current.
 
 ## Releases

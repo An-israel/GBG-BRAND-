@@ -21,6 +21,9 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 | Change opening hours, phone, email, address | ⚙ **Theme settings → Shop details**. Updates footer, Visit Us, contact page and Google data at once. |
 | Turn WhatsApp links on/off | ⚙ Theme settings → **Social and WhatsApp**. |
 | Newsletter pop-up | ⚙ Theme settings → **Newsletter prompt** (never shows on a first visit). |
+| Change the "You may also like" products | Products → **You may also like** → *Products from*: same collection (default) or Shopify recommendations. |
+| Change the text above Add to basket | Products → **Product information** → *Text above the Add to basket button*. |
+| Change the social sharing image | ⚙ Theme settings → Brand and logo → *Default social preview image*. If empty, the built-in GBG image is used. |
 | Edit FAQs | Pages → FAQ page template → **FAQs** section → questions. |
 | Edit the Visit Us photos | Pages → Visit template → **Shop photos**. |
 | Change colours | ⚙ Theme settings → **Colours** (contrast-checked – ask before changing). |
@@ -32,7 +35,7 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 
 - **Add one product by hand:** Products → Add product. Fill title, description, photos (main photo on white first),
   price, **Cost per item**, SKU, weight, quantity at "GBG Bargain Shop, Unit M10". Untick *Continue selling when out of stock*.
-  Scroll to **Metafields**: set **Condition** (required), Condition notes, Dimensions, Tested (electricals), Collection only.
+  Scroll to **Metafields**: set **Condition** (required), Colour, Condition notes, Dimensions, Tested (electricals), Collection only.
   Add tags (category + `new-arrival`). Status **Draft** → check → **Active**.
 - **Add many products:** staff use the spreadsheet + scripts (STAFF_SOP, PRODUCT_CSV_GUIDE).
 - **Approve the sample:** Products → filter **Status: Draft** → open each → check → set **Active**.
@@ -74,7 +77,7 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 **Monthly**
 - [ ] Review analytics: Shopify Analytics → sales, top products, conversion; GA4 if set up.
 - [ ] Remove unused apps (Settings → Apps) and check the recurring costs list in HANDOVER.md.
-- [ ] Run the backup export (`npm run backup`) and keep the folder somewhere safe.
+- [ ] Download the monthly backup (GitHub → Actions → *Monthly backup* → artifact) or run `npm run backup`, and keep it somewhere safe.
 
 ## 6. Who to call
 

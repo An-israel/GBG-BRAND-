@@ -10,3 +10,4 @@ All notable changes to the GBG Bargain Shop theme and scripts. Versions follow s
 - Branded notification templates, draft pages and UK policy drafts, GA4 consent-mode custom pixel.
 - Tests: unit (validator, images, API client), Playwright end-to-end and axe accessibility; CI with Theme Check and Lighthouse CI.
 - Documentation set (see README).
+- From the brief audit: tap-to-swap second photo on product cards (touch screens, plus swipe); Colour metafield (product page, filter, CSV column, validator, importer, alt text); "You may also like" from the same collection with fallback to Shopify recommendations; branded default social preview image; optional "only 1 in stock" rule for Last Chance; monthly backup workflow; Launch Pack copy ("Find something you love?…", "Check our opening hours before visiting.").

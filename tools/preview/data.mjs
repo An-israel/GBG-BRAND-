@@ -33,6 +33,7 @@ function product(p) {
       condition: { value: p.condition || 'New' },
       condition_notes: p.notes ? { value: p.notes } : null,
       dimensions: p.dimensions ? { value: p.dimensions } : null,
+      colour: p.colour ? { value: p.colour } : null,
       collection_only: { value: !!p.collectionOnly },
       tested: p.tested ? { value: p.tested } : null,
     } },
@@ -40,20 +41,20 @@ function product(p) {
 }
 
 export const products = [
-  product({ title: 'Tan faux-leather tote bag with gold clasp', price: 1299, compare: 2499, sku: 'GBG-BAG-001', images: ['handbag', 'purse'], condition: 'New with tags', tags: ['bags', 'handbags', 'new-arrival'], dimensions: '38 x 30 x 14 cm' }),
-  product({ title: 'Navy everyday backpack, 20 litre', price: 899, sku: 'GBG-BAG-002', images: ['backpack', 'handbag'], condition: 'New', tags: ['bags', 'backpacks', 'new-arrival'], qty: 1 }),
-  product({ title: 'Raspberry zip-around purse', price: 450, sku: 'GBG-BAG-003', images: ['purse'], condition: 'Customer return', notes: 'Small mark on the inside lining. Zip works perfectly.', tags: ['bags', 'purses', 'under-5', 'clearance'] }),
-  product({ title: "Women's white lace-up trainers", price: 1500, sku: 'GBG-SHO-001', images: ['trainers', 'heels'], condition: 'Open box', tags: ['shoes', 'womens-shoes'], variants: [{ title: '4', qty: 1 }, { title: '5', qty: 2 }, { title: '6', qty: 0 }, { title: '7', qty: 1 }] }),
-  product({ title: 'Black patent court heels', price: 999, compare: 1999, sku: 'GBG-SHO-002', images: ['heels'], condition: 'New with tags', tags: ['shoes', 'womens-shoes', 'clearance'], qty: 0 }),
+  product({ title: 'Tan faux-leather tote bag with gold clasp', colour: 'Tan', price: 1299, compare: 2499, sku: 'GBG-BAG-001', images: ['handbag', 'purse'], condition: 'New with tags', tags: ['bags', 'handbags', 'new-arrival'], dimensions: '38 x 30 x 14 cm' }),
+  product({ title: 'Navy everyday backpack, 20 litre', colour: 'Navy', price: 899, sku: 'GBG-BAG-002', images: ['backpack', 'handbag'], condition: 'New', tags: ['bags', 'backpacks', 'new-arrival'], qty: 1 }),
+  product({ title: 'Raspberry zip-around purse', colour: 'Pink', price: 450, sku: 'GBG-BAG-003', images: ['purse'], condition: 'Customer return', notes: 'Small mark on the inside lining. Zip works perfectly.', tags: ['bags', 'purses', 'under-5', 'clearance'] }),
+  product({ title: "Women's white lace-up trainers", colour: 'White', price: 1500, sku: 'GBG-SHO-001', images: ['trainers', 'heels'], condition: 'Open box', tags: ['shoes', 'womens-shoes'], variants: [{ title: '4', qty: 1 }, { title: '5', qty: 2 }, { title: '6', qty: 0 }, { title: '7', qty: 1 }] }),
+  product({ title: 'Black patent court heels', colour: 'Black', price: 999, compare: 1999, sku: 'GBG-SHO-002', images: ['heels'], condition: 'New with tags', tags: ['shoes', 'womens-shoes', 'clearance'], qty: 0 }),
   product({ title: 'Gold-tone analogue watch, brown strap', price: 1199, sku: 'GBG-JEW-001', images: ['watch'], condition: 'New', tags: ['jewellery', 'watches', 'new-arrival'] }),
   product({ title: 'Blue crystal pendant necklace', price: 399, sku: 'GBG-JEW-002', images: ['necklace'], condition: 'New', tags: ['jewellery', 'necklaces', 'under-5'] }),
   product({ title: 'Gold-tone hoop earrings, 4 cm', price: 299, sku: 'GBG-JEW-003', images: ['earrings'], condition: 'New with tags', tags: ['jewellery', 'earrings', 'under-5', 'last-chance'], qty: 1 }),
   product({ title: 'Navy and gold stoneware mug', price: 250, sku: 'GBG-HOM-001', images: ['mug'], condition: 'New', tags: ['home', 'cookware', 'under-5'] }),
   product({ title: '28 cm non-stick frying pan', price: 1099, sku: 'GBG-HOM-002', images: ['pan'], condition: 'Open box', notes: 'Box is damaged. Pan is unused.', tags: ['home', 'cookware'] }),
   product({ title: '45 litre clear storage box with lid', price: 650, sku: 'GBG-HOM-003', images: ['storage'], condition: 'New', tags: ['home', 'storage'], collectionOnly: true }),
-  product({ title: 'Portable Bluetooth speaker, black', price: 1499, sku: 'GBG-ELE-001', images: ['speaker'], condition: 'Customer return', tested: 'Tested working', notes: 'Light scuff on the base. Charging cable included.', tags: ['electronics', 'speakers', 'new-arrival'] }),
+  product({ title: 'Portable Bluetooth speaker, black', colour: 'Black', price: 1499, sku: 'GBG-ELE-001', images: ['speaker'], condition: 'Customer return', tested: 'Tested working', notes: 'Light scuff on the base. Charging cable included.', tags: ['electronics', 'speakers', 'new-arrival'] }),
   product({ title: 'Yellow desk lamp with metal base', price: 799, sku: 'GBG-ELE-002', images: ['lamp'], condition: 'Unchecked', tested: 'Untested', tags: ['electronics', 'small-electronics', 'last-chance'] }),
-  product({ title: 'Purple knitted winter scarf', price: 350, sku: 'GBG-FAS-001', images: ['scarf'], condition: 'New', tags: ['fashion', 'womens-fashion', 'under-5'] }),
+  product({ title: 'Purple knitted winter scarf', colour: 'Purple', price: 350, sku: 'GBG-FAS-001', images: ['scarf'], condition: 'New', tags: ['fashion', 'womens-fashion', 'under-5'] }),
 ];
 
 const byTag = (t) => products.filter((p) => p.tags.includes(t));
@@ -99,6 +100,9 @@ export const collections = {
   storage: collection('storage', 'Storage', byTag('storage')),
   speakers: collection('speakers', 'Speakers', byTag('speakers')),
 };
+
+// Each product knows which collections it is in (used by "You may also like").
+for (const p of products) p.collections = Object.values(collections).filter((c) => c.products.includes(p));
 
 const link = (title, url, children = [], handle) => {
   const m = url.match(/^\/collections\/(.+)$/);

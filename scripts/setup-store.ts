@@ -39,6 +39,7 @@ const METAFIELDS = [
   { key: 'condition', name: 'Condition', type: 'single_line_text_field', description: 'Condition label shown as a badge with a plain-English explanation.', validations: [{ name: 'choices', value: JSON.stringify(CONDITIONS) }], filterable: true },
   { key: 'condition_notes', name: 'Condition notes', type: 'multi_line_text_field', description: 'Faults, missing parts, signs of use. Shown on the product page.' },
   { key: 'dimensions', name: 'Dimensions', type: 'single_line_text_field', description: 'Size or dimensions, e.g. 38 x 30 x 14 cm.' },
+  { key: 'colour', name: 'Colour', type: 'single_line_text_field', description: 'Main colour, e.g. Tan, Navy, Multicolour. Used for the colour filter.', filterable: true },
   { key: 'collection_only', name: 'Collection only', type: 'boolean', description: 'Shows the "Collection only" badge. Real enforcement: the "Collection only" shipping profile.', filterable: true },
   { key: 'tested', name: 'Tested', type: 'single_line_text_field', description: 'Required for electricals.', validations: [{ name: 'choices', value: JSON.stringify(TESTED) }] },
   { key: 'internal_notes', name: 'Internal notes', type: 'multi_line_text_field', description: 'Staff only – never shown on the website.', internal: true },
@@ -95,6 +96,9 @@ async function matchCount(c: CollectionDef): Promise<number> {
     if (r.column === 'TAG') {
       const d = await client.query(`query($q: String!) { productsCount(query: $q) { count } }`, { q: `tag:'${r.condition}'` });
       total = Math.max(total, d.productsCount.count);
+    } else if (r.column === 'VARIANT_INVENTORY') {
+      const d = await client.query(`query($q: String!) { productsCount(query: $q) { count } }`, { q: `inventory_total:${r.condition}` });
+      total = Math.max(total, d.productsCount.count);
     } else if (r.column === 'VARIANT_PRICE' && r.relation === 'LESS_THAN') {
       const d = await client.query(`query($q: String!) { productVariantsCount(query: $q) { count } }`, { q: `price:<${r.condition}` });
       total = Math.max(total, d.productVariantsCount.count);
@@ -127,7 +131,7 @@ async function setupCollections() {
     const input = {
       title: c.title, handle: c.handle, descriptionHtml: `<p>${c.description}</p>`,
       sortOrder: c.sortOrder || 'BEST_SELLING',
-      ruleSet: { appliedDisjunctively: false, rules: c.rules },
+      ruleSet: { appliedDisjunctively: !!c.disjunctive, rules: c.rules },
       seo: { title: `${c.title} | GBG Bargain Shop`, description: c.seoDescription },
     };
     const res = await client.mutate(

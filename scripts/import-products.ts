@@ -113,6 +113,7 @@ function buildInput(group: ProductGroup, status: 'ACTIVE' | 'DRAFT', isCreate: b
     ['condition', 'single_line_text_field', first[COL.condition]],
     ['condition_notes', 'multi_line_text_field', first[COL.conditionNotes]],
     ['dimensions', 'single_line_text_field', first[COL.dimensions]],
+    ['colour', 'single_line_text_field', first[COL.colour]],
     ['collection_only', 'boolean', isTrue(first[COL.collectionOnly]) ? 'true' : 'false'],
     ['tested', 'single_line_text_field', first[COL.tested]],
     ['internal_notes', 'multi_line_text_field', first[COL.internalNotes]],
@@ -187,7 +188,7 @@ async function importGroup(group: ProductGroup, status: 'ACTIVE' | 'DRAFT') {
     input.files = [];
     for (const [i, f] of files.entries()) {
       const src = await uploadImage(f);
-      input.files.push({ originalSource: src, contentType: 'IMAGE', alt: reviewedAlt.get(path.basename(f)) || draftAltText(input.title, i) });
+      input.files.push({ originalSource: src, contentType: 'IMAGE', alt: reviewedAlt.get(path.basename(f)) || draftAltText(input.title, i, first[COL.colour]) });
     }
   }
 

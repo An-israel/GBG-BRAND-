@@ -59,6 +59,8 @@ Archivo 800 and Inter 400 are preloaded. Body text is 16 px on mobile, never sma
 - A thin **gold rule** under every section title.
 - A diagonal navy/yellow **bargain stripe**, used only on the hero edge, clearance banner and password page.
 - Real product **collage** in the hero (owner-editable), slightly rotated tiles on desktop for a "found it" feel.
+- On phones, two small dots on a product card swap to the second photo (desktop: hover).
+- A branded default social preview image (`theme/assets/og-default.png`) for links shared on WhatsApp, Facebook etc.
 - Light motion only (fade-up, button press, drawer slide) – all off with *reduce motion*.
 
 ## Self-review scores (out of 10)

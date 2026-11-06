@@ -66,3 +66,12 @@ describe('draftAltText', () => {
     expect(draftAltText('Tan tote bag', 1, 'tan')).toBe('Tan tote bag – side view');
   });
 });
+
+describe('colour and Last Chance rules', () => {
+  it('warns when a bag has no colour, but does not block the import', () => {
+    const issues = validateRows([base()], opts);
+    expect(issues.some((i) => i.field === COL.colour && i.level === 'warning')).toBe(true);
+    expect(issues.filter((i) => i.level === 'error')).toEqual([]);
+    expect(validateRows([base({ [COL.colour]: 'Tan' })], opts).some((i) => i.field === COL.colour)).toBe(false);
+  });
+});

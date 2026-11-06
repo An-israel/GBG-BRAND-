@@ -126,3 +126,41 @@ test('sticky add-to-basket bar appears once the main button scrolls away', async
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect(bar).not.toHaveClass(/is-visible/);
 });
+
+test('product cards: tap the dots to see the second photo (touch screens)', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'touch only');
+  await page.goto(url('/collections/all', '/collection'));
+  const card = page.locator('[data-product-card]:has([data-card-swap])').first();
+  const btn = card.locator('[data-card-swap]');
+  await expect(btn).toBeVisible();
+  const box = await btn.boundingBox();
+  expect(box!.width).toBeGreaterThanOrEqual(44);
+  await btn.click();
+  await expect(card).toHaveClass(/is-swapped/);
+  await expect(btn).toHaveAttribute('aria-pressed', 'true');
+  await expect(page).toHaveURL(/collection/); // tapping the dots does not open the product
+  await btn.click();
+  await expect(card).not.toHaveClass(/is-swapped/);
+});
+
+test('"You may also like" shows other products from the same collection', async ({ page }) => {
+  test.skip(LIVE, 'checked offline with known sample data');
+  await page.goto('/product');
+  const related = page.locator('.section.related');
+  await expect(related.getByRole('link', { name: /More in Bags/ })).toBeVisible();
+  const titles = await related.locator('.card__title').allInnerTexts();
+  expect(titles.length).toBeGreaterThanOrEqual(2);
+  expect(titles.join(' ')).not.toContain('Tan faux-leather tote'); // never the product itself
+});
+
+test('pages have a branded default social preview image', async ({ page }) => {
+  await page.goto(url('/', '/index'));
+  await expect(page.locator('meta[property="og:image"]').first()).toHaveAttribute('content', /og-default\.png|cdn\.shopify/);
+});
+
+test('product page shows colour and the Launch Pack call to action', async ({ page }) => {
+  test.skip(LIVE, 'checked offline with known sample data');
+  await page.goto('/product');
+  await expect(page.locator('.spec')).toContainText('Colour');
+  await expect(page.locator('.product__cta')).toContainText('Find something you love?');
+});

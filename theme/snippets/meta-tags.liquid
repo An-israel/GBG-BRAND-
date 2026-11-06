@@ -16,6 +16,14 @@
 <meta property="og:type" content="{{ og_type }}">
 <meta property="og:description" content="{{ og_description | escape }}">
 <meta property="og:locale" content="en_GB">
+{%- unless share_image -%}
+  {%- comment -%} Branded default social preview (assets/og-default.png, 1200 x 630) {%- endcomment -%}
+  <meta property="og:image" content="https:{{ 'og-default.png' | asset_url }}">
+  <meta property="og:image:secure_url" content="https:{{ 'og-default.png' | asset_url }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="GBG Bargain Shop – Big bargains. Small prices. Liverpool">
+{%- endunless -%}
 {%- if share_image -%}
   <meta property="og:image" content="https:{{ share_image | image_url: width: 1200 }}">
   <meta property="og:image:secure_url" content="https:{{ share_image | image_url: width: 1200 }}">

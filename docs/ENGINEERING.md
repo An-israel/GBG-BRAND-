@@ -91,7 +91,7 @@ We deliberately add no infrastructure the shop does not need – it would only a
 | 81 | Database migrations | **BUILD** | scripts/setup-store.ts | Metafields, collections, menus, pages created by a versioned, re-runnable script. |
 | 82 | Schema versioning | **BUILD** | scripts/setup-store.ts | STRUCTURE_VERSION stored on the shop as metafield gbg.structure_version. |
 | 83 | Disaster recovery | **PLATFORM** | Shopify + scripts/backup-export.ts | Shopify handles infra DR; our monthly export restores catalogue, pages, menus and redirects. |
-| 84 | Backups | **BUILD** | scripts/backup-export.ts | Full export before launch, then monthly (products, collections, pages, menus, redirects, discounts…). |
+| 84 | Backups | **BUILD** | scripts/backup-export.ts; monthly-backup.yml | Full export before launch, then automatically on the 1st of every month (.github/workflows/monthly-backup.yml, 90-day private artifact). |
 | 85 | Failover | **PLATFORM** | Shopify | – |
 | 86 | Multi-region deployment | **NOT NEEDED** | – | UK-only shop on a global platform. |
 | 87 | Chaos engineering | **NOT NEEDED** | docs/ACCEPTANCE_TESTS.md | Instead: test checkout with a declined card and an out-of-stock race (two baskets, one last item). |
@@ -110,7 +110,7 @@ We deliberately add no infrastructure the shop does not need – it would only a
 | 100 | gRPC | **NOT NEEDED** | – | Not applicable. |
 | 101 | Webhooks | **BUILD** | – | NOT NEEDED at launch unless a later integration requires them. |
 | 102 | API versioning | **NOT NEEDED** | scripts/lib/config.ts | Admin API pinned to 2026-10; upgrade each April (versions are supported ~12 months). Noted in RUNBOOK. |
-| 103 | Semantic versioning | **BUILD** | CHANGELOG.md; git tags | Theme releases tagged v1.0.0 and up. |
+| 103 | Semantic versioning | **BUILD** | CHANGELOG.md; git tags | Tagged v1.0.0 (pre-launch build); later releases v1.0.1, v1.1.0… |
 | 104 | Infrastructure as code | **BUILD** | theme/, config/collections.json, scripts/ | Theme in Git; store structure in scripts; settings checklist in docs. |
 | 105 | Terraform | **NOT NEEDED** | – | No infrastructure to provision. |
 | 106 | Helm charts | **NOT NEEDED** | – | No Kubernetes. |

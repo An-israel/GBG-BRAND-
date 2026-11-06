@@ -51,6 +51,11 @@
       {{ 'product-1' | placeholder_svg_tag: 'card__img placeholder-svg' }}
     {%- endif -%}
   </a>
+  {%- if second_image -%}
+    <button type="button" class="card__swap" data-card-swap aria-pressed="false" aria-label="Show another photo of {{ product.title | escape }}">
+      <span class="card__swap-dot" aria-hidden="true"></span><span class="card__swap-dot" aria-hidden="true"></span>
+    </button>
+  {%- endif -%}
 
   <div class="card__badges">
     {%- unless product.available -%}

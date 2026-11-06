@@ -672,3 +672,16 @@ dialog::backdrop { background: rgb(11 31 58 / 0.55); backdrop-filter: blur(2px);
 .card__quick-btn { padding-left: 10px; padding-right: 10px; font-size: 0.875rem; }
 .footer .hours a, .hours--unconfirmed a { text-decoration: underline; }
 .price--sold-out .price__tag { background: var(--paper); }
+
+/* Tap swap to the second image on touch screens (hover does it on desktop) */
+.card__swap { display: none; }
+@media (hover: none) {
+  .card__swap { position: absolute; z-index: 2; top: 6px; right: 6px; display: flex; align-items: center; justify-content: center; gap: 5px;
+    width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgb(255 255 255 / 0.92); box-shadow: var(--shadow); padding: 0; }
+  .card__swap-dot { width: 7px; height: 7px; border-radius: 50%; background: #B9BEC8; }
+  .card__swap .card__swap-dot:first-child, .card__swap[aria-pressed='true'] .card__swap-dot:last-child { background: var(--navy); }
+  .card__swap[aria-pressed='true'] .card__swap-dot:first-child { background: #B9BEC8; }
+  .card.is-swapped .card__img--secondary { opacity: 1; }
+  .card.is-swapped .card__img--primary { opacity: 0; }
+}
+.product__cta { margin: 4px 0 8px; font-size: 0.9375rem; color: var(--muted); }

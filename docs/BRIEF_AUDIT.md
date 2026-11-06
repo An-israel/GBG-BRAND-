@@ -5,22 +5,29 @@ Checked line by line against *GBG_Bargain_Shop_Claude_Code_Prompt.pdf* (sections
 
 ## Not built or only partly built
 
+Items 2, 3, 4, 5, 6, 8, 9 and 11 were built after the first audit (2026-11-06). What is still open:
+
 | # | Brief item | Status | Detail |
 |---|---|---|---|
-| 1 | §2 Fork Shopify's **Dawn** theme | 🟡 | Written from scratch in Dawn's style (web components, no jQuery). Not a literal fork of Dawn. |
-| 2 | §3.4 Product card: **tap** swap to the second image | 🟡 | Hover swap only (desktop). On phones a tap opens the product. |
-| 3 | §6.3 Product details: **colour** | ❌ | No colour field. Colour only shows if it is a variant option or in the description. The colour filter (§6.2) has no data to filter on. |
-| 4 | §6.3 "You may also like" **from the same collection** | 🟡 | Uses Shopify's automatic recommendations, not "same collection". |
-| 5 | §6.6 **Branded default social preview image** | 🟡 | There is a setting to upload one, but no image was designed or included. |
-| 6 | §5.2 Last Chance "or inventory 1 where reliable" | 🟡 | Tag `last-chance` only. No stock-based rule (optional in the brief). |
-| 7 | §13 Playwright: "collection-only product shows **only pickup at checkout**" | 🟡 | The test checks the product-page label. The checkout step is a manual test in ACCEPTANCE_TESTS (checkout pages can't be automated reliably). |
-| 8 | §14 #84 **Monthly** backup | 🟡 | Backup script built. It is not scheduled, so it has to be run by hand each month. |
-| 9 | §14 #103 Git tag **v1.0.0** | ❌ | Not tagged yet (planned for launch). |
-| 10 | §13 / §9 Admin guide and setup checklist **with screenshots** | 🟡 | Storefront screenshots included. No Shopify-admin screenshots: they need store access. |
-| 11 | Launch pack §12 example copy: "Find something you love?…" and "Check our opening hours before visiting." | ❌ | Not used on the site. |
-| 12 | Launch pack §16 **itemised fixed-price quotation** | ❌ | Not produced. It is a commercial document for a developer to price. |
-| 13 | Launch pack §11 **banners designed from real inventory** | ❌ | No real product photos exist yet. The hero collage is built and waiting for them. |
-| 14 | §3.6 Self-review scores | 🟡 | Done, but scored by me from the offline preview (sample products). Re-score on the real preview theme. |
+| 1 | §2 Fork Shopify's **Dawn** theme | 🟡 | Written from scratch in Dawn's style (web components, no jQuery), not a literal fork. Rebuilding on a Dawn fork would mean starting the theme again. |
+| 7 | §13 Playwright: "collection-only product shows **only pickup at checkout**" | 🟡 | Product-page label is tested automatically. The checkout step is a manual acceptance test (Shopify checkout can't be scripted reliably). |
+| 10 | Admin guide / setup checklist **with Shopify-admin screenshots** | 🔒 | Needs store access. Storefront screenshots are included. |
+| 12 | Launch pack §16 **itemised fixed-price quotation** | ❌ | A commercial document for a developer to price – not something to invent. |
+| 13 | Launch pack §11 **banners designed from real inventory** | 🔒 | Needs real product photos. Hero collage, category tiles and the social image are ready. |
+| 14 | §3.6 Self-review scores | 🟡 | Scored from the offline preview with sample products; re-score on the real preview theme. |
+
+### Fixed after the first audit ✅
+
+| # | Item | What was built |
+|---|---|---|
+| 2 | Tap swap to second image | Two-dot button (44 px) on cards with 2+ photos on touch screens, plus left/right swipe. Hover still works on desktop. Tested. |
+| 3 | Colour | `custom.colour` metafield (filterable), shown on the product page, CSV column, validator warning for bags/shoes/clothing, importer, photo alt text. |
+| 4 | "You may also like" from the same collection | Uses the collection the shopper came from, else the product's most specific category; "More in …" link; falls back to Shopify recommendations if fewer than 2 products. Setting to switch source. Tested. |
+| 5 | Branded default social image | `theme/assets/og-default.png` (1200 × 630, GBG fonts/colours), used when no other image is set. |
+| 6 | Last Chance "inventory 1" | Optional rule (`lastChanceIncludesStockOfOne` in `config/collections.json`), off by default because one-off items would all qualify. Unit tested. |
+| 8 | Monthly backup | `.github/workflows/monthly-backup.yml`, 1st of each month, private 90-day artifact. |
+| 9 | Git tag | `v1.0.0` tagged. |
+| 11 | Launch Pack copy | "Find something you love?…" above Add to basket (editable); "Check our opening hours before visiting." in Visit Us. |
 
 ## Built, but never run against a real store 🔒
 

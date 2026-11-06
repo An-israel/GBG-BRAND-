@@ -50,7 +50,9 @@ Admin API scopes (nothing more):
 - [ ] `npm run setup:store -- --dry-run` – read the log.
 - [ ] `npm run setup:store` – creates metafield definitions, location, collections **with products only**, "Collection only" shipping profile, hidden draft pages, menus.
 - [ ] Re-run after each import so new categories appear (it never creates empty collections).
-- [ ] ✋ Search & Discovery app (free, by Shopify) → **Filters**: add Availability, Price, **Condition** (custom.condition), Product type, Size / Colour (variant options, if used). Filters only show when data exists.
+- [ ] Last Chance: tag-only by default. To also include every item with exactly 1 in stock, set `"lastChanceIncludesStockOfOne": true` in `config/collections.json` **before** the collection is first created (only sensible if most listings are NOT one-offs).
+- [ ] Monthly backup: add repository variable `SHOPIFY_STORE_DOMAIN` and secret `SHOPIFY_ADMIN_TOKEN` – `.github/workflows/monthly-backup.yml` then exports on the 1st of each month (download the artifact and keep it safe).
+- [ ] ✋ Search & Discovery app (free, by Shopify) → **Filters**: add Availability, Price, **Condition** (custom.condition), **Colour** (custom.colour), Product type, Size (variant option, if used). Filters only show when data exists.
 - [ ] ✋ Online Store → Pages: after owner approval, set each page to **Visible**.
 
 ## 4. Location, stock and pickup (brief §8)

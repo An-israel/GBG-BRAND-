@@ -1,0 +1,35 @@
+name: Monthly backup
+
+# ENGINEERING #84: monthly export of products, collections, pages, menus, redirects,
+# discounts and metafield definitions. Customer data is counts only (no personal data).
+# The export is kept as a private workflow artifact for 90 days – download it each month
+# and store it somewhere safe (e.g. the owner's Google Drive).
+
+on:
+  schedule:
+    - cron: '23 5 1 * *' # 1st of every month, 05:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    if: vars.SHOPIFY_STORE_DOMAIN != ''
+    runs-on: ubuntu-latest
+    env:
+      SHOPIFY_STORE_DOMAIN: ${{ vars.SHOPIFY_STORE_DOMAIN }}
+      SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run backup
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gbg-backup-${{ github.run_id }}
+          path: |
+            backup/
+            logs/
+          retention-days: 90

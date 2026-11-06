@@ -7,6 +7,7 @@
   assign condition_notes = product.metafields.custom.condition_notes.value
   assign dimensions = product.metafields.custom.dimensions.value
   assign tested = product.metafields.custom.tested.value
+  assign colour = product.metafields.custom.colour.value
   assign returns_url = settings.returns_page.url | default: shop.refund_policy.url
   assign delivery_url = settings.delivery_page.url | default: shop.shipping_policy.url
 -%}
@@ -104,6 +105,9 @@
             </script>
           {%- endunless -%}
 
+          {%- if section.settings.cta_text != blank -%}
+            <p class="product__cta">{{ section.settings.cta_text | escape }}</p>
+          {%- endif -%}
           <div class="product-form__buttons" data-main-atc>
             <button type="submit" name="add" class="button button--large button--full" data-add-button {% unless current_variant.available %}disabled{% endunless %}>
               <span data-add-label>{% if current_variant.available %}Add to basket{% else %}Sold out{% endif %}</span>
@@ -121,10 +125,11 @@
           <pickup-availability class="pickup" data-variant-id="{{ current_variant.id }}" data-base-url="{{ routes.root_url }}" {% unless current_variant.available %}hidden{% endunless %}></pickup-availability>
         </div>
 
-        {%- if dimensions != blank or tested != blank or product.description != blank -%}
+        {%- if dimensions != blank or tested != blank or colour != blank or product.description != blank -%}
           <div class="product__details">
-            {%- if dimensions != blank or tested != blank -%}
+            {%- if dimensions != blank or tested != blank or colour != blank -%}
               <dl class="spec">
+                {%- if colour != blank -%}<div><dt>Colour</dt><dd>{{ colour | escape }}</dd></div>{%- endif -%}
                 {%- if dimensions != blank -%}<div><dt>Size / dimensions</dt><dd>{{ dimensions | escape }}</dd></div>{%- endif -%}
                 {%- if tested != blank and tested != 'Not applicable' -%}<div><dt>Electrical check</dt><dd>{{ tested | escape }}</dd></div>{%- endif -%}
                 {%- if current_variant.sku != blank -%}<div><dt>Item code</dt><dd data-sku>{{ current_variant.sku | escape }}</dd></div>{%- endif -%}
@@ -176,7 +181,13 @@
   "name": "Product information",
   "class": "section-main-product",
   "settings": [
-    { "type": "paragraph", "content": "Notes for delivery, collection-only and returns are edited in Theme settings → Cart and delivery / Products." }
+    { "type": "paragraph", "content": "Notes for delivery, collection-only and returns are edited in Theme settings → Cart and delivery / Products." },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Text above the Add to basket button",
+      "default": "Find something you love? Add it to your basket or choose collection at checkout where available."
+    }
   ]
 }
 {% endschema %}

@@ -24,6 +24,7 @@ can also be imported in Shopify admin if needed.
 | **Condition** | Exactly one of: `New`, `New with tags`, `Open box`, `Customer return`, `Used`, `Unchecked`. | `New with tags` |
 | **Condition notes** | Faults, missing parts, wear. Required in practice for Open box / Customer return / Used / Unchecked. | `Small mark on the lining.` |
 | **Dimensions** | Size or measurements. | `38 x 30 x 14 cm` |
+| **Colour** | The main colour in one or two words. Used for the colour filter and photo alt text. Expected for bags, shoes and clothing. | `Tan` |
 | **Collection only** | `TRUE` for bulky items that can't be posted. Otherwise `FALSE`. | `FALSE` |
 | **Tested** | Electricals: `Tested working` / `Untested`. Others: `Not applicable`. | `Tested working` |
 | **Internal notes** | Staff only – never shown. Shelf, pallet, supplier. | `Shelf B2` |

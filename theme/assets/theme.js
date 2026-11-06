@@ -488,6 +488,35 @@
   });
 
   /* ---------------------------------------------------------------------
+   * Product cards: tap (touch screens) or swipe to see the second photo
+   * ------------------------------------------------------------------- */
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-card-swap]');
+    if (!btn) return;
+    e.preventDefault();
+    const card = btn.closest('[data-product-card]');
+    const on = !card.classList.contains('is-swapped');
+    card.classList.toggle('is-swapped', on);
+    btn.setAttribute('aria-pressed', String(on));
+  });
+  let swipeStart = null;
+  document.addEventListener('touchstart', (e) => {
+    const media = e.target.closest('.card__media--swap');
+    swipeStart = media ? { x: e.touches[0].clientX, y: e.touches[0].clientY, media } : null;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if (!swipeStart) return;
+    const dx = e.changedTouches[0].clientX - swipeStart.x;
+    const dy = e.changedTouches[0].clientY - swipeStart.y;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      const card = swipeStart.media.closest('[data-product-card]');
+      const btn = card && card.querySelector('[data-card-swap]');
+      if (btn) btn.click();
+    }
+    swipeStart = null;
+  }, { passive: true });
+
+  /* ---------------------------------------------------------------------
    * Custom analytics events (consent is enforced by Shopify Customer Events)
    * ------------------------------------------------------------------- */
   document.addEventListener('click', (e) => {

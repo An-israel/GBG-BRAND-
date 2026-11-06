@@ -65,11 +65,13 @@ async function main() {
     process.exit(1);
   }
   const titles = new Map<string, string>();
+  const colours = new Map<string, string>();
   if (typeof args.flags.csv === 'string') {
     let current = '';
+    let currentColour = '';
     for (const r of readCsv(args.flags.csv)) {
-      if (r[COL.title]) current = r[COL.title];
-      if (r[COL.sku]) titles.set(r[COL.sku], r[COL.title] || current);
+      if (r[COL.title]) { current = r[COL.title]; currentColour = r[COL.colour] || ''; }
+      if (r[COL.sku]) { titles.set(r[COL.sku], r[COL.title] || current); colours.set(r[COL.sku], r[COL.colour] || currentColour); }
     }
   }
 
@@ -93,7 +95,7 @@ async function main() {
             const res = await processImage(fs.readFileSync(path.join(inDir, sku, f)), { square: idx === 0, format });
             fs.writeFileSync(path.join(dest, name), res.data);
           }
-          altRows.push({ SKU: sku, File: path.join(dest, name), 'Draft alt text': draftAltText(titles.get(sku) || sku, idx), 'Reviewed (yes/no)': 'no' });
+          altRows.push({ SKU: sku, File: path.join(dest, name), 'Draft alt text': draftAltText(titles.get(sku) || sku, idx, colours.get(sku)), 'Reviewed (yes/no)': 'no' });
           done++;
         } catch (err: any) {
           failed++;

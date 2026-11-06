@@ -47,6 +47,7 @@ export const COL = {
   condition: 'Condition (product.metafields.custom.condition)',
   conditionNotes: 'Condition notes (product.metafields.custom.condition_notes)',
   dimensions: 'Dimensions (product.metafields.custom.dimensions)',
+  colour: 'Colour (product.metafields.custom.colour)',
   collectionOnly: 'Collection only (product.metafields.custom.collection_only)',
   tested: 'Tested (product.metafields.custom.tested)',
   internalNotes: 'Internal notes (product.metafields.custom.internal_notes)',
@@ -71,6 +72,7 @@ export interface ValidateOptions {
 }
 
 const IMAGE_EXT = /\.(jpe?g|png|webp|heic|heif)$/i;
+const COLOUR_EXPECTED = new Set(['bags', 'shoes', 'fashion', 'handbags', 'backpacks', 'purses', 'womens-shoes', 'mens-shoes', 'kids-shoes', 'womens-fashion', 'mens-fashion', 'kids-fashion']);
 const DBS_RE = /\bdbs\b/i;
 
 export const splitTags = (t: string | undefined) => (t || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
@@ -134,6 +136,14 @@ export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
       if (tested && !(TESTED as readonly string[]).includes(tested)) add(COL.tested, 'error', `"${tested}" is not valid. Use: ${TESTED.join(' / ')}.`);
       if (isElectrical && !tested) add(COL.tested, 'error', 'Electrical item: "Tested" must be filled in (Tested working / Untested / Not applicable).');
       if (isElectrical && tested === 'Not applicable') add(COL.tested, 'warning', 'Electrical item marked "Not applicable" – check this is right.');
+
+      const colour = (r[COL.colour] || '').trim();
+      if (colour && (colour.length > 30 || /[,;/]/.test(colour) && colour.split(/[,;/]/).length > 3)) {
+        add(COL.colour, 'warning', 'Colour should be a short main colour name (e.g. "Tan", "Navy", "Multicolour") so the colour filter stays tidy.');
+      }
+      if (!colour && tags.some((t) => COLOUR_EXPECTED.has(t))) {
+        add(COL.colour, 'warning', 'Add the main colour – shoppers can filter bags, shoes and clothing by colour.');
+      }
 
       const co = (r[COL.collectionOnly] || '').trim();
       if (co && !/^(true|false)$/i.test(co)) add(COL.collectionOnly, 'error', 'Collection only must be TRUE or FALSE.');
