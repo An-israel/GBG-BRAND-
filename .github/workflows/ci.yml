@@ -17,7 +17,7 @@ jobs:
     name: Theme Check, types, unit tests, audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
@@ -36,7 +36,7 @@ jobs:
     name: Playwright (offline design preview)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
@@ -57,7 +57,7 @@ jobs:
       SHOPIFY_FLAG_STORE: ${{ vars.SHOPIFY_STORE_DOMAIN }}
       SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm install -g @shopify/cli@3
@@ -73,7 +73,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
@@ -86,7 +86,7 @@ jobs:
     needs: [deploy-preview]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
@@ -107,7 +107,7 @@ jobs:
       SOLD_OUT_PRODUCT_PATH: ${{ vars.SOLD_OUT_PRODUCT_PATH }}
       COLLECTION_ONLY_PRODUCT_PATH: ${{ vars.COLLECTION_ONLY_PRODUCT_PATH }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
