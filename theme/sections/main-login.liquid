@@ -7,12 +7,15 @@
         <div class="field"><label for="LoginEmail">Email</label><input class="input" type="email" name="customer[email]" id="LoginEmail" autocomplete="email" required></div>
         <div class="field"><label for="LoginPassword">Password</label><input class="input" type="password" name="customer[password]" id="LoginPassword" autocomplete="current-password" required></div>
         <button type="submit" class="button button--full button--large">Log in</button>
-        <p><a href="#Recover" class="link" data-show-recover>Forgotten your password?</a></p>
+        <p><a href="#recover" class="link" data-show-recover>Forgotten your password?</a></p>
         <p>New here? <a href="{{ routes.account_register_url }}" class="link">Create an account</a></p>
       {%- endform -%}
     </div>
-    <div id="Recover" class="account__recover">
-      <h2 class="h3">Reset your password</h2>
+    {%- comment -%}
+      Shopify returns to /account/login#recover after this form is sent. The box is also
+      forced open whenever the form has a result, so the message is never hidden.
+    {%- endcomment -%}
+    {%- capture recover_form -%}
       {%- form 'recover_customer_password', class: 'form-stack' -%}
         {%- if form.posted_successfully? -%}
           <p class="form-message form-message--success" role="status">We've emailed you a link to reset your password.</p>
@@ -21,6 +24,10 @@
         <div class="field"><label for="RecoverEmail">Email</label><input class="input" type="email" name="email" id="RecoverEmail" autocomplete="email" required></div>
         <button type="submit" class="button button--secondary">Send reset link</button>
       {%- endform -%}
+    {%- endcapture -%}
+    <div id="recover" class="account__recover{% if recover_form contains 'form-message' %} account__recover--open{% endif %}">
+      <h2 class="h3">Reset your password</h2>
+      {{ recover_form }}
     </div>
     {%- if shop.checkout.guest_login -%}
       <div class="account__guest">

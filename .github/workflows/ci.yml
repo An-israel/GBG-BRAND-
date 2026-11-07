@@ -3,7 +3,6 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -49,7 +48,8 @@ jobs:
 
   deploy-preview:
     name: Push to the UNPUBLISHED preview theme
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.SHOPIFY_PREVIEW_THEME_ID != ''
+    # Runs on pushes to the repository's default branch (whatever it is called).
+    if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.SHOPIFY_PREVIEW_THEME_ID != ''
     needs: [checks, e2e-offline]
     runs-on: ubuntu-latest
     environment: preview
@@ -62,7 +62,23 @@ jobs:
         with: { node-version: 22 }
       - run: npm install -g @shopify/cli@3
       # Deploys ONLY to the unpublished preview theme. The live theme is published by hand after sign-off.
-      - run: shopify theme push --path theme --theme ${{ vars.SHOPIFY_PREVIEW_THEME_ID }} --nodelete --json
+      # Theme-editor content (settings_data.json, template and section-group JSON) is NOT uploaded,
+      # so the owner's banners, texts and settings made in the editor are never overwritten.
+      - run: >-
+          shopify theme push --path theme --theme ${{ vars.SHOPIFY_PREVIEW_THEME_ID }} --nodelete --json
+          --ignore config/settings_data.json --ignore "templates/*.json" --ignore "templates/customers/*.json" --ignore "sections/*-group.json"
+
+  lighthouse-offline:
+    name: Lighthouse CI (every pull request, offline preview)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: node tools/preview/render.mjs
+      - run: npx @lhci/cli@0.14.x autorun --config=lighthouserc.offline.cjs
 
   lighthouse:
     name: Lighthouse CI (preview theme)

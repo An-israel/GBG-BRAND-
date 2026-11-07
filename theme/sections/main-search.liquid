@@ -10,6 +10,9 @@
     </form>
 
     {%- if search.performed -%}
+      <div class="collection__layout{% if search.filters.size > 0 %} collection__layout--filters{% endif %}">
+      {%- render 'facets-panel', results: search, url: routes.search_url, terms: search.terms -%}
+      <div class="collection__results">
       {%- if search.results_count > 0 or search.filters.size > 0 -%}
         <div class="collection__toolbar">
           <p class="collection__count" role="status">{{ search.results_count }} {{ search.results_count | pluralize: 'result', 'results' }}</p>
@@ -40,6 +43,8 @@
       {%- else -%}
         {%- render 'empty-state', heading: 'No results found', text: 'Check the spelling, try a simpler word like “bag” or “mug”, or browse our bargains.' -%}
       {%- endif -%}
+      </div>
+      </div>
     {%- endif -%}
   </div>
 </div>

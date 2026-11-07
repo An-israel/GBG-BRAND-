@@ -23,7 +23,7 @@ HEAD = f'''<!doctype html>
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden;">
         <tr><td style="background:{NAVY};padding:20px 28px;border-bottom:4px solid {GOLD};">
-          {{%- if shop.email_logo_url -%}}
+          {{%- if shop.email_logo_url != blank -%}}
             <img src="{{{{ shop.email_logo_url }}}}" alt="GBG Bargain Shop" width="{{{{ shop.email_logo_width | default: 150 }}}}" style="display:block;border:0;max-width:200px;height:auto;">
           {{%- else -%}}
             <span style="display:inline-block;background:{GOLD};color:{NAVY};font:800 20px Arial,sans-serif;padding:6px 8px;border-radius:4px;">GBG</span>
@@ -87,7 +87,7 @@ TOTALS = f'''
 '''
 
 PICKUP_ADDRESS = f'''<p {NOTE}><strong>Collect from:</strong> GBG Bargain Shop, {ADDRESS}.<br>
-Bring your order number <strong>{{{{ order_name }}}}</strong> (this email on your phone is fine) and photo ID if someone else is collecting for you. [TO CONFIRM collection rules]</p>'''
+Bring your order number <strong>{{{{ order_name }}}}</strong> – this email on your phone is fine. If someone else is collecting for you, give them the order number.</p>'''
 
 T = {}
 
@@ -111,8 +111,8 @@ T['pickup_ready'] = (
     f'''<h1 {H1}>Your order is ready to collect</h1>
 <p {P}>Good news, {{{{ customer.first_name | default: 'there' }}}} – order <strong>{{{{ order_name }}}}</strong> is waiting for you at the shop.</p>
 <p {NOTE}><strong>Where:</strong> GBG Bargain Shop, {ADDRESS} (inside Stanley Meat Market).<br>
-<strong>When:</strong> during our opening hours [TO CONFIRM hours] – please collect within [TO CONFIRM] days.<br>
-<strong>Bring:</strong> your order number <strong>{{{{ order_name }}}}</strong> (this email is fine) and photo ID if someone is collecting for you.</p>
+<strong>When:</strong> during our opening hours – check them on our website or call {PHONE} before you come.<br>
+<strong>Bring:</strong> your order number <strong>{{{{ order_name }}}}</strong> (this email is fine). If someone else is collecting for you, give them the order number.</p>
 {{%- if pickup_instructions != blank -%}}<p {P}>{{{{ pickup_instructions }}}}</p>{{%- endif -%}}
 <p style="margin:0 0 24px;"><a href="https://www.google.com/maps/dir/?api=1&destination=Stanley%20Meat%20Market%2C%20Prescot%20Road%2C%20Liverpool%20L13%203AS" {BTN}>Get directions</a></p>
 {lines('line_items')}
@@ -171,7 +171,7 @@ T['abandoned_checkout'] = (
 <p {P}>You left these in your basket at GBG Bargain Shop. Many of our bargains are one-offs, so we can't hold them – but they're still there if you'd like them.</p>
 {lines('line_items')}
 <p style="margin:0 0 24px;"><a href="{{{{ url }}}}" {BTN}>Return to your basket</a></p>
-<p style="margin:0;font-size:14px;color:{MUTED};">You're receiving this because you started a checkout and agreed to receive emails. Don't want these? Use the unsubscribe link below.</p>'''
+<p style="margin:0;font-size:14px;color:{MUTED};">You're receiving this because you started a checkout at GBG Bargain Shop. Questions? Call {PHONE}.</p>'''
 )
 
 T['customer_account_activate'] = (

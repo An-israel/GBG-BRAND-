@@ -24,6 +24,8 @@ export const COL = {
   option1Value: 'Option1 Value',
   option2Name: 'Option2 Name',
   option2Value: 'Option2 Value',
+  option3Name: 'Option3 Name',
+  option3Value: 'Option3 Value',
   sku: 'Variant SKU',
   grams: 'Variant Grams',
   tracker: 'Variant Inventory Tracker',
@@ -77,16 +79,46 @@ const DBS_RE = /\bdbs\b/i;
 
 export const splitTags = (t: string | undefined) => (t || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
 export const isTrue = (v: string | undefined) => /^(true|yes|y|1)$/i.test((v || '').trim());
-const num = (v: string | undefined) => (v === undefined || v.trim() === '' ? NaN : Number(v.replace(/[£,\s]/g, '')));
+const num = (v: string | undefined) => (v === undefined || v.trim() === '' ? NaN : Number(v.replace(/[£\s]/g, '')));
+
+/**
+ * Parses a price the UK way: "12.99", "£12.99", "1,299.00". A comma used for pence
+ * ("12,99") is NOT accepted – it used to be read as £1,299. Returns NaN when invalid.
+ */
+export function parseMoney(v: string | undefined): number {
+  if (v === undefined) return NaN;
+  const s = v.replace(/[£\s]/g, '');
+  if (s === '') return NaN;
+  if (/^\d+(\.\d{1,2})?$/.test(s)) return Number(s);
+  if (/^\d{1,3}(,\d{3})+(\.\d{1,2})?$/.test(s)) return Number(s.replace(/,/g, ''));
+  return NaN;
+}
+const isCommaPence = (v: string | undefined) => /^£?\s*\d+,\d{1,2}$/.test((v || '').trim());
+const moneyHelp = (v: string | undefined) => (isCommaPence(v) ? ` "${v}" uses a comma for pence – write it with a dot, e.g. ${(v || '').replace(',', '.').replace('£', '').trim()}.` : v && v.trim() ? ` "${v}" is not a price – write it like 4.99 (no letters).` : '');
+
+/** Case-insensitive match against a fixed choice list; returns the correctly spelt choice. */
+export function canonicalChoice(value: string | undefined, choices: readonly string[]): string | null {
+  const v = (value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+  return choices.find((c) => c.toLowerCase() === v) ?? null;
+}
+
+/** Option names used by a product (from its first row), ignoring Shopify's default "Title". */
+export function optionNames(first: Row): string[] {
+  return [COL.option1Name, COL.option2Name, COL.option3Name].map((k) => (first[k] || '').trim()).filter((n, i) => n && !(i === 0 && n === 'Title'));
+}
+export function optionValues(r: Row, count: number): string[] {
+  return [COL.option1Value, COL.option2Value, COL.option3Value].slice(0, count).map((k) => (r[k] || '').trim());
+}
 
 /** A row that only carries an extra image (Shopify CSV style) has a handle but no SKU/title. */
-export const isImageOnlyRow = (r: Row) => !r[COL.title] && !r[COL.sku] && !r[COL.option1Value] && !!r[COL.handle];
+export const isImageOnlyRow = (r: Row) => !r[COL.title] && !r[COL.sku] && !r[COL.option1Value] && !r[COL.option2Value] && !!r[COL.handle];
 
 export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
   const issues: Issue[] = [];
   const seenSku = new Map<string, number>();
   const titleByHandle = new Map<string, string>();
   const tagsByHandle = new Map<string, string[]>();
+  const optionsByHandle = new Map<string, { names: string[]; seen: Map<string, number> }>();
   const categories = new Set(opts.categoryTags.map((t) => t.toLowerCase()));
   const electrical = new Set(opts.electricalTags.map((t) => t.toLowerCase()));
 
@@ -114,6 +146,7 @@ export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
       else if (title.length < 10) add(COL.title, 'error', `Title is too short (${title.length} characters). Describe the item: colour, material, type, size.`);
       else if (title.length > 120) add(COL.title, 'error', `Title is too long (${title.length} characters, max 120).`);
       else if (title.length > 70) add(COL.title, 'warning', `Title is ${title.length} characters – search results cut off after about 70.`);
+      if (/<[^>]+>/.test(title)) add(COL.title, 'error', 'Title contains HTML tags (<…>). Write plain words only.');
       if (/genuine|designer|authentic|original brand/i.test(title + ' ' + (r[COL.body] || ''))) {
         add(COL.title, 'warning', 'Authenticity wording found ("genuine", "designer", "authentic"). Only use it if the owner can prove it.');
       }
@@ -124,16 +157,20 @@ export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
         add(COL.tags, 'error', `No category tag. Add at least one of: ${[...categories].slice(0, 8).join(', ')}…`);
       }
 
-      const condition = (r[COL.condition] || '').trim();
-      if (!condition) add(COL.condition, 'error', `Condition is required: ${CONDITIONS.join(' / ')}.`);
-      else if (!(CONDITIONS as readonly string[]).includes(condition)) add(COL.condition, 'error', `"${condition}" is not a valid condition. Use exactly one of: ${CONDITIONS.join(' / ')}.`);
+      const conditionRaw = (r[COL.condition] || '').trim();
+      const condition = canonicalChoice(conditionRaw, CONDITIONS) ?? conditionRaw;
+      if (!conditionRaw) add(COL.condition, 'error', `Condition is required: ${CONDITIONS.join(' / ')}.`);
+      else if (!(CONDITIONS as readonly string[]).includes(condition)) add(COL.condition, 'error', `"${conditionRaw}" is not a valid condition. Use exactly one of: ${CONDITIONS.join(' / ')}.`);
+      else if (condition !== conditionRaw) add(COL.condition, 'warning', `"${conditionRaw}" will be saved as "${condition}".`);
       else if (['Customer return', 'Used', 'Unchecked', 'Open box'].includes(condition) && !(r[COL.conditionNotes] || '').trim()) {
         add(COL.conditionNotes, 'warning', `Condition is "${condition}" – describe any faults, missing parts or wear in Condition notes.`);
       }
 
-      const tested = (r[COL.tested] || '').trim();
+      const testedRaw = (r[COL.tested] || '').trim();
+      const tested = canonicalChoice(testedRaw, TESTED) ?? testedRaw;
       const isElectrical = tags.some((t) => electrical.has(t));
-      if (tested && !(TESTED as readonly string[]).includes(tested)) add(COL.tested, 'error', `"${tested}" is not valid. Use: ${TESTED.join(' / ')}.`);
+      if (testedRaw && !(TESTED as readonly string[]).includes(tested)) add(COL.tested, 'error', `"${testedRaw}" is not valid. Use: ${TESTED.join(' / ')}.`);
+      else if (testedRaw && tested !== testedRaw) add(COL.tested, 'warning', `"${testedRaw}" will be saved as "${tested}".`);
       if (isElectrical && !tested) add(COL.tested, 'error', 'Electrical item: "Tested" must be filled in (Tested working / Untested / Not applicable).');
       if (isElectrical && tested === 'Not applicable') add(COL.tested, 'warning', 'Electrical item marked "Not applicable" – check this is right.');
 
@@ -144,6 +181,8 @@ export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
       if (!colour && tags.some((t) => COLOUR_EXPECTED.has(t))) {
         add(COL.colour, 'warning', 'Add the main colour – shoppers can filter bags, shoes and clothing by colour.');
       }
+
+      optionsByHandle.set(handle, { names: optionNames(r), seen: new Map() });
 
       const co = (r[COL.collectionOnly] || '').trim();
       if (co && !/^(true|false)$/i.test(co)) add(COL.collectionOnly, 'error', 'Collection only must be TRUE or FALSE.');
@@ -163,9 +202,27 @@ export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
     else if (seenSku.has(sku)) add(COL.sku, 'error', `SKU "${sku}" is used more than once (also on row ${seenSku.get(sku)}).`);
     else seenSku.set(sku, rowNo);
 
-    const price = num(r[COL.price]);
-    if (Number.isNaN(price) || price <= 0) add(COL.price, 'error', 'Price is required and must be more than 0 (e.g. 4.99).');
-    const compare = num(r[COL.compareAt]);
+    // Options (Size, Colour…): every variant row needs a value for each option, and no two
+    // rows of the same product may have the same combination.
+    const opt = optionsByHandle.get(handle);
+    if (opt && opt.names.length) {
+      const vals = optionValues(r, opt.names.length);
+      vals.forEach((v, i) => { if (!v) add(`Option${i + 1} Value`, 'error', `Missing value for option "${opt.names[i]}".`); });
+      const key = vals.join(' / ').toLowerCase();
+      if (vals.every(Boolean)) {
+        if (opt.seen.has(key)) add('Options', 'error', `Same options "${vals.join(' / ')}" as row ${opt.seen.get(key)} – each variant needs a different combination.`);
+        else opt.seen.set(key, rowNo);
+      }
+      if (opt.names.length < 3 && (r[COL.option3Value] || '').trim()) add(COL.option3Value, 'error', 'Option3 Value is filled but the product has no Option3 Name on its first row.');
+      if (opt.names.length < 2 && (r[COL.option2Value] || '').trim()) add(COL.option2Value, 'error', 'Option2 Value is filled but the product has no Option2 Name on its first row.');
+    } else if (opt && (r !== rows.find((x) => (x[COL.handle] || '').trim() === handle))) {
+      add(COL.option1Name, 'error', 'This product has more than one row but no option name (e.g. Size) on its first row.');
+    }
+
+    const price = parseMoney(r[COL.price]);
+    if (Number.isNaN(price) || price <= 0) add(COL.price, 'error', `Price is required and must be more than 0 (e.g. 4.99).${moneyHelp(r[COL.price])}`);
+    const compare = parseMoney(r[COL.compareAt]);
+    if ((r[COL.compareAt] || '').trim() && Number.isNaN(compare)) add(COL.compareAt, 'error', `Compare-at price is not a valid price.${moneyHelp(r[COL.compareAt])}`);
     if (!Number.isNaN(compare) && !Number.isNaN(price) && compare <= price) {
       add(COL.compareAt, 'error', 'Compare-at ("was") price must be higher than the price – or leave it empty. Only use a genuine, provable was-price.');
     }
@@ -178,8 +235,8 @@ export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
     if (policy !== 'deny') add(COL.policy, 'error', 'Inventory policy must be "deny" – overselling is switched off for every product.');
     const tracker = (r[COL.tracker] || 'shopify').trim().toLowerCase();
     if (tracker !== 'shopify') add(COL.tracker, 'error', 'Inventory tracker must be "shopify" so stock is tracked.');
-    const cost = num(r[COL.cost]);
-    if (r[COL.cost] && (Number.isNaN(cost) || cost < 0)) add(COL.cost, 'error', 'Cost per item must be a number.');
+    const cost = parseMoney(r[COL.cost]);
+    if ((r[COL.cost] || '').trim() && Number.isNaN(cost)) add(COL.cost, 'error', `Cost per item must be a price like 2.50.${moneyHelp(r[COL.cost])}`);
   });
   return issues;
 }

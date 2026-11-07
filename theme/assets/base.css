@@ -200,8 +200,15 @@ textarea.input { min-height: 140px; resize: vertical; }
 .announcement { background: var(--yellow); color: var(--navy); font-size: 0.875rem; font-weight: 600; }
 .announcement__inner { display: flex; justify-content: center; min-height: 36px; align-items: center; text-align: center; }
 .announcement__msg { margin: 0; padding: 6px 0; }
-.announcement__msg + .announcement__msg { display: none; }
-@media (min-width: 990px) { .announcement__msg + .announcement__msg { display: block; margin-left: 32px; } }
+.announcement__msgs { display: flex; justify-content: center; flex: 1; min-width: 0; }
+.announcement__next { display: none; }
+/* Phones: several messages take turns (rotate every 6 s, or tap the arrow). */
+@media (max-width: 989px) {
+  .announcement--multi .announcement__msg { display: none; }
+  .announcement--multi .announcement__msg.is-active { display: block; }
+  .announcement--multi .announcement__next { display: grid; place-items: center; flex: none; width: 44px; height: 36px; border: 0; background: none; color: var(--navy); margin-right: -12px; }
+}
+@media (min-width: 990px) { .announcement__msg + .announcement__msg { margin-left: 32px; } }
 .announcement a { color: var(--navy); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .announcement a:hover { text-decoration: underline; }
 
@@ -638,7 +645,7 @@ dialog::backdrop { background: rgb(11 31 58 / 0.55); backdrop-filter: blur(2px);
 .account__grid { display: grid; gap: 32px; margin-top: 24px; }
 @media (min-width: 750px) { .account__grid { grid-template-columns: 2fr 1fr; } }
 .account__recover { display: none; margin-top: 32px; }
-.account__recover:target { display: block; }
+.account__recover:target, .account__recover--open { display: block; }
 .account__guest { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
 .address-card { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; }
 .table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
@@ -685,3 +692,20 @@ dialog::backdrop { background: rgb(11 31 58 / 0.55); backdrop-filter: blur(2px);
   .card.is-swapped .card__img--primary { opacity: 0; }
 }
 .product__cta { margin: 4px 0 8px; font-size: 0.9375rem; color: var(--muted); }
+
+/* Desktop: filters as a sidebar beside the products */
+@media (min-width: 990px) {
+  .collection__layout--filters { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 36px; align-items: start; }
+  .collection__layout--filters #FacetsDrawer:not([open]) {
+    display: block; position: sticky; top: calc(var(--header-h) + 64px); inset: auto; width: auto; height: auto; max-height: calc(100vh - var(--header-h) - 90px);
+    overflow: auto; background: none; animation: none; z-index: 1;
+  }
+  .collection__layout--filters #FacetsDrawer:not([open]) .drawer__header { background: none; color: var(--navy); padding: 0 0 8px; border-bottom: 3px solid var(--gold); }
+  .collection__layout--filters #FacetsDrawer:not([open]) .drawer__title { color: var(--navy); font-size: 1.125rem; }
+  .collection__layout--filters #FacetsDrawer:not([open]) .drawer__header .icon-button { display: none; }
+  .collection__layout--filters #FacetsDrawer:not([open]) .drawer__body { padding: 0; overflow: visible; }
+  .collection__layout--filters #FacetsDrawer:not([open]) .drawer__footer { grid-template-columns: 1fr 1fr; padding: 12px 0; border: 0; }
+  .collection__layout--filters .facets__open { display: none; }
+}
+@media (min-width: 1200px) { .collection__layout--filters .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 990px) { .collection__layout--filters #FacetsDrawer:not([open]) .drawer__footer .button { min-height: 44px; padding: 8px 10px; font-size: 0.9375rem; } }

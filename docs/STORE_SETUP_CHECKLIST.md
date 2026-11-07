@@ -48,7 +48,9 @@ Admin API scopes (nothing more):
 ## 3. Metafields, collections, menus, pages 🤖
 
 - [ ] `npm run setup:store -- --dry-run` – read the log.
-- [ ] `npm run setup:store` – creates metafield definitions, location, collections **with products only**, "Collection only" shipping profile, hidden draft pages, menus.
+- [ ] `npm run setup:store` – creates metafield definitions, collections **with products only**, "Collection only" shipping profile, hidden draft pages, menus.
+  - **Location:** if the store has one location (e.g. the old DBS one) it is re-used, so stock is never split. Add `--rename-location` to rename it to "GBG Bargain Shop, Unit M10" with the Unit M10 address. With several locations, choose one with `--location-id <number>`; `--create-location` adds a new one.
+  - **Menus** only link to *published* pages. After the owner approves and publishes the pages, run `npm run setup:store -- --only menus`.
 - [ ] Re-run after each import so new categories appear (it never creates empty collections).
 - [ ] Last Chance: tag-only by default. To also include every item with exactly 1 in stock, set `"lastChanceIncludesStockOfOne": true` in `config/collections.json` **before** the collection is first created (only sensible if most listings are NOT one-offs).
 - [ ] Monthly backup: add repository variable `SHOPIFY_STORE_DOMAIN` and secret `SHOPIFY_ADMIN_TOKEN` – `.github/workflows/monthly-backup.yml` then exports on the 1st of each month (download the artifact and keep it safe).

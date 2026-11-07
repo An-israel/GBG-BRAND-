@@ -4,31 +4,64 @@
   and again in the browser, because pages can be cached).
 {%- endcomment -%}
 {%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign shown = 0 -%}
 {%- capture messages -%}
   {%- for block in section.blocks -%}
     {%- liquid
+      comment
+        End date: accepts YYYY-MM-DD (2026-12-05) or UK DD/MM/YYYY (05/12/2026).
+        Anything else is ignored (the message stays visible) and flagged in the editor.
+      endcomment
+      assign end_raw = block.settings.end_date | strip
+      assign end_iso = ''
+      if end_raw != blank
+        if end_raw contains '/'
+          assign parts = end_raw | split: '/'
+          if parts.size == 3 and parts[2].size == 4
+            assign dd = parts[0] | prepend: '0' | slice: -2, 2
+            assign mm = parts[1] | prepend: '0' | slice: -2, 2
+            assign end_iso = parts[2] | append: '-' | append: mm | append: '-' | append: dd
+          endif
+        else
+          assign parts = end_raw | split: '-'
+          if parts.size == 3 and parts[0].size == 4
+            assign dd = parts[2] | prepend: '0' | slice: -2, 2
+            assign mm = parts[1] | prepend: '0' | slice: -2, 2
+            assign end_iso = parts[0] | append: '-' | append: mm | append: '-' | append: dd
+          endif
+        endif
+      endif
       assign expired = false
-      if block.settings.end_date != blank
-        assign end_num = block.settings.end_date | remove: '-' | plus: 0
+      if end_iso != blank
+        assign end_num = end_iso | remove: '-' | plus: 0
         if end_num > 0 and today > end_num
           assign expired = true
         endif
       endif
     -%}
+    {%- if request.design_mode and end_raw != blank and end_iso == blank -%}
+      <p class="placeholder-note">End date "{{ end_raw | escape }}" not understood – use 2026-12-05 or 05/12/2026. The message will not hide automatically.</p>
+    {%- endif -%}
     {%- if block.settings.text != blank and expired == false -%}
-      <p class="announcement__msg" {{ block.shopify_attributes }}{% if block.settings.end_date != blank %} data-end="{{ block.settings.end_date | escape }}"{% endif %}>
+      <p class="announcement__msg{% if shown == 0 %} is-active{% endif %}" {{ block.shopify_attributes }}{% if end_iso != blank %} data-end="{{ end_iso }}"{% endif %}>
         {%- if block.settings.link != blank -%}
           <a href="{{ block.settings.link }}">{{ block.settings.text | escape }} {% render 'icon', name: 'arrow' %}</a>
         {%- else -%}
           {{ block.settings.text | escape }}
         {%- endif -%}
       </p>
+      {%- assign shown = shown | plus: 1 -%}
     {%- endif -%}
   {%- endfor -%}
 {%- endcapture -%}
 {%- if messages != blank -%}
-  <div class="announcement" role="region" aria-label="Announcement">
-    <div class="container announcement__inner">{{ messages }}</div>
+  <div class="announcement{% if shown > 1 %} announcement--multi{% endif %}" role="region" aria-label="Announcement" data-announcement>
+    <div class="container announcement__inner">
+      <div class="announcement__msgs" aria-live="off">{{ messages }}</div>
+      {%- if shown > 1 -%}
+        <button type="button" class="announcement__next" data-announcement-next aria-label="Show next announcement">{% render 'icon', name: 'arrow' %}</button>
+      {%- endif -%}
+    </div>
   </div>
 {%- endif -%}
 
@@ -54,7 +87,7 @@
           "type": "text",
           "id": "end_date",
           "label": "End date (optional)",
-          "info": "Format YYYY-MM-DD. The message hides automatically after this date."
+          "info": "Format 2026-12-05 or 05/12/2026. The message hides automatically after this date."
         }
       ]
     }

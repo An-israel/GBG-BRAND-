@@ -58,7 +58,7 @@
       {%- if settings.claim_free_collection and settings.cart_collection_note != blank -%}
         <li>{% render 'icon', name: 'store' %} {{ settings.cart_collection_note | escape }}</li>
       {%- endif -%}
-      {%- if settings.cart_delivery_note != blank -%}
+      {%- if settings.claim_uk_delivery and settings.cart_delivery_note != blank -%}
         <li>{% render 'icon', name: 'truck' %} {{ settings.cart_delivery_note | escape }}</li>
       {%- endif -%}
     </ul>

@@ -12,9 +12,10 @@
       <a href="{{ routes.root_url }}" class="header__logo-link">
         {%- if settings.logo != blank -%}
           {%- assign logo_h = settings.logo_width | divided_by: settings.logo.aspect_ratio | round -%}
+          {%- assign logo_sizes = '(min-width: 990px) ' | append: settings.logo_width | append: 'px, 120px' -%}
           {{ settings.logo | image_url: width: 520 | image_tag:
             widths: '160, 260, 390, 520',
-            sizes: '(min-width: 990px) var(--logo-width), 120px',
+            sizes: logo_sizes,
             width: settings.logo_width,
             height: logo_h,
             alt: shop.name,
@@ -57,6 +58,7 @@
       <ul class="container nav" role="list">
         {%- for link in menu.links -%}
           {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if link.type == 'page_link' and link.object == blank -%}{%- continue -%}{%- endif -%}
           {%- if link.links.size > 0 -%}
             {%- assign has_grandchildren = false -%}
             {%- for child in link.links -%}{%- if child.links.size > 0 -%}{%- assign has_grandchildren = true -%}{%- endif -%}{%- endfor -%}
@@ -67,12 +69,14 @@
                   <ul class="{% if has_grandchildren %}container mega{% else %}dropdown{% endif %}" role="list">
                     {%- for child in link.links -%}
                       {%- if child.type == 'collection_link' and child.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if child.type == 'page_link' and child.object == blank -%}{%- continue -%}{%- endif -%}
                       <li class="{% if has_grandchildren %}mega__col{% else %}dropdown__item{% endif %}">
                         <a href="{{ child.url }}" class="{% if has_grandchildren %}mega__heading{% else %}dropdown__link{% endif %}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
                         {%- if child.links.size > 0 -%}
                           <ul class="mega__list" role="list">
                             {%- for grandchild in child.links -%}
                               {%- if grandchild.type == 'collection_link' and grandchild.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if grandchild.type == 'page_link' and grandchild.object == blank -%}{%- continue -%}{%- endif -%}
                               <li><a href="{{ grandchild.url }}" class="mega__link"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
                             {%- endfor -%}
                           </ul>
@@ -106,6 +110,7 @@
       <ul class="sheet__list" role="list">
         {%- for link in menu.links -%}
           {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if link.type == 'page_link' and link.object == blank -%}{%- continue -%}{%- endif -%}
           <li>
             {%- if link.links.size > 0 -%}
               <details class="sheet__details">
@@ -113,6 +118,7 @@
                 <ul class="sheet__sublist" role="list">
                   {%- for child in link.links -%}
                     {%- if child.type == 'collection_link' and child.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if child.type == 'page_link' and child.object == blank -%}{%- continue -%}{%- endif -%}
                     <li>
                       {%- if child.links.size > 0 -%}
                         <details class="sheet__details">
@@ -121,6 +127,7 @@
                             <li><a class="sheet__sublink" href="{{ child.url }}">All {{ child.title | escape }}</a></li>
                             {%- for grandchild in child.links -%}
                               {%- if grandchild.type == 'collection_link' and grandchild.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if grandchild.type == 'page_link' and grandchild.object == blank -%}{%- continue -%}{%- endif -%}
                               <li><a class="sheet__sublink" href="{{ grandchild.url }}">{{ grandchild.title | escape }}</a></li>
                             {%- endfor -%}
                           </ul>

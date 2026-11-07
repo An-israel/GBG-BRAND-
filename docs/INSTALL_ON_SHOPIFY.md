@@ -18,7 +18,7 @@ There are two ways in. Pick **A** if you just want to look at it. Pick **B** if 
 
 ## A. Upload the zip (no tools needed)
 
-1. Get the file `dist/gbg-bargain-shop-theme-v1.0.0.zip` from this repository
+1. Get the file `dist/gbg-bargain-shop-theme-v1.0.1.zip` from this repository
    (or build a fresh one: `npm ci && npm run theme:zip`).
 2. Shopify admin → **Online Store → Themes**.
 3. Scroll to **Theme library** → **Add theme** → **Upload zip file** → choose the zip → **Upload**.
@@ -38,7 +38,9 @@ shopify theme push --path theme --unpublished --store <your-store>.myshopify.com
 shopify theme dev  --path theme --store <your-store>.myshopify.com   # live-reloading local preview
 ```
 
-Later pushes go to the same unpublished theme: `shopify theme push --path theme --theme <ID>`.
+Later pushes go to the same unpublished theme **without touching what was set in the theme editor**:
+`npm run theme:push:code -- --theme <ID>` (it skips `settings_data.json` and the template/section-group JSON, so banners, texts and settings chosen in the editor are kept).
+Use the plain `shopify theme push` only for the very first upload.
 
 ---
 

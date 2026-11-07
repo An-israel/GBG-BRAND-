@@ -35,13 +35,6 @@
             "answer": "<p>If you buy online you can cancel within 14 days of receiving your item under the Consumer Contracts Regulations. If an item is faulty, not as described or not fit for purpose, you have rights under the Consumer Rights Act 2015 – this includes clearance and customer-return items. See our returns policy for how to return an item.</p>"
           }
         },
-        "q5": {
-          "type": "question",
-          "settings": {
-            "question": "Are the online prices the same as in the shop?",
-            "answer": "<p>[TO CONFIRM with owner] We'll confirm our pricing policy for online and in-store items here.</p>"
-          }
-        },
         "q6": {
           "type": "question",
           "settings": {
@@ -60,7 +53,7 @@
           "type": "question",
           "settings": {
             "question": "How can I contact you?",
-            "answer": "<p>Call us on 07344 670317 or use the contact form. [TO CONFIRM reply-time promise]</p>"
+            "answer": "<p>Call us on 07344 670317 or send a message with the <a href=\"/pages/contact\">contact form</a>. If you’re asking about an order, include your order number.</p>"
           }
         }
       },
@@ -69,7 +62,6 @@
         "q2",
         "q3",
         "q4",
-        "q5",
         "q6",
         "q7",
         "q8"

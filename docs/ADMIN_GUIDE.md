@@ -13,11 +13,12 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 
 | I want to… | Where |
 |---|---|
-| Change the yellow announcement bar | Header group → **Announcement bar** → message. Optional **End date** (YYYY-MM-DD) hides it automatically. Only genuine messages. |
+| Change the yellow announcement bar | Header group → **Announcement bar** → message. Optional **End date** – `2026-12-05` or `05/12/2026` – hides it automatically after that day. Up to 3 messages: computers show them side by side, phones take turns every 6 seconds (with an arrow to skip). Only genuine messages. |
 | Change hero photos / headline / buttons | Home page → **Hero**. Use real product photos (square, 1200 px+). Price tag text must be the real current price. |
 | Change category tiles | Home page → **Category grid** → each Category → choose collection / image. Empty collections hide themselves. |
 | Change featured products | Home page → **Featured products** → each tab → collection. |
-| Switch "UK delivery" / "Free Liverpool collection" claims on or off | ⚙ **Theme settings → Trust claims**. Only switch on what is really set up. |
+| Switch "UK delivery" / "Free Liverpool collection" claims on or off | ⚙ **Theme settings → Trust claims**. Only switch on what is really set up. These switches also control the delivery note on product pages and in the basket, and the Click & Collect box in Visit Us. |
+| "Price includes VAT" on product pages | Appears only when a VAT number is filled in (Theme settings → Shop details) and Shopify prices include tax. |
 | Change opening hours, phone, email, address | ⚙ **Theme settings → Shop details**. Updates footer, Visit Us, contact page and Google data at once. |
 | Turn WhatsApp links on/off | ⚙ Theme settings → **Social and WhatsApp**. |
 | Newsletter pop-up | ⚙ Theme settings → **Newsletter prompt** (never shows on a first visit). |

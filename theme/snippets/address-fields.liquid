@@ -6,7 +6,7 @@
 <div class="field"><label for="AddrZip{{ id }}">Postcode</label><input class="input" id="AddrZip{{ id }}" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code"></div>
 <div class="field">
   <label for="AddrCountry{{ id }}">Country</label>
-  <select class="select" id="AddrCountry{{ id }}" name="address[country]" autocomplete="country">{{ all_country_option_tags }}</select>
+  <select class="select" id="AddrCountry{{ id }}" name="address[country]" autocomplete="country" data-default="{{ form.country | default: 'United Kingdom' | escape }}">{{ all_country_option_tags }}</select>
 </div>
 <div class="field"><label for="AddrPhone{{ id }}">Phone</label><input class="input" type="tel" id="AddrPhone{{ id }}" name="address[phone]" value="{{ form.phone }}" autocomplete="tel"></div>
 <label class="checkbox"><input type="checkbox" name="address[default]" value="1"{% if form.set_as_default_checkbox %} checked{% endif %}><span>Set as default address</span></label>

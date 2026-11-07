@@ -15,7 +15,8 @@
  *   - every row is validated first; invalid products go to failed_rows.csv with the reason
  *   - existing products (same SKU) are UPDATED, never duplicated               ENGINEERING #14
  *   - if a product was edited in Shopify after our last import (updatedAt newer
- *     than recorded in .import-state.json) it is SKIPPED with a warning          #36, #39
+ *     than the importer's own stamp, metafield gbg.imported_at) it is SKIPPED  #36, #39
+ *     The stamp lives in Shopify, so imports work from any computer or from CI.
  *   - images are uploaded only when the product has no photos yet
  *   - "Continue selling when out of stock" is always OFF (inventoryPolicy DENY)
  */
@@ -25,7 +26,7 @@ import { parseArgs } from './lib/args.js';
 import { loadConfig } from './lib/config.js';
 import { readCsv, writeCsv } from './lib/csv.js';
 import { createLogger } from './lib/logger.js';
-import { COL, draftAltText, groupByHandle, isTrue, splitTags, validateRows, type ProductGroup, type Row } from './lib/products.js';
+import { COL, CONDITIONS, TESTED, canonicalChoice, draftAltText, groupByHandle, isTrue, optionNames, optionValues, parseMoney, splitTags, validateRows, type ProductGroup, type Row } from './lib/products.js';
 import { ShopifyClient, assertAllowedHost, checkUserErrors } from './lib/shopify.js';
 import { loadStructure } from './lib/store-structure.js';
 
@@ -34,15 +35,13 @@ const file = args.positional[0];
 if (!file) { console.error('Usage: npm run import -- <products.csv> [--sample 10] [--dry-run]'); process.exit(2); }
 const sample = args.flags.sample ? Number(args.flags.sample) : 0;
 const photosDir = String(args.flags.photos || 'prepared-images');
-const STATE_FILE = '.import-state.json';
+const EDIT_TOLERANCE_MS = 120_000; // our own follow-up calls (publish, stock) can bump updatedAt
 
 const log = createLogger('import-products');
 const config = loadConfig();
 const client = new ShopifyClient(config, { dryRun: args.dryRun, logger: log });
 const structure = loadStructure();
 
-type State = Record<string, { productId: string; updatedAt: string }>;
-const state: State = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')) : {};
 const failed: (Row & { 'Failure reason': string })[] = [];
 const summary = { created: 0, updated: 0, skipped: 0, failed: 0 };
 const skippedReasons: string[] = [];
@@ -103,19 +102,21 @@ async function uploadImage(filePath: string): Promise<string> {
   return target.resourceUrl;
 }
 
-const money = (v: string | undefined) => (v && v.trim() ? Number(v.replace(/[£,\s]/g, '')).toFixed(2) : null);
+const money = (v: string | undefined) => { const n = parseMoney(v); return Number.isNaN(n) ? null : n.toFixed(2); };
 
 function buildInput(group: ProductGroup, status: 'ACTIVE' | 'DRAFT', isCreate: boolean) {
   const first = group.rows[0];
-  const optionName = first[COL.option1Name] && first[COL.option1Name] !== 'Title' ? first[COL.option1Name] : 'Title';
-  const hasOptions = optionName !== 'Title';
+  // Up to three options (e.g. Size + Colour). A product without options gets Shopify's default "Title".
+  const names = optionNames(first);
+  const opts = names.length ? names : ['Title'];
+  const valuesFor = (r: Row) => (names.length ? optionValues(r, names.length) : ['Default Title']);
   const metafields = [
-    ['condition', 'single_line_text_field', first[COL.condition]],
+    ['condition', 'single_line_text_field', canonicalChoice(first[COL.condition], CONDITIONS) ?? first[COL.condition]],
     ['condition_notes', 'multi_line_text_field', first[COL.conditionNotes]],
     ['dimensions', 'single_line_text_field', first[COL.dimensions]],
     ['colour', 'single_line_text_field', first[COL.colour]],
     ['collection_only', 'boolean', isTrue(first[COL.collectionOnly]) ? 'true' : 'false'],
-    ['tested', 'single_line_text_field', first[COL.tested]],
+    ['tested', 'single_line_text_field', canonicalChoice(first[COL.tested], TESTED) ?? first[COL.tested]],
     ['internal_notes', 'multi_line_text_field', first[COL.internalNotes]],
   ].filter(([, , v]) => v && String(v).trim()).map(([key, type, value]) => ({ namespace: 'custom', key, type, value: String(value).trim() }));
 
@@ -131,9 +132,9 @@ function buildInput(group: ProductGroup, status: 'ACTIVE' | 'DRAFT', isCreate: b
     tags,
     status,
     seo: { title: first[COL.seoTitle] || null, description: first[COL.seoDescription] || null },
-    productOptions: [{ name: optionName, position: 1, values: group.rows.map((r) => ({ name: hasOptions ? r[COL.option1Value] : 'Default Title' })) }],
+    productOptions: opts.map((name, i) => ({ name, position: i + 1, values: [...new Set(group.rows.map((r) => valuesFor(r)[i]))].map((v) => ({ name: v })) })),
     variants: group.rows.map((r) => ({
-      optionValues: [{ optionName, name: hasOptions ? r[COL.option1Value] : 'Default Title' }],
+      optionValues: valuesFor(r).map((v, i) => ({ optionName: opts[i], name: v })),
       price: money(r[COL.price]),
       compareAtPrice: money(r[COL.compareAt]),
       barcode: r[COL.barcode] || null,
@@ -156,8 +157,8 @@ async function findExisting(group: ProductGroup) {
   const sku = group.rows[0][COL.sku].trim();
   const d = await client.query(
     `query($q: String!, $h: String!) {
-      productVariants(first: 1, query: $q) { nodes { product { id handle updatedAt mediaCount { count } } } }
-      productByHandle(handle: $h) { id handle updatedAt mediaCount { count } }
+      productVariants(first: 1, query: $q) { nodes { product { id handle updatedAt mediaCount { count } importedAt: metafield(namespace: "gbg", key: "imported_at") { value } } } }
+      productByHandle(handle: $h) { id handle updatedAt mediaCount { count } importedAt: metafield(namespace: "gbg", key: "imported_at") { value } }
     }`,
     { q: `sku:'${sku.replace(/'/g, "\\'")}'`, h: group.handle },
   );
@@ -171,16 +172,17 @@ async function importGroup(group: ProductGroup, status: 'ACTIVE' | 'DRAFT') {
   const isCreate = !existing;
 
   if (existing) {
-    const recorded = state[sku];
+    const recorded = existing.importedAt?.value as string | undefined;
     if (!recorded && !args.flags.force) {
       throw new SkipError(`already exists in Shopify (${existing.handle}) but was not created by this importer – not overwritten. Use --force to take it over.`);
     }
-    if (recorded && new Date(existing.updatedAt) > new Date(recorded.updatedAt) && !args.flags.force) {
+    if (recorded && new Date(existing.updatedAt).getTime() > new Date(recorded).getTime() + EDIT_TOLERANCE_MS && !args.flags.force) {
       throw new SkipError(`edited in Shopify on ${existing.updatedAt} after the last import – staff changes kept. Use --force to overwrite.`);
     }
   }
 
   const input: any = buildInput(group, status, isCreate);
+  input.metafields.push({ namespace: 'gbg', key: 'imported_at', type: 'date_time', value: new Date().toISOString() });
   const needsImages = isCreate || (existing?.mediaCount?.count ?? 0) === 0;
   if (needsImages) {
     const files = listImages(sku);
@@ -235,9 +237,8 @@ async function importGroup(group: ProductGroup, status: 'ACTIVE' | 'DRAFT') {
     checkUserErrors(`collection-only ${sku}`, dp.deliveryProfileUpdate);
   }
 
-  if (!args.dryRun) for (const r of group.rows) state[r[COL.sku].trim()] = { productId: product.id, updatedAt: product.updatedAt };
   if (isCreate) summary.created++; else summary.updated++;
-  log.info(`${isCreate ? 'CREATED' : 'UPDATED'} ${sku} ${group.handle} as ${status}`);
+  log.info(`${args.dryRun ? 'WOULD ' : ''}${isCreate ? (args.dryRun ? 'CREATE' : 'CREATED') : (args.dryRun ? 'UPDATE' : 'UPDATED')} ${sku} ${group.handle} as ${status}`);
 }
 
 class SkipError extends Error {}
@@ -285,7 +286,6 @@ async function main() {
     }
   }
 
-  if (!args.dryRun) fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
   if (failed.length) {
     writeCsv('failed_rows.csv', failed, [...Object.keys(rows[0] || {}), 'Failure reason']);
     log.warn(`${failed.length} row(s) written to failed_rows.csv – fix them and run the import again.`);
@@ -300,7 +300,7 @@ async function main() {
   ].join('\n');
   const reportFile = path.join('reports', `import-${new Date().toISOString().replace(/[:.]/g, '-')}.md`);
   fs.writeFileSync(reportFile, report);
-  log.info(`created ${summary.created}, updated ${summary.updated}, skipped ${summary.skipped}, failed ${summary.failed}. Report: ${reportFile}`);
+  log.info(`${args.dryRun ? 'DRY RUN – nothing changed. Would have: ' : ''}created ${summary.created}, updated ${summary.updated}, skipped ${summary.skipped}, failed ${summary.failed}. Report: ${reportFile}`);
   process.exit(summary.failed ? 1 : 0);
 }
 

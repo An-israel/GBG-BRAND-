@@ -20,7 +20,7 @@
           <h3 class="visit__label">{% render 'icon', name: 'clock' %} Opening hours</h3>
           {%- render 'opening-hours' -%}
         </div>
-        {%- if section.settings.show_collection -%}
+        {%- if section.settings.show_collection and settings.claim_free_collection -%}
           <div class="visit__item visit__item--wide">
             <h3 class="visit__label">{% render 'icon', name: 'store' %} Click &amp; Collect</h3>
             <p>{{ section.settings.collection_text | escape }}
@@ -82,7 +82,7 @@
     },
     { "type": "paragraph", "content": "Address, phone and hours are edited in Theme settings → Shop details." },
     { "type": "image_picker", "id": "image", "label": "Shop photo", "info": "A real photo of the shop entrance or shelves." },
-    { "type": "checkbox", "id": "show_collection", "label": "Show Click & Collect details", "default": true },
+    { "type": "checkbox", "id": "show_collection", "label": "Show Click & Collect details", "default": true, "info": "Only shown once Theme settings → Trust claims → Free Liverpool collection is on." },
     {
       "type": "text",
       "id": "collection_text",

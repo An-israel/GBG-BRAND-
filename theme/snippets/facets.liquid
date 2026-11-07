@@ -23,14 +23,27 @@
       {%- endfor -%}
       <label for="SortBy" class="facets__sort-label">Sort</label>
       <select id="SortBy" name="sort_by" class="select" data-autosubmit>
-        {%- assign sort_options = 'created-descending:Newest,price-ascending:Price: low to high,price-descending:Price: high to low' | split: ',' -%}
         {%- if terms -%}
-          <option value="relevance"{% if sort_by == 'relevance' %} selected{% endif %}>Most relevant</option>
+          {%- comment -%} Shopify search only supports relevance and price sorting. {%- endcomment -%}
+          {%- assign sort_options = 'relevance=Most relevant,price-ascending=Price: low to high,price-descending=Price: high to low' | split: ',' -%}
         {%- else -%}
-          <option value="manual"{% if sort_by == 'manual' %} selected{% endif %}>Featured</option>
+          {%- comment -%} The collection's own default order comes first, with its real name. {%- endcomment -%}
+          {%- case results.default_sort_by -%}
+            {%- when 'best-selling' -%}{%- assign default_label = 'Best selling' -%}
+            {%- when 'created-descending' -%}{%- assign default_label = 'Newest' -%}
+            {%- when 'price-ascending' -%}{%- assign default_label = 'Price: low to high' -%}
+            {%- when 'price-descending' -%}{%- assign default_label = 'Price: high to low' -%}
+            {%- when 'title-ascending' -%}{%- assign default_label = 'A–Z' -%}
+            {%- else -%}{%- assign default_label = 'Featured' -%}
+          {%- endcase -%}
+          {%- assign sort_options = results.default_sort_by | append: '=' | append: default_label | append: ',created-descending=Newest,price-ascending=Price: low to high,price-descending=Price: high to low' | split: ',' -%}
         {%- endif -%}
+        {%- assign listed = '' -%}
         {%- for opt in sort_options -%}
-          {%- assign parts = opt | split: ':' -%}
+          {%- assign parts = opt | split: '=' -%}
+          {%- assign key = '|' | append: parts[0] | append: '|' -%}
+          {%- if listed contains key -%}{%- continue -%}{%- endif -%}
+          {%- assign listed = listed | append: key -%}
           <option value="{{ parts[0] }}"{% if sort_by == parts[0] %} selected{% endif %}>{{ parts[1] }}</option>
         {%- endfor -%}
       </select>
@@ -71,54 +84,3 @@
   {%- endif -%}
 </div>
 
-{%- if results.filters.size > 0 -%}
-<dialog class="drawer drawer--left" id="FacetsDrawer" aria-labelledby="FacetsTitle">
-  <form class="drawer__inner facets__form" data-facets-form>
-    <div class="drawer__header">
-      <h2 class="drawer__title" id="FacetsTitle">Filter</h2>
-      <button type="button" class="icon-button" data-close-dialog aria-label="Close filters">{% render 'icon', name: 'close' %}</button>
-    </div>
-    <div class="drawer__body">
-      {%- if terms -%}<input type="hidden" name="q" value="{{ terms | escape }}"><input type="hidden" name="options[prefix]" value="last">{%- endif -%}
-      <input type="hidden" name="sort_by" value="{{ sort_by }}">
-      {%- for filter in results.filters -%}
-        <details class="facet" {% if filter.active_values.size > 0 or forloop.index <= 2 %}open{% endif %}>
-          <summary class="facet__summary">{{ filter.label | escape }} {% render 'icon', name: 'chevron' %}</summary>
-          {%- case filter.type -%}
-            {%- when 'list', 'boolean' -%}
-              <fieldset class="facet__values">
-                <legend class="visually-hidden">{{ filter.label | escape }}</legend>
-                {%- for value in filter.values -%}
-                  <label class="checkbox{% if value.count == 0 and value.active == false %} checkbox--disabled{% endif %}">
-                    <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}"
-                      {% if value.active %}checked{% endif %}
-                      {% if value.count == 0 and value.active == false %}disabled{% endif %}>
-                    <span>{{ value.label | escape }}</span>
-                    <span class="checkbox__count">({{ value.count }})</span>
-                  </label>
-                {%- endfor -%}
-              </fieldset>
-            {%- when 'price_range' -%}
-              <div class="facet__price">
-                <label>
-                  <span>From £</span>
-                  <input class="input" type="number" inputmode="decimal" name="{{ filter.min_value.param_name }}" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}"
-                    {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"{% endif %} placeholder="0">
-                </label>
-                <label>
-                  <span>To £</span>
-                  <input class="input" type="number" inputmode="decimal" name="{{ filter.max_value.param_name }}" min="0" max="{{ filter.range_max | money_without_currency | remove: ',' }}"
-                    {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"{% endif %} placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}">
-                </label>
-              </div>
-          {%- endcase -%}
-        </details>
-      {%- endfor -%}
-    </div>
-    <div class="drawer__footer">
-      <a href="{{ url }}{% if terms %}?q={{ terms | url_encode }}&options%5Bprefix%5D=last{% endif %}" class="button button--secondary">Clear</a>
-      <button type="submit" class="button">Show results</button>
-    </div>
-  </form>
-</dialog>
-{%- endif -%}

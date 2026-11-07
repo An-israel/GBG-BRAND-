@@ -14,7 +14,9 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="container collection__layout{% if collection.filters.size > 0 %} collection__layout--filters{% endif %}">
+    {%- render 'facets-panel', results: collection, url: collection.url -%}
+    <div class="collection__results">
     <div class="collection__toolbar">
       <p class="collection__count" role="status">
         {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
@@ -46,6 +48,7 @@
     {%- else -%}
       {%- render 'empty-state', heading: 'No products match those filters', text: 'Try removing a filter, or browse our bargains and newest stock.' -%}
     {%- endif -%}
+    </div>
   </div>
 </div>
 {%- endpaginate -%}

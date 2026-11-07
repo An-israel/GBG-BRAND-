@@ -71,7 +71,9 @@ blockTag('form', (args) => {
   const cls = (args.match(/class: '([^']+)'/) || [])[1] || '';
   const id = (args.match(/id: '([^']+)'/) || [])[1] || '';
   const action = { product: '/cart/add', customer: '/contact#newsletter', contact: '/contact' }[type] || '/account';
-  return { scope: { form: { errors: null, 'posted_successfully?': false } }, before: `<form method="post" action="${action}" class="${cls}" id="${id}">`, after: '</form>' };
+  // Pass through data-* / novalidate attributes the same way Shopify's form tag does.
+  const extra = [...args.matchAll(/([a-z][\w-]*): '([^']*)'/g)].filter(([, k]) => !['class', 'id'].includes(k)).map(([, k, v]) => ` ${k}="${v}"`).join('');
+  return { scope: { form: { errors: null, 'posted_successfully?': false } }, before: `<form method="post" action="${action}" class="${cls}" id="${id}"${extra}>`, after: '</form>' };
 });
 blockTag('paginate', () => ({ scope: { paginate: { next: null, pages: 1, current_offset: 0 } } }));
 liquid.registerTag('schema', {
@@ -183,3 +185,16 @@ const cartFull = { ...base.cart, item_count: 2, total_price: 1749, items: [
   { key: 'b', url: products[10].url, image: products[10].featured_media.preview_image, product: products[10], variant: products[10].variants[0], quantity: 1, original_line_price: 450, final_line_price: 450 },
 ] };
 await renderTemplate('cart', { ...req('cart'), cart: cartFull, page_title: 'Your basket' }, 'cart-full.html');
+// Same product with the delivery/collection claims switched OFF (honesty check) and no VAT number.
+{
+  const off = { ...settings, claim_uk_delivery: false, claim_free_collection: false, vat_number: '' };
+  await renderTemplate('product', { ...req('product'), settings: off, product: products[0], collection: collections['bags-accessories'], page_title: products[0].title, recommendations: { performed: false } }, 'product-claims-off.html');
+  await renderTemplate('index', { ...req('index'), settings: off, page_title: 'GBG Bargain Shop' }, 'index-claims-off.html');
+}
+// Account login (password-reset box) and a search with results + filters.
+await renderTemplate('customers/login', { ...req('customers/login'), page_title: 'Log in' }, 'login.html');
+{
+  const results = products.slice(0, 6).map((p) => ({ ...p, object_type: 'product' }));
+  const search = { performed: true, terms: 'bag', results_count: results.length, results, sort_by: 'relevance', default_sort_by: 'relevance', filters: collections.all.filters };
+  await renderTemplate('search', { ...req('search'), search, page_title: 'Search: bag' }, 'search-results.html');
+}

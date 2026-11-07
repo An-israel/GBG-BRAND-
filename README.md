@@ -43,7 +43,7 @@ A devcontainer (`.devcontainer/`) gives the same environment in VS Code / Codesp
 npm run theme:check                      # Shopify Theme Check – must report 0 errors
 shopify theme dev  --path theme --store <store>.myshopify.com    # local preview against real data
 shopify theme push --path theme --unpublished                    # first push → new unpublished theme
-shopify theme push --path theme --theme <id>                      # later pushes
+npm run theme:push:code -- --theme <id>                         # later pushes – code only, keeps theme-editor content
 shopify theme pull --path theme --theme <id>                      # pull editor changes back into Git
 npm run theme:zip                        # dist/gbg-bargain-shop-theme-v<version>.zip
 ```
@@ -77,11 +77,11 @@ Every script writes a log to `logs/`, and every script that changes data support
 |---|---|
 | `npm run backup` | Read-only export to `backup/YYYY-MM-DD/` (products, collections, pages, menus, redirects, discounts, metafield definitions, customer *counts*) |
 | `npm run audit:dbs` | Read-only: writes `docs/DBS_AUDIT.md` – every "DBS" mention with a suggested action |
-| `npm run setup:store -- --dry-run` | Metafield definitions, GBG location, smart collections (**only if they'd have products**), "Collection only" shipping profile, hidden draft pages, menus. Re-runnable. `--only metafields,collections`, `--policies` (after legal approval) |
-| `npm run images -- --csv products.csv` | `photos/<SKU>/*` → `prepared-images/<SKU>/<sku>-1.jpg…`: auto-orient, main image squared on white, ≤ 2048 px, compressed; alt-text drafts for review |
+| `npm run setup:store -- --dry-run` | Metafield definitions, GBG location (re-uses the store's existing one; `--rename-location`, `--location-id <n>`, `--create-location`), smart collections (**only if they'd have products**), "Collection only" shipping profile, hidden draft pages, menus (only link **published** pages – re-run `--only menus` after publishing). Re-runnable. `--only metafields,collections`, `--policies` (after legal approval) |
+| `npm run images -- --csv products.csv` | `photos/<SKU>/*` (JPEG, PNG, WebP, **iPhone HEIC**) → `prepared-images/<SKU>/<sku>-1.jpg…` in natural order (IMG_9 before IMG_10): auto-orient, main image squared on white, ≤ 2048 px, compressed; warns about photos under 800 px; alt-text drafts for review |
 | `npm run validate -- products.csv --photos photos` | Checks every row (unique SKU, price, weight, condition, tested for electricals, photos, genuine compare-at, no DBS, title length, category exists); staff-readable report |
 | `npm run import -- products.csv --sample 10` | Imports the first 10 products as **drafts** for owner approval |
-| `npm run import -- products.csv` | Imports rows with `Status = active` as Active with stock at Unit M10. Keyed by SKU (no duplicates), skips products staff edited since the last import, failed rows → `failed_rows.csv` |
+| `npm run import -- products.csv` | Imports rows with `Status = active` as Active with stock at Unit M10. Up to 3 options (e.g. Size + Colour). Keyed by SKU (no duplicates); skips products staff edited since the last import (stamp stored in Shopify, so it works from any computer); failed rows → `failed_rows.csv` |
 | `npm run report:weekly` | Sold-out items still featured, missing condition/alt text, old New Arrival tags (`--remove-old-tags`) |
 | `npm run redirects` | Creates URL redirects from `redirects/redirects.csv` |
 | `npm run smoke` | Post-deploy check of key pages on the live domain or a preview (`--base`, `--preview-theme`) |
@@ -103,7 +103,7 @@ search, sold-out cannot be added (`SOLD_OUT_PRODUCT_PATH`), collection-only labe
 pixels not firing before consent, and the no-"DBS" crawler.
 
 GitHub Actions (`.github/workflows/`):
-- **ci.yml** – every PR: Theme Check, types, unit tests, `npm audit`, DBS grep, Playwright (offline). On `main`: deploy to the
+- **ci.yml** – every PR: Theme Check, types, unit tests, `npm audit`, DBS grep, Playwright (offline), **Lighthouse CI (offline preview, `lighthouserc.offline.cjs`)**. On the default branch: deploy (code only) to the
   **unpublished** preview theme (needs `SHOPIFY_PREVIEW_THEME_ID` variable + `SHOPIFY_CLI_THEME_TOKEN` secret), then Lighthouse CI
   (budgets: perf ≥ 90, a11y/BP/SEO ≥ 95, LCP < 2.5 s, CLS < 0.05) and Playwright against the preview.
 - **weekly.yml** – Monday report + smoke test.

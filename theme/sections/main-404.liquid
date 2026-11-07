@@ -5,6 +5,7 @@
       <ul class="chips" role="list">
         {%- for link in section.settings.menu.links -%}
           {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+          {%- if link.type == 'page_link' and link.object == blank -%}{%- continue -%}{%- endif -%}
           <li><a href="{{ link.url }}" class="chip">{{ link.title | escape }}</a></li>
         {%- endfor -%}
       </ul>

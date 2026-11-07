@@ -15,12 +15,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import sharp from 'sharp';
+// iPhone photos are HEIC (HEVC). sharp's bundled libvips can't decode HEVC, so they are
+// converted with heic-convert (pure JavaScript, no system libraries) first.
+import heicConvert from 'heic-convert';
 import { parseArgs } from './lib/args.js';
 import { createLogger } from './lib/logger.js';
 import { readCsv, writeCsv } from './lib/csv.js';
 import { COL, draftAltText } from './lib/products.js';
 
 export const MAX_SIZE = 2048;
+/** Below this (longest side, px) a photo looks blurry when zoomed – staff get a warning. */
+export const MIN_GOOD_SIZE = 800;
+
+/** True for HEIC/HEIF files (by content, not just the file name). */
+export function isHeic(buf: Buffer): boolean {
+  const brand = buf.subarray(4, 12).toString('latin1');
+  return brand.startsWith('ftyp') && /^(heic|heix|hevc|hevx|heim|heis|mif1|msf1)/.test(buf.subarray(8, 12).toString('latin1'));
+}
+
+/** Natural order: IMG_9 before IMG_10, photo2 before photo10. */
+export const naturalSort = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 const IMAGE_EXT = /\.(jpe?g|png|webp|heic|heif|tiff?)$/i;
 
 export interface PrepareOptions {
@@ -30,8 +44,11 @@ export interface PrepareOptions {
 }
 
 /** Process one image buffer. Exported for unit tests. */
-export async function processImage(input: Buffer, opts: PrepareOptions): Promise<{ data: Buffer; width: number; height: number }> {
+export async function processImage(input: Buffer, opts: PrepareOptions): Promise<{ data: Buffer; width: number; height: number; sourceWidth: number; sourceHeight: number }> {
   const max = opts.maxSize ?? MAX_SIZE;
+  if (isHeic(input) && !isAvif(input)) {
+    input = Buffer.from(await heicConvert({ buffer: input, format: 'JPEG', quality: 0.95 }));
+  }
   let img = sharp(input, { failOn: 'none' }).rotate(); // rotate() with no args = auto-orient from EXIF
   const oriented = await img.toBuffer({ resolveWithObject: true });
   img = sharp(oriented.data);
@@ -45,8 +62,10 @@ export async function processImage(input: Buffer, opts: PrepareOptions): Promise
   img = img.flatten({ background: '#ffffff' });
   const out = opts.format === 'webp' ? img.webp({ quality: 82 }) : img.jpeg({ quality: 82, mozjpeg: true, progressive: true });
   const { data, info } = await out.toBuffer({ resolveWithObject: true });
-  return { data, width: info.width, height: info.height };
+  return { data, width: info.width, height: info.height, sourceWidth: oriented.info.width, sourceHeight: oriented.info.height };
 }
+
+const isAvif = (buf: Buffer) => /^(avif|avis)/.test(buf.subarray(8, 12).toString('latin1'));
 
 export function safeSku(sku: string): string {
   return sku.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '');
@@ -84,18 +103,24 @@ async function main() {
   for (let i = 0; i < skus.length; i += concurrency) {
     const batch = skus.slice(i, i + concurrency);
     await Promise.all(batch.map(async (sku) => {
-      const files = fs.readdirSync(path.join(inDir, sku)).filter((f) => IMAGE_EXT.test(f)).sort();
+      const files = fs.readdirSync(path.join(inDir, sku)).filter((f) => IMAGE_EXT.test(f)).sort(naturalSort);
       if (!files.length) { log.warn(`${sku}: no images`); return; }
       const dest = path.join(outDir, sku);
       if (!args.dryRun) fs.mkdirSync(dest, { recursive: true });
       for (const [idx, f] of files.entries()) {
         const name = `${safeSku(sku)}-${idx + 1}.${format === 'webp' ? 'webp' : 'jpg'}`;
         try {
+          let check = '';
           if (!args.dryRun) {
             const res = await processImage(fs.readFileSync(path.join(inDir, sku, f)), { square: idx === 0, format });
             fs.writeFileSync(path.join(dest, name), res.data);
+            const longest = Math.max(res.sourceWidth, res.sourceHeight);
+            if (longest < MIN_GOOD_SIZE) {
+              check = `Small photo (${res.sourceWidth} x ${res.sourceHeight} px) – will look blurry; retake at ${MIN_GOOD_SIZE}px+ if possible`;
+              log.warn(`${sku}/${f}: ${check}`);
+            }
           }
-          altRows.push({ SKU: sku, File: path.join(dest, name), 'Draft alt text': draftAltText(titles.get(sku) || sku, idx, colours.get(sku)), 'Reviewed (yes/no)': 'no' });
+          altRows.push({ SKU: sku, Source: f, File: path.join(dest, name), 'Draft alt text': draftAltText(titles.get(sku) || sku, idx, colours.get(sku)), 'Reviewed (yes/no)': 'no', Check: check });
           done++;
         } catch (err: any) {
           failed++;

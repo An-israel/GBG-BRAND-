@@ -1,8 +1,8 @@
 {
   "name": "gbg-bargain-shop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
-  "description": "GBG Bargain Shop – Shopify theme, admin scripts, tests and docs",
+  "description": "GBG Bargain Shop \u2013 Shopify theme, admin scripts, tests and docs",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -25,7 +25,8 @@
     "backup": "tsx scripts/backup-export.ts",
     "audit:dbs": "tsx scripts/dbs-audit.ts",
     "smoke": "tsx scripts/smoke-test.ts",
-    "redirects": "tsx scripts/import-redirects.ts"
+    "redirects": "tsx scripts/import-redirects.ts",
+    "theme:push:code": "shopify theme push --path theme --nodelete --ignore config/settings_data.json --ignore \"templates/*.json\" --ignore \"templates/customers/*.json\" --ignore \"sections/*-group.json\""
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -44,6 +45,7 @@
     "csv-parse": "^7.0.3",
     "csv-stringify": "^6.9.0",
     "dotenv": "^18.0.9",
+    "heic-convert": "^2.1.0",
     "sharp": "^0.35.5"
   }
 }

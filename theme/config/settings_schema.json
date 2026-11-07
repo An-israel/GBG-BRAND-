@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "GBG Bargain Shop",
-    "theme_version": "1.0.0",
+    "theme_version": "1.0.1",
     "theme_author": "GBG Bargain Shop",
     "theme_documentation_url": "https://www.gbgbargainshop.co.uk",
     "theme_support_url": "https://www.gbgbargainshop.co.uk/pages/contact"
@@ -47,17 +47,72 @@
         "type": "paragraph",
         "content": "Approved GBG palette. Every text pairing has been checked against WCAG AA. Yellow is for promotions only and always carries navy text. Never put gold text on white."
       },
-      { "type": "color", "id": "color_navy", "label": "Navy (header, footer, buttons, headings)", "default": "#0B1F3A" },
-      { "type": "color", "id": "color_navy_700", "label": "Navy 700 (hover, secondary surfaces)", "default": "#153461" },
-      { "type": "color", "id": "color_gold", "label": "Gold (accents, rules, badges, icons)", "default": "#C9A227" },
-      { "type": "color", "id": "color_gold_soft", "label": "Gold soft (subtle panels)", "default": "#F3E7C1" },
-      { "type": "color", "id": "color_yellow", "label": "Yellow (promotions only)", "default": "#FFD60A" },
-      { "type": "color", "id": "color_white", "label": "White (background, cards)", "default": "#FFFFFF" },
-      { "type": "color", "id": "color_paper", "label": "Paper (alternate sections)", "default": "#F7F7F5" },
-      { "type": "color", "id": "color_ink", "label": "Ink (body text)", "default": "#16181D" },
-      { "type": "color", "id": "color_muted", "label": "Muted (secondary text)", "default": "#5D6470" },
-      { "type": "color", "id": "color_success", "label": "Success", "default": "#1E7F4F" },
-      { "type": "color", "id": "color_error", "label": "Error", "default": "#B42318" }
+      {
+        "type": "color",
+        "id": "color_navy",
+        "label": "Navy (header, footer, buttons, headings)",
+        "default": "#0B1F3A"
+      },
+      {
+        "type": "color",
+        "id": "color_navy_700",
+        "label": "Navy 700 (hover, secondary surfaces)",
+        "default": "#153461"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold (accents, rules, badges, icons)",
+        "default": "#C9A227"
+      },
+      {
+        "type": "color",
+        "id": "color_gold_soft",
+        "label": "Gold soft (subtle panels)",
+        "default": "#F3E7C1"
+      },
+      {
+        "type": "color",
+        "id": "color_yellow",
+        "label": "Yellow (promotions only)",
+        "default": "#FFD60A"
+      },
+      {
+        "type": "color",
+        "id": "color_white",
+        "label": "White (background, cards)",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_paper",
+        "label": "Paper (alternate sections)",
+        "default": "#F7F7F5"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Ink (body text)",
+        "default": "#16181D"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Muted (secondary text)",
+        "default": "#5D6470"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success",
+        "default": "#1E7F4F"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Error",
+        "default": "#B42318"
+      }
     ]
   },
   {
@@ -67,19 +122,85 @@
         "type": "paragraph",
         "content": "These details appear in the footer, the Visit Us block, contact page and search-engine data. Leave a field empty until the owner confirms it – never guess."
       },
-      { "type": "text", "id": "shop_display_name", "label": "Shop name", "default": "GBG Bargain Shop" },
-      { "type": "text", "id": "legal_entity", "label": "Legal entity name", "info": "[TO CONFIRM] For example \"GBG Retail Ltd\". Shown in the footer copyright line." },
-      { "type": "text", "id": "company_number", "label": "Company number", "info": "[TO CONFIRM] Leave empty if not a limited company." },
-      { "type": "text", "id": "vat_number", "label": "VAT number", "info": "[TO CONFIRM] Leave empty if not VAT-registered." },
-      { "type": "text", "id": "address_line_1", "label": "Address line 1", "default": "Unit M10, Stanley Meat Market" },
-      { "type": "text", "id": "address_line_2", "label": "Address line 2", "default": "Prescot Road" },
-      { "type": "text", "id": "address_city", "label": "Town / city", "default": "Liverpool" },
-      { "type": "text", "id": "address_postcode", "label": "Postcode", "default": "L13 3AS" },
-      { "type": "text", "id": "geo_lat", "label": "Latitude (for search engines)", "info": "[TO CONFIRM] Copy from Google Maps, e.g. 53.4170" },
-      { "type": "text", "id": "geo_lng", "label": "Longitude (for search engines)", "info": "[TO CONFIRM] Copy from Google Maps, e.g. -2.9300" },
-      { "type": "text", "id": "phone", "label": "Telephone (as displayed)", "default": "07344 670317" },
-      { "type": "text", "id": "phone_international", "label": "Telephone (international format, digits only)", "default": "447344670317", "info": "Used for tel: links and WhatsApp." },
-      { "type": "text", "id": "email", "label": "Customer email", "info": "[TO CONFIRM]" },
+      {
+        "type": "text",
+        "id": "shop_display_name",
+        "label": "Shop name",
+        "default": "GBG Bargain Shop"
+      },
+      {
+        "type": "text",
+        "id": "legal_entity",
+        "label": "Legal entity name",
+        "info": "[TO CONFIRM] For example \"GBG Retail Ltd\". Shown in the footer copyright line."
+      },
+      {
+        "type": "text",
+        "id": "company_number",
+        "label": "Company number",
+        "info": "[TO CONFIRM] Leave empty if not a limited company."
+      },
+      {
+        "type": "text",
+        "id": "vat_number",
+        "label": "VAT number",
+        "info": "[TO CONFIRM] Leave empty if not VAT-registered. \"Price includes VAT\" only shows on product pages when this is filled in."
+      },
+      {
+        "type": "text",
+        "id": "address_line_1",
+        "label": "Address line 1",
+        "default": "Unit M10, Stanley Meat Market"
+      },
+      {
+        "type": "text",
+        "id": "address_line_2",
+        "label": "Address line 2",
+        "default": "Prescot Road"
+      },
+      {
+        "type": "text",
+        "id": "address_city",
+        "label": "Town / city",
+        "default": "Liverpool"
+      },
+      {
+        "type": "text",
+        "id": "address_postcode",
+        "label": "Postcode",
+        "default": "L13 3AS"
+      },
+      {
+        "type": "text",
+        "id": "geo_lat",
+        "label": "Latitude (for search engines)",
+        "info": "[TO CONFIRM] Copy from Google Maps, e.g. 53.4170"
+      },
+      {
+        "type": "text",
+        "id": "geo_lng",
+        "label": "Longitude (for search engines)",
+        "info": "[TO CONFIRM] Copy from Google Maps, e.g. -2.9300"
+      },
+      {
+        "type": "text",
+        "id": "phone",
+        "label": "Telephone (as displayed)",
+        "default": "07344 670317"
+      },
+      {
+        "type": "text",
+        "id": "phone_international",
+        "label": "Telephone (international format, digits only)",
+        "default": "447344670317",
+        "info": "Used for tel: links and WhatsApp."
+      },
+      {
+        "type": "text",
+        "id": "email",
+        "label": "Customer email",
+        "info": "[TO CONFIRM]"
+      },
       {
         "type": "textarea",
         "id": "opening_hours",
@@ -92,9 +213,24 @@
         "label": "Opening hours for search engines",
         "info": "Optional. Comma-separated, e.g. Mo-Sa 09:00-17:30, Su 10:00-16:00"
       },
-      { "type": "text", "id": "response_time", "label": "Reply-time promise", "info": "[TO CONFIRM] e.g. We reply within 1 working day." },
-      { "type": "text", "id": "pickup_ready_time", "label": "Collection ready time", "info": "[TO CONFIRM] Must match the pickup setting in Shopify, e.g. Usually ready in 24 hours." },
-      { "type": "url", "id": "directions_url", "label": "Google Maps directions link", "info": "Optional. If empty, a directions link is built from the address." },
+      {
+        "type": "text",
+        "id": "response_time",
+        "label": "Reply-time promise",
+        "info": "[TO CONFIRM] e.g. We reply within 1 working day."
+      },
+      {
+        "type": "text",
+        "id": "pickup_ready_time",
+        "label": "Collection ready time",
+        "info": "[TO CONFIRM] Must match the pickup setting in Shopify, e.g. Usually ready in 24 hours."
+      },
+      {
+        "type": "url",
+        "id": "directions_url",
+        "label": "Google Maps directions link",
+        "info": "Optional. If empty, a directions link is built from the address."
+      },
       {
         "type": "text",
         "id": "map_embed_query",
@@ -106,10 +242,31 @@
   {
     "name": "Social and WhatsApp",
     "settings": [
-      { "type": "checkbox", "id": "whatsapp_enabled", "label": "Show WhatsApp links", "default": false, "info": "Turn on only when the owner confirms the number uses WhatsApp Business." },
-      { "type": "text", "id": "social_instagram", "label": "Instagram URL", "info": "[TO CONFIRM]" },
-      { "type": "text", "id": "social_tiktok", "label": "TikTok URL", "info": "[TO CONFIRM]" },
-      { "type": "text", "id": "social_facebook", "label": "Facebook URL", "info": "[TO CONFIRM]" }
+      {
+        "type": "checkbox",
+        "id": "whatsapp_enabled",
+        "label": "Show WhatsApp links",
+        "default": false,
+        "info": "Turn on only when the owner confirms the number uses WhatsApp Business."
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL",
+        "info": "[TO CONFIRM]"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL",
+        "info": "[TO CONFIRM]"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL",
+        "info": "[TO CONFIRM]"
+      }
     ]
   },
   {
@@ -119,10 +276,32 @@
         "type": "paragraph",
         "content": "Each claim only appears on the site when it is switched on here. Only switch a claim on when it is actually set up in Shopify."
       },
-      { "type": "checkbox", "id": "claim_value", "label": "Great value", "default": true },
-      { "type": "checkbox", "id": "claim_secure_checkout", "label": "Secure checkout", "default": true },
-      { "type": "checkbox", "id": "claim_uk_delivery", "label": "UK delivery", "default": false, "info": "Switch on when delivery zones and rates are live." },
-      { "type": "checkbox", "id": "claim_free_collection", "label": "Free Liverpool collection", "default": false, "info": "Switch on when local pickup is enabled for the Unit M10 location." }
+      {
+        "type": "checkbox",
+        "id": "claim_value",
+        "label": "Great value",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_secure_checkout",
+        "label": "Secure checkout",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_uk_delivery",
+        "label": "UK delivery",
+        "default": false,
+        "info": "Switch on when delivery zones and rates are live. Also controls the delivery notes on product pages and in the basket."
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_free_collection",
+        "label": "Free Liverpool collection",
+        "default": false,
+        "info": "Switch on when local pickup is enabled for the Unit M10 location. Also controls the collection reminder in the basket and the Click & Collect box in Visit Us."
+      }
     ]
   },
   {
@@ -133,8 +312,14 @@
         "id": "cart_type",
         "label": "When something is added to the basket",
         "options": [
-          { "value": "drawer", "label": "Open the basket drawer" },
-          { "value": "page", "label": "Go to the basket page" }
+          {
+            "value": "drawer",
+            "label": "Open the basket drawer"
+          },
+          {
+            "value": "page",
+            "label": "Go to the basket page"
+          }
         ],
         "default": "drawer"
       },
@@ -167,11 +352,55 @@
   {
     "name": "Products",
     "settings": [
-      { "type": "checkbox", "id": "card_show_second_image", "label": "Show second image on hover", "default": true },
-      { "type": "checkbox", "id": "card_quick_add", "label": "Quick add on product cards", "default": true, "info": "Only for products without options." },
-      { "type": "page", "id": "returns_page", "label": "Returns page link (optional)", "info": "If empty, the Shopify refund policy is used." },
-      { "type": "page", "id": "delivery_page", "label": "Delivery page link (optional)", "info": "If empty, the Shopify shipping policy is used." },
-      { "type": "page", "id": "conditions_page", "label": "Condition guide page (optional)", "info": "FAQ page that explains each condition label." }
+      {
+        "type": "checkbox",
+        "id": "card_show_second_image",
+        "label": "Show second image on hover",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_quick_add",
+        "label": "Quick add on product cards",
+        "default": true,
+        "info": "Only for products without options."
+      },
+      {
+        "type": "page",
+        "id": "returns_page",
+        "label": "Returns page link (optional)",
+        "info": "If empty, the Shopify refund policy is used."
+      },
+      {
+        "type": "page",
+        "id": "delivery_page",
+        "label": "Delivery page link (optional)",
+        "info": "If empty, the Shopify shipping policy is used."
+      },
+      {
+        "type": "page",
+        "id": "conditions_page",
+        "label": "Condition guide page (optional)",
+        "info": "FAQ page that explains each condition label."
+      },
+      {
+        "type": "checkbox",
+        "id": "google_returns_info",
+        "label": "Tell Google about the returns window",
+        "default": true,
+        "info": "Adds the return period to product data for Google. UK online orders always have at least 14 days."
+      },
+      {
+        "type": "range",
+        "id": "returns_days",
+        "label": "Returns window (days)",
+        "min": 14,
+        "max": 60,
+        "step": 1,
+        "unit": "d",
+        "default": 14,
+        "info": "Must match the Refund policy. Delivery prices are not sent to Google until rates are confirmed."
+      }
     ]
   },
   {
@@ -184,7 +413,12 @@
         "default": false,
         "info": "Never shown on a visitor's first page. Shown at most once every 30 days and easy to close."
       },
-      { "type": "text", "id": "newsletter_popup_heading", "label": "Heading", "default": "Hear about new bargains first" },
+      {
+        "type": "text",
+        "id": "newsletter_popup_heading",
+        "label": "Heading",
+        "default": "Hear about new bargains first"
+      },
       {
         "type": "textarea",
         "id": "newsletter_popup_text",

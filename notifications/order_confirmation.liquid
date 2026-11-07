@@ -11,7 +11,7 @@
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden;">
         <tr><td style="background:#0B1F3A;padding:20px 28px;border-bottom:4px solid #C9A227;">
-          {%- if shop.email_logo_url -%}
+          {%- if shop.email_logo_url != blank -%}
             <img src="{{ shop.email_logo_url }}" alt="GBG Bargain Shop" width="{{ shop.email_logo_width | default: 150 }}" style="display:block;border:0;max-width:200px;height:auto;">
           {%- else -%}
             <span style="display:inline-block;background:#C9A227;color:#0B1F3A;font:800 20px Arial,sans-serif;padding:6px 8px;border-radius:4px;">GBG</span>
@@ -23,7 +23,7 @@
 <p style="margin:0 0 16px;font-size:16px;line-height:1.55;color:#16181D;">Order <strong>{{ order_name }}</strong> is confirmed.
 {%- if delivery_method == 'pick-up' %} We'll email you when it's ready to collect from our Liverpool shop.{% else %} We'll email you when it's on its way.{% endif -%}</p>
 {%- if delivery_method == 'pick-up' -%}<p style="margin:0 0 16px;padding:14px 16px;background:#F3E7C1;border-left:4px solid #C9A227;border-radius:6px;font-size:15px;line-height:1.5;color:#16181D;"><strong>Collect from:</strong> GBG Bargain Shop, Unit M10, Stanley Meat Market, Prescot Road, Liverpool, L13 3AS.<br>
-Bring your order number <strong>{{ order_name }}</strong> (this email on your phone is fine) and photo ID if someone else is collecting for you. [TO CONFIRM collection rules]</p>{%- endif -%}
+Bring your order number <strong>{{ order_name }}</strong> – this email on your phone is fine. If someone else is collecting for you, give them the order number.</p>{%- endif -%}
 <p style="margin:0 0 24px;"><a href="{{ order_status_url }}" style="display:inline-block;background:#0B1F3A;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:999px;font-size:16px;">View your order</a></p>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 16px;border-top:1px solid #E3E5EA;">

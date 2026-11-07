@@ -81,6 +81,14 @@
   document.addEventListener('click', (e) => {
     if (!e.target.closest('[data-nav-details]')) $$('[data-nav-details][open]').forEach((d) => { d.open = false; });
   });
+  if (window.matchMedia('(hover: hover) and (min-width: 990px)').matches) {
+    $$('[data-nav-details]').forEach((d) => {
+      const item = d.closest('.nav__item') || d;
+      let t;
+      item.addEventListener('mouseenter', () => { clearTimeout(t); t = setTimeout(() => { d.open = true; }, 80); });
+      item.addEventListener('mouseleave', () => { clearTimeout(t); t = setTimeout(() => { d.open = false; }, 200); });
+    });
+  }
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     $$('[data-nav-details][open]').forEach((d) => { d.open = false; d.querySelector('summary').focus(); });
@@ -171,7 +179,9 @@
       const fresh = $('[data-cart-contents]', doc);
       if (!fresh) return;
       $$('[data-cart-contents]').forEach((el) => { el.innerHTML = fresh.innerHTML; el.removeAttribute('aria-busy'); });
-      this.updateCount(parseInt(fresh.dataset.count || '0', 10));
+      const count = parseInt(fresh.dataset.count || '0', 10);
+      this.updateCount(count);
+      $$('.cart-page__continue').forEach((el) => { el.hidden = count === 0; });
     },
     async add(formData) {
       formData.append('sections', 'cart-drawer');
@@ -208,6 +218,9 @@
     },
   };
 
+  const qtyTimers = {};
+  // A Remove (or typed quantity) cancels pending +/− taps, so a removed item can't come back.
+  const clearQtyTimers = () => Object.keys(qtyTimers).forEach((k) => { clearTimeout(qtyTimers[k]); delete qtyTimers[k]; });
   document.addEventListener('click', (e) => {
     const toggle = e.target.closest('[data-cart-toggle]');
     if (toggle && GBG.cartType !== 'page' && !document.body.classList.contains('template-cart')) {
@@ -217,16 +230,24 @@
     }
     const qtyBtn = e.target.closest('[data-qty-change]');
     if (qtyBtn) {
+      // Update the number straight away and send one request once the taps stop,
+      // so fast double taps add up instead of being lost.
       const input = $('input', qtyBtn.closest('[data-qty]'));
-      const next = Math.max(0, parseInt(input.value || '0', 10) + parseInt(qtyBtn.dataset.qtyChange, 10));
-      Cart.change(parseInt(input.dataset.lineInput, 10), next);
+      let next = Math.max(0, parseInt(input.value || '0', 10) + parseInt(qtyBtn.dataset.qtyChange, 10));
+      const max = input.max ? parseInt(input.max, 10) : Infinity;
+      if (next > max) { next = max; announce(`Only ${max} available`); }
+      input.value = next;
+      const line = parseInt(input.dataset.lineInput, 10);
+      clearTimeout(qtyTimers[line]);
+      qtyTimers[line] = setTimeout(() => Cart.change(line, next), 350);
       return;
     }
     const remove = e.target.closest('[data-remove]');
-    if (remove) Cart.change(parseInt(remove.dataset.remove, 10), 0);
+    if (remove) { clearQtyTimers(); Cart.change(parseInt(remove.dataset.remove, 10), 0); }
   });
   document.addEventListener('change', (e) => {
     const input = e.target.closest('[data-line-input]');
+    if (input) clearQtyTimers();
     if (input) Cart.change(parseInt(input.dataset.lineInput, 10), Math.max(0, parseInt(input.value || '0', 10)));
   });
 
@@ -258,7 +279,7 @@
   function initProduct(root) {
     const ac = new AbortController();
     const { signal } = ac;
-    const form = $('[data-product-form]', root);
+    const form = $('[data-product-form]', root) || $('#ProductForm', root);
     const variantsEl = $('[data-variants]', root);
     const variants = variantsEl ? JSON.parse(variantsEl.textContent) : null;
     const idInput = $('[data-variant-id]', root);
@@ -359,7 +380,7 @@
         if (stickyBtn) stickyBtn.tabIndex = show ? 0 : -1;
       };
       window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true, signal });
-      update();
+      requestAnimationFrame(update);
     }
     return ac;
   }
@@ -434,7 +455,11 @@
    * ------------------------------------------------------------------- */
   document.addEventListener('change', (e) => {
     const el = e.target.closest('[data-autosubmit]');
-    if (el) el.form.submit();
+    if (el) { el.form.submit(); return; }
+    // Desktop sidebar (drawer not open as a pop-up): apply a ticked filter straight away.
+    const box = e.target.closest('[data-facets-form] input[type="checkbox"]');
+    const drawer = box && box.closest('dialog');
+    if (box && drawer && !drawer.open && window.matchMedia('(min-width: 990px)').matches) box.form.requestSubmit();
   });
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('[data-load-more]');
@@ -456,7 +481,6 @@
       const nextWrap = $('[data-load-more-wrap]', doc);
       const wrap = btn.closest('[data-load-more-wrap]');
       if (nextWrap) wrap.replaceWith(document.importNode(nextWrap, true)); else wrap.remove();
-      history.replaceState({}, '', btn.href);
       announce(`${items.length} more products loaded`);
       if (firstNew) {
         const link = $(`#${btn.dataset.grid} > li:nth-last-child(${items.length}) a.card__link`);
@@ -544,14 +568,45 @@
     const c = e.target.closest('[data-confirm]');
     if (c && !window.confirm(c.dataset.confirm)) e.preventDefault(); // eslint-disable-line no-alert
     const rec = e.target.closest('[data-show-recover]');
-    if (rec) { const r = $('#Recover'); if (r) { r.style.display = 'block'; $('input', r).focus(); } }
+    if (rec) { const r = $('#recover'); if (r) { r.style.display = 'block'; setTimeout(() => $('input', r).focus(), 50); } } // after the #recover jump
   });
 
   function hideExpiredAnnouncements() {
-    const today = new Date().toISOString().slice(0, 10);
-    $$('.announcement__msg[data-end]').forEach((el) => { if (el.dataset.end < today) el.remove(); });
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    $$('.announcement__msg[data-end]').forEach((el) => { if (/^\d{4}-\d{2}-\d{2}$/.test(el.dataset.end) && el.dataset.end < today) el.remove(); });
     const bar = $('.announcement');
-    if (bar && !$('.announcement__msg', bar)) bar.remove();
+    if (bar && !$('.announcement__msg', bar)) { bar.remove(); return; }
+    initAnnouncementRotation(bar);
+  }
+
+  // Phones show one message at a time: rotate every 6 s; stops for good as soon as the
+  // shopper interacts (tap, focus) or prefers reduced motion. The arrow shows the next one.
+  function initAnnouncementRotation(bar) {
+    if (!bar) return;
+    const msgs = $$('.announcement__msg', bar);
+    const next = $('[data-announcement-next]', bar);
+    if (msgs.length < 2) { bar.classList.remove('announcement--multi'); if (next) next.remove(); return; }
+    if (!msgs.some((m) => m.classList.contains('is-active'))) msgs[0].classList.add('is-active');
+    let i = msgs.findIndex((m) => m.classList.contains('is-active'));
+    const show = (n) => { msgs[i].classList.remove('is-active'); i = (n + msgs.length) % msgs.length; msgs[i].classList.add('is-active'); };
+    let timer = null;
+    const stop = () => { clearInterval(timer); timer = null; };
+    if (next) next.addEventListener('click', () => { stop(); show(i + 1); });
+    bar.addEventListener('focusin', stop);
+    bar.addEventListener('touchstart', stop, { passive: true });
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(max-width: 989px)').matches) {
+      timer = setInterval(() => { if (!document.hidden) show(i + 1); }, 6000);
+    }
+  }
+
+  // Address forms: pre-select the saved country (Shopify outputs the list without a selection).
+  function initCountrySelects() {
+    $$('select[data-default]').forEach((sel) => {
+      const want = sel.dataset.default;
+      const opt = Array.from(sel.options).find((o) => o.value === want || o.textContent.trim() === want);
+      if (opt) sel.value = opt.value;
+    });
   }
 
   function initCookieButton() {
@@ -592,6 +647,7 @@
     $$('[data-product]').forEach(mountProduct);
     initReveal();
     hideExpiredAnnouncements();
+    initCountrySelects();
     initCookieButton();
     initNewsletterPopup();
   }

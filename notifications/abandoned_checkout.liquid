@@ -11,7 +11,7 @@
     <tr><td align="center" style="padding:24px 12px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:10px;overflow:hidden;">
         <tr><td style="background:#0B1F3A;padding:20px 28px;border-bottom:4px solid #C9A227;">
-          {%- if shop.email_logo_url -%}
+          {%- if shop.email_logo_url != blank -%}
             <img src="{{ shop.email_logo_url }}" alt="GBG Bargain Shop" width="{{ shop.email_logo_width | default: 150 }}" style="display:block;border:0;max-width:200px;height:auto;">
           {%- else -%}
             <span style="display:inline-block;background:#C9A227;color:#0B1F3A;font:800 20px Arial,sans-serif;padding:6px 8px;border-radius:4px;">GBG</span>
@@ -38,7 +38,7 @@
 </table>
 
 <p style="margin:0 0 24px;"><a href="{{ url }}" style="display:inline-block;background:#0B1F3A;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:999px;font-size:16px;">Return to your basket</a></p>
-<p style="margin:0;font-size:14px;color:#5D6470;">You're receiving this because you started a checkout and agreed to receive emails. Don't want these? Use the unsubscribe link below.</p>
+<p style="margin:0;font-size:14px;color:#5D6470;">You're receiving this because you started a checkout at GBG Bargain Shop. Questions? Call 07344 670317.</p>
 
         </td></tr>
         <tr><td style="background:#0B1F3A;color:#DCE3EE;padding:22px 28px;font-size:13px;line-height:1.6;">

@@ -13,7 +13,7 @@ We deliberately add no infrastructure the shop does not need – it would only a
 | 3 | Load balancing | **PLATFORM** | Shopify | Shopify storefront and checkout are load-balanced by Shopify. |
 | 4 | Reverse proxies | **PLATFORM** | Shopify / Cloudflare | Shopify fronts all traffic with its edge network. |
 | 5 | API gateways | **PLATFORM** | Shopify Admin API | Admin API is Shopify's gateway; scripts only talk to it. |
-| 6 | CI/CD | **BUILD** | .github/workflows/ci.yml | Theme Check, types, unit tests, Playwright, Lighthouse CI; deploys only to the unpublished preview theme. Live theme is published by hand after sign-off. |
+| 6 | CI/CD | **BUILD** | .github/workflows/ci.yml | Theme Check, types, unit tests, Playwright and Lighthouse CI on every pull request; deploys only to the unpublished preview theme (code only – theme-editor content is never overwritten). Live theme is published by hand after sign-off. |
 | 7 | Docker | **BUILD** | .devcontainer/devcontainer.json | Optional devcontainer (Node 22 + Shopify CLI + Playwright) so scripts run the same everywhere. |
 | 8 | Kubernetes | **NOT NEEDED** | – | No servers to orchestrate: Shopify hosts everything. |
 | 9 | Service discovery | **NOT NEEDED** | – | Only one service (Shopify); nothing to discover. |
@@ -43,7 +43,7 @@ We deliberately add no infrastructure the shop does not need – it would only a
 | 33 | Leader election | **NOT NEEDED** | – | No clustered services. |
 | 34 | CAP theorem | **NOT NEEDED** | – | Shopify treats inventory as strongly consistent at checkout; an item with 0 stock cannot be bought (inventoryPolicy DENY). |
 | 35 | Eventual consistency | **NOT NEEDED** | – | POS and online share one Shopify inventory, which syncs near-instantly. Manual process documented in STAFF_SOP if POS is not used. |
-| 36 | Optimistic locking | **BUILD** | scripts/import-products.ts | Compares product updatedAt with .import-state.json; skips and warns if staff edited it since the last import. |
+| 36 | Optimistic locking | **BUILD** | scripts/import-products.ts | Each import stamps the product with metafield gbg.imported_at; if Shopify updatedAt is later (beyond 2 min) staff edited it, so it is skipped with a warning. Works from any computer or CI. |
 | 37 | Pessimistic locking | **NOT NEEDED** | – | Not needed; optimistic check (#36) is enough for a small team. |
 | 38 | Distributed locks | **NOT NEEDED** | – | Only one person runs scripts at a time (documented). |
 | 39 | Race conditions | **BUILD** | scripts/import-products.ts | Same updatedAt check; stock is only overwritten with --sync-stock so POS sales are not undone. |

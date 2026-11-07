@@ -10,6 +10,52 @@ Severity: **High** = wrong data, money or a broken promise to customers · **Med
 
 ---
 
+
+## Fix status – 2026-11-07 (v1.0.1)
+
+The owner asked to fix **section A (1–25)** and **section C (31–39)**. Section B (26–30) still needs the real store.
+
+| # | Status | What changed · how it was checked |
+|---|---|---|
+| 1 | ✅ Fixed | Prices must use a dot; "12,99" gives a clear error (never £1,299). `1,299.00` still works. Unit tests. |
+| 2 | ✅ Fixed | Up to 3 options (Size, Colour…) validated (missing or repeated combinations) and imported. Simulated-store import checked. |
+| 3 | ✅ Fixed | iPhone HEIC converted with `heic-convert`; tested with two real HEIC files. |
+| 4 | ✅ Fixed | Natural order (IMG_9 before IMG_10). Unit test and real-file run. |
+| 5 | ✅ Fixed | Delivery note (product and basket) needs *UK delivery* on; Visit Us Click & Collect needs *Free Liverpool collection* on. Browser tests with claims on and off. |
+| 6 | ✅ Fixed | CI deploy and the new `npm run theme:push:code` skip `settings_data.json` and template/section-group JSON. |
+| 7 | ✅ Fixed | End date accepts `2026-12-05` or `05/12/2026`; anything else never hides the message, plus an editor note. Liquid unit tests. |
+| 8 | ✅ Fixed | Phones rotate messages every 6 s (stops on touch, focus or reduced motion) with a "next" arrow. Browser test. |
+| 9 | ✅ Fixed | Box uses `#recover` (where Shopify returns) and opens whenever there's a result; the cursor lands in the email field. Browser test. |
+| 10 | ✅ Fixed | Saved country is pre-selected (defaults to United Kingdom). Browser test. |
+| 11 | ✅ Fixed | "Price includes VAT." only shows when a VAT number is filled in. Browser test. |
+| 12 | ✅ Fixed | Misleading unsubscribe sentence removed. Unit test. |
+| 13 | ✅ Fixed | Setup script links only published pages and says to re-run `--only menus` after publishing; the theme also hides links to hidden pages. Simulated run. |
+| 14 | ✅ Fixed | Re-uses the existing location; `--rename-location`, `--location-id`, `--create-location`. Simulated run. |
+| 15 | ✅ Fixed | Deploy follows the repository's default branch; new Lighthouse CI on every pull request (offline preview) – ran locally, passes (performance 99–100, LCP 1.7–1.9 s). |
+| 16 | ✅ Fixed | Search offers only Most relevant and the two price sorts. Also found and fixed a **new bug**: sort labels were cut at ":" ("Price" instead of "Price: low to high"). Browser test. |
+| 17 | ✅ Fixed | Address bar no longer changes to `?page=2`. Browser test. |
+| 18 | ✅ Fixed | "Continue shopping" hides when the basket empties. Browser test. |
+| 19 | ✅ Fixed | Taps update the number at once; one request is sent for the final quantity (respects stock). A Remove straight after a tap cancels the pending tap (found during re-testing). Browser tests. |
+| 20 | ✅ Fixed | Emails use `!= blank` for the logo. Unit test. |
+| 21 | ✅ Fixed | `sizes` uses the real pixel width from settings. |
+| 22 | ✅ Fixed | Dry-run logs say "would be created / WOULD CREATE". |
+| 23 | ✅ Fixed | Desktop dropdowns open on hover (click and keyboard still work). Browser test. |
+| 24 | ⛔ Blocked | GitHub refuses tag pushes from this session (branch pushes work). **Do it on GitHub:** Releases → Draft a new release → tag `v1.0.1` → target `gbg-shopify-theme-v1` → Publish. |
+| 25 | ✅ Fixed | FAQ pricing question removed (owner can add it back when decided); contact answer has no placeholder; emails have no `[TO CONFIRM]`. Draft pages and policies in `content/` keep their placeholders on purpose – they stay hidden until approved. |
+| 31 | ✅ Fixed | Warning (log and "Check" column) for photos under 800 px. |
+| 32 | ✅ Fixed | Wrong capital letters are corrected with a warning; HTML in titles is an error. Unit tests. |
+| 33 | ✅ Fixed | Import stamp stored on each product in Shopify (`gbg.imported_at`); `.import-state.json` no longer used. |
+| 34 | ✅ Fixed | GTIN only for real 8/12/13/14-digit barcodes; returns window (default 14 days, setting) sent to Google. Delivery prices are not sent until rates are confirmed (never invent). |
+| 35 | ✅ Fixed | The collection's real default sort comes first with its real name (e.g. "Best selling"). |
+| 36 | ✅ Fixed | Theme no longer relies on preview-unsupported Liquid (`parentloop`, `nil | json`); the preview form tag passes attributes through; size-picker browser test added. |
+| 37 | ⛔ Needs store | Shopify-admin screenshots can only be taken inside the store – to do during the handover walkthrough. |
+| 38 | ✅ Fixed | Desktop (990 px+): filters are an always-visible sidebar and ticks apply at once; phones keep the drawer. Browser tests. |
+| 39 | ✅ Fixed | Sticky-bar position check deferred to the next frame (no forced layout on load). |
+
+Totals after the fixes: Theme Check 0 errors · 45 unit tests · 107 offline browser tests · Lighthouse CI (pull request) passing.
+
+---
+
 ## A. Not working properly (confirmed by testing or reading the code)
 
 | # | Area | Problem | How found | Severity |

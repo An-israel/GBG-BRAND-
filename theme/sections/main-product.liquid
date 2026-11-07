@@ -69,7 +69,7 @@
         <div class="product__price" data-product-price>
           {%- render 'price', product: product, variant: current_variant, size: 'large' -%}
         </div>
-        {%- if cart.taxes_included -%}<p class="product__tax">Price includes VAT.</p>{%- endif -%}
+        {%- if cart.taxes_included and settings.vat_number != blank -%}<p class="product__tax">Price includes VAT.</p>{%- endif -%}
 
         <div data-product-stock>{%- render 'stock-status', variant: current_variant -%}</div>
 
@@ -81,19 +81,21 @@
           </div>
         {%- endif -%}
 
-        {%- form 'product', product, id: 'ProductForm', class: 'product-form', novalidate: 'novalidate', data-product-form: '' -%}
+        {%- form 'product', product, id: 'ProductForm', class: 'product-form', novalidate: 'novalidate', data-product-form: 'main' -%}
           <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
 
           {%- unless product.has_only_default_variant -%}
             {%- for option in product.options_with_values -%}
+              {%- assign option_index0 = forloop.index0 -%}
+              {%- assign option_position = forloop.index -%}
               <fieldset class="option">
                 <legend class="option__legend">{{ option.name | escape }}: <span data-option-selected="{{ forloop.index0 }}">{{ option.selected_value | escape }}</span></legend>
                 <div class="option__values">
                   {%- for value in option.values -%}
-                    <input type="radio" class="option__input visually-hidden" id="Option-{{ section.id }}-{{ forloop.parentloop.index0 }}-{{ forloop.index0 }}"
-                      name="option{{ forloop.parentloop.index }}" value="{{ value | escape }}" data-option-index="{{ forloop.parentloop.index0 }}"
+                    <input type="radio" class="option__input visually-hidden" id="Option-{{ section.id }}-{{ option_index0 }}-{{ forloop.index0 }}"
+                      name="option{{ option_position }}" value="{{ value | escape }}" data-option-index="{{ option_index0 }}"
                       {% if option.selected_value == value %}checked{% endif %}>
-                    <label class="option__label{% unless value.available %} option__label--unavailable{% endunless %}" for="Option-{{ section.id }}-{{ forloop.parentloop.index0 }}-{{ forloop.index0 }}">
+                    <label class="option__label{% unless value.available %} option__label--unavailable{% endunless %}" for="Option-{{ section.id }}-{{ option_index0 }}-{{ forloop.index0 }}">
                       {{ value | escape }}{% unless value.available %}<span class="visually-hidden"> (sold out)</span>{% endunless %}
                     </label>
                   {%- endfor -%}
@@ -101,7 +103,7 @@
               </fieldset>
             {%- endfor -%}
             <script type="application/json" data-variants>
-              [{%- for v in product.variants -%}{"id":{{ v.id }},"options":{{ v.options | json }},"available":{{ v.available | json }},"price":{{ v.price | json }},"compare_at_price":{{ v.compare_at_price | json }},"price_html":{{ v.price | money | json }},"compare_html":{{ v.compare_at_price | money | json }},"saving_html":{{ v.compare_at_price | minus: v.price | money | json }},"sku":{{ v.sku | json }},"qty":{% if v.inventory_management == 'shopify' %}{{ v.inventory_quantity | json }}{% else %}null{% endif %},"featured_media":{{ v.featured_media.id | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+              [{%- for v in product.variants -%}{"id":{{ v.id }},"options":{{ v.options | json }},"available":{{ v.available | json }},"price":{{ v.price | json }},"compare_at_price":{% if v.compare_at_price %}{{ v.compare_at_price }}{% else %}null{% endif %},"price_html":{{ v.price | money | json }},"compare_html":{{ v.compare_at_price | money | json }},"saving_html":{{ v.compare_at_price | minus: v.price | money | json }},"sku":{{ v.sku | json }},"qty":{% if v.inventory_management == 'shopify' %}{{ v.inventory_quantity | json }}{% else %}null{% endif %},"featured_media":{% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
             </script>
           {%- endunless -%}
 
@@ -119,7 +121,7 @@
         <div class="product__fulfilment">
           {%- if collection_only -%}
             <p class="fulfil fulfil--collection">{% render 'icon', name: 'store' %} <span>{{ settings.collection_only_note | escape }}</span></p>
-          {%- else -%}
+          {%- elsif settings.claim_uk_delivery and settings.product_delivery_note != blank -%}
             <p class="fulfil">{% render 'icon', name: 'truck' %} <span>{{ settings.product_delivery_note | escape }}</span></p>
           {%- endif -%}
           <pickup-availability class="pickup" data-variant-id="{{ current_variant.id }}" data-base-url="{{ routes.root_url }}" {% unless current_variant.available %}hidden{% endunless %}></pickup-availability>

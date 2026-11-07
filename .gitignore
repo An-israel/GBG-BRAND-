@@ -8,7 +8,6 @@ backup/
 photos/
 prepared-images/
 failed_rows.csv
-.import-state.json
 tools/preview/out/
 tools/preview/screens/
 test-results/
