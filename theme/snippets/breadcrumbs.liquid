@@ -18,6 +18,9 @@
     when 'page'
       assign crumbs_names = crumbs_names | append: '|||' | append: page.title
       assign crumbs_urls = crumbs_urls | append: '|||' | append: page.url
+    when 'list-collections'
+      assign crumbs_names = crumbs_names | append: '|||Site map'
+      assign crumbs_urls = crumbs_urls | append: '|||' | append: routes.collections_url
     when 'search'
       assign crumbs_names = crumbs_names | append: '|||Search'
       assign crumbs_urls = crumbs_urls | append: '|||' | append: routes.search_url

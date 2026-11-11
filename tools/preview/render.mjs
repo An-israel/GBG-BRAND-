@@ -88,10 +88,13 @@ function schemaOf(type) {
   return m ? JSON.parse(m[1]) : { settings: [] };
 }
 const defaults = (list = []) => Object.fromEntries(list.filter((s) => 'default' in s).map((s) => [s.id, s.default]));
+// Section settings point at handles; resolve them against the data of the page being
+// rendered (so the "fresh store" scenario only sees its own collections/menus/pages).
+let current = { collections, linklists, pages };
 function resolve(value, def) {
-  if (def && def.type === 'collection' && typeof value === 'string') return collections[value] || null;
-  if (def && def.type === 'link_list' && typeof value === 'string') return linklists[value] || null;
-  if (def && def.type === 'page' && typeof value === 'string') return pages[value] || null;
+  if (def && def.type === 'collection' && typeof value === 'string') return current.collections[value] || null;
+  if (def && def.type === 'link_list' && typeof value === 'string') return current.linklists[value] || null;
+  if (def && def.type === 'page' && typeof value === 'string') return current.pages[value] || null;
   return value;
 }
 function buildSettings(schemaSettings, values) {
@@ -104,13 +107,14 @@ function buildSettings(schemaSettings, values) {
 }
 let sectionIndex = 0;
 async function renderSection(id, data, globals) {
+  current = { collections: globals.collections || collections, linklists: globals.linklists || linklists, pages: globals.pages || pages };
   const schema = schemaOf(data.type);
   const blocks = (data.block_order || []).map((bid) => {
     const b = data.blocks[bid];
     const bs = (schema.blocks || []).find((x) => x.type === b.type) || {};
     const settings = buildSettings(bs.settings, b.settings);
     // Preview-only: fill hero photo slots with sample product images.
-    if (data.type === 'hero' && b.type === 'image' && !settings.image) {
+    if (data.type === 'hero' && b.type === 'image' && !settings.image && !globals.__noHeroMock) {
       const pick = ['handbag', 'trainers', 'watch', 'mug'][data.block_order.indexOf(bid) % 4];
       settings.image = { src: `/preview-images/${pick}.svg`, alt: `Sample ${pick}`, aspect_ratio: 1 };
       settings.price_label = { handbag: '£12.99', trainers: '£15.00', watch: '£11.99', mug: '£2.50' }[pick];
@@ -144,10 +148,13 @@ const settings = buildSettings(allSettingDefs, { ...settingsData.presets.Default
 
 // ---------- pages ----------
 const policies = ['Refund policy', 'Privacy policy', 'Terms of service', 'Shipping policy'].map((t) => ({ title: t, url: `/policies/${t.toLowerCase().replace(/ /g, '-')}` }));
+// Shopify lets themes both loop over `collections` and look one up by handle; an array
+// with named properties behaves the same way in liquidjs.
+const asShopifyList = (obj) => Object.assign(Object.values(obj), obj);
 const base = {
-  settings, collections, linklists, pages,
+  settings, collections: asShopifyList(collections), linklists, pages,
   shop: { name: 'GBG Bargain Shop', url: '/', customer_accounts_enabled: true, enabled_payment_types: ['visa', 'master', 'apple_pay', 'google_pay'], policies, privacy_policy: policies[1], refund_policy: policies[0], shipping_policy: policies[3], description: 'Big bargains. Small prices.' },
-  routes: { root_url: '/', cart_url: '/cart', cart_add_url: '/cart/add', cart_change_url: '/cart/change', search_url: '/search', predictive_search_url: '/search/suggest', product_recommendations_url: '/recommendations/products', all_products_collection_url: '/collections/all', account_url: '/account', account_login_url: '/account/login', account_register_url: '/account/register', account_logout_url: '/account/logout', account_addresses_url: '/account/addresses' },
+  routes: { root_url: '/', cart_url: '/cart', cart_add_url: '/cart/add', cart_change_url: '/cart/change', search_url: '/search', predictive_search_url: '/search/suggest', product_recommendations_url: '/recommendations/products', all_products_collection_url: '/collections/all', account_url: '/account', account_login_url: '/account/login', account_register_url: '/account/register', account_logout_url: '/account/logout', account_addresses_url: '/account/addresses', collections_url: '/collections' },
   cart: { item_count: 0, items: [], total_price: 0, currency: { iso_code: 'GBP' }, taxes_included: true, cart_level_discount_applications: [] },
   canonical_url: 'https://www.gbgbargainshop.co.uk/', current_page: 1, current_tags: null, customer: null,
   content_for_header: '', all_country_option_tags: '',
@@ -197,4 +204,26 @@ await renderTemplate('customers/login', { ...req('customers/login'), page_title:
   const results = products.slice(0, 6).map((p) => ({ ...p, object_type: 'product' }));
   const search = { performed: true, terms: 'bag', results_count: results.length, results, sort_by: 'relevance', default_sort_by: 'relevance', filters: collections.all.filters };
   await renderTemplate('search', { ...req('search'), search, page_title: 'Search: bag' }, 'search-results.html');
+}
+
+// Site map (/collections)
+await renderTemplate('list-collections', { ...req('list-collections'), page_title: 'Site map' }, 'sitemap.html');
+
+// ---------- "Fresh store" scenario: what the client sees right after uploading the theme ----------
+// Old DBS menus and collections still in the store, none of the GBG collections, no new pages,
+// no photos uploaded in the theme editor.
+{
+  const p = products.slice(0, 8);
+  const mk = (handle, title, prods) => ({ ...collections.all, handle, title, url: `/collections/${handle}`, products: prods, products_count: prods.length, all_products_count: prods.length, featured_image: null, description: '' });
+  const fresh = asShopifyList({
+    all: mk('all', 'All products', p),
+    'dbs-summer-picks': mk('dbs-summer-picks', 'Handbags', p.slice(0, 3)),
+    'footwear': mk('footwear', 'Footwear', p.slice(3, 5)),
+    'old-empty-collection': mk('old-empty-collection', 'Old empty collection', []),
+    'gifts': mk('gifts', 'Gifts & jewellery', p.slice(5, 8)),
+  });
+  const dbsMenu = { links: [{ title: 'DBS Home', url: '/', type: 'frontpage_link', links: [] }, { title: 'DBS Sale', url: '/collections/dbs-sale', type: 'collection_link', object: { products_count: 0 }, links: [] }] };
+  const freshGlobals = { collections: fresh, pages: {}, linklists: { 'main-menu': dbsMenu, footer: dbsMenu, 'footer-shop': dbsMenu } };
+  await renderTemplate('index', { ...req('index'), ...freshGlobals, page_title: 'GBG Bargain Shop', __noHeroMock: true }, 'fresh-index.html');
+  await renderTemplate('list-collections', { ...req('list-collections'), ...freshGlobals, page_title: 'Site map' }, 'fresh-sitemap.html');
 }

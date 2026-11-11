@@ -1,11 +1,17 @@
 {%- liquid
-  assign menu = section.settings.menu
   assign cart_url = routes.cart_url
 -%}
+{%- comment -%}
+  Navigation comes from snippets/nav-tree.liquid (one list for the top menu, phone
+  menu, quick links, footer and site map). By default it is the built-in GBG menu,
+  which never shows the store's old menus, empty collections or missing pages.
+{%- endcomment -%}
+{%- capture nav_raw -%}{%- render 'nav-tree', source: section.settings.nav_source, menu: section.settings.menu -%}{%- endcapture -%}
+{%- assign nav_rows = nav_raw | strip | remove_first: '^^' | split: '^^' -%}
 <header class="header" data-header>
   <div class="container header__row">
-    <button type="button" class="icon-button header__menu-btn" aria-label="Open menu" aria-haspopup="dialog" aria-controls="MenuSheet" data-open-dialog="MenuSheet">
-      {%- render 'icon', name: 'menu' -%}
+    <button type="button" class="header__menu-btn" aria-label="Open menu" aria-haspopup="dialog" aria-controls="MenuSheet" data-open-dialog="MenuSheet">
+      {%- render 'icon', name: 'menu' -%}<span class="header__menu-label" aria-hidden="true">Menu</span>
     </button>
 
     <div class="header__logo">
@@ -53,44 +59,96 @@
     </div>
   </div>
 
-  {%- if menu != blank -%}
-    <nav class="header__nav" aria-label="Main">
-      <ul class="container nav" role="list">
-        {%- for link in menu.links -%}
-          {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
-          {%- if link.type == 'page_link' and link.object == blank -%}{%- continue -%}{%- endif -%}
-          {%- if link.links.size > 0 -%}
-            {%- assign has_grandchildren = false -%}
-            {%- for child in link.links -%}{%- if child.links.size > 0 -%}{%- assign has_grandchildren = true -%}{%- endif -%}{%- endfor -%}
-            <li class="nav__item nav__item--parent">
-              <details class="nav__details" data-nav-details>
-                <summary class="nav__link{% if link.child_active or link.active %} nav__link--active{% endif %}">{{ link.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
-                <div class="nav__panel{% if has_grandchildren %} nav__panel--mega{% endif %}">
-                  <ul class="{% if has_grandchildren %}container mega{% else %}dropdown{% endif %}" role="list">
-                    {%- for child in link.links -%}
-                      {%- if child.type == 'collection_link' and child.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
-          {%- if child.type == 'page_link' and child.object == blank -%}{%- continue -%}{%- endif -%}
-                      <li class="{% if has_grandchildren %}mega__col{% else %}dropdown__item{% endif %}">
-                        <a href="{{ child.url }}" class="{% if has_grandchildren %}mega__heading{% else %}dropdown__link{% endif %}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title | escape }}</a>
-                        {%- if child.links.size > 0 -%}
-                          <ul class="mega__list" role="list">
-                            {%- for grandchild in child.links -%}
-                              {%- if grandchild.type == 'collection_link' and grandchild.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
-          {%- if grandchild.type == 'page_link' and grandchild.object == blank -%}{%- continue -%}{%- endif -%}
-                              <li><a href="{{ grandchild.url }}" class="mega__link"{% if grandchild.current %} aria-current="page"{% endif %}>{{ grandchild.title | escape }}</a></li>
-                            {%- endfor -%}
-                          </ul>
+  {%- comment -%} ---------- Computer: top menu ---------- {%- endcomment -%}
+  <nav class="header__nav" aria-label="Main">
+    <ul class="container nav" role="list">
+      {%- for row in nav_rows -%}
+        {%- assign f = row | split: '~~' -%}
+        {%- if f[0] != '1' -%}{%- continue -%}{%- endif -%}
+        {%- liquid
+          assign kids = 0
+          assign mega = false
+          for r2 in nav_rows offset: forloop.index
+            assign g = r2 | split: '~~'
+            if g[0] == '1'
+              break
+            endif
+            assign kids = kids | plus: 1
+            if g[0] == '3'
+              assign mega = true
+            endif
+          endfor
+          assign is_active = false
+          if request.path == f[3] or request.path contains f[3] and f[3] != '/'
+            assign is_active = true
+          endif
+        -%}
+        {%- if kids > 0 -%}
+          <li class="nav__item nav__item--parent">
+            <details class="nav__details" data-nav-details>
+              <summary class="nav__link{% if f[4] == 'promo' %} nav__link--promo{% endif %}">{{ f[2] | escape }} {% render 'icon', name: 'chevron' %}</summary>
+              <div class="nav__panel{% if mega %} nav__panel--mega{% endif %}">
+                {%- if mega -%}
+                  <div class="container mega-wrap">
+                    <ul class="mega" role="list">
+                      {%- assign base = forloop.index -%}
+                      {%- for r2 in nav_rows offset: base -%}
+                        {%- assign g = r2 | split: '~~' -%}
+                        {%- if g[0] == '1' -%}{%- break -%}{%- endif -%}
+                        {%- if g[0] != '2' -%}{%- continue -%}{%- endif -%}
+                        {%- if g[4] == 'all' -%}
+                          <li class="mega__col mega__col--all"><a href="{{ g[3] }}" class="mega__all">{{ g[2] | escape }} {% render 'icon', name: 'arrow' %}</a></li>
+                        {%- else -%}
+                          {%- assign sub_offset = base | plus: forloop.index -%}
+                          <li class="mega__col">
+                            <a href="{{ g[3] }}" class="mega__heading">{{ g[2] | escape }}</a>
+                            <ul class="mega__list" role="list">
+                              {%- for r3 in nav_rows offset: sub_offset -%}
+                                {%- assign h = r3 | split: '~~' -%}
+                                {%- if h[0] != '3' -%}{%- break -%}{%- endif -%}
+                                <li><a href="{{ h[3] }}" class="mega__link">{{ h[2] | escape }}</a></li>
+                              {%- endfor -%}
+                            </ul>
+                          </li>
                         {%- endif -%}
-                      </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- else -%}
+                  <ul class="dropdown" role="list">
+                    {%- for r2 in nav_rows offset: forloop.index -%}
+                      {%- assign g = r2 | split: '~~' -%}
+                      {%- if g[0] == '1' -%}{%- break -%}{%- endif -%}
+                      <li class="dropdown__item"><a href="{{ g[3] }}" class="dropdown__link">{{ g[2] | escape }}</a></li>
                     {%- endfor -%}
                   </ul>
-                </div>
-              </details>
-            </li>
-          {%- else -%}
-            <li class="nav__item">
-              <a href="{{ link.url }}" class="nav__link{% if link.active %} nav__link--active{% endif %}{% if link.handle contains 'clearance' %} nav__link--promo{% endif %}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
-            </li>
+                {%- endif -%}
+              </div>
+            </details>
+          </li>
+        {%- else -%}
+          <li class="nav__item">
+            <a href="{{ f[3] }}" class="nav__link{% if f[4] == 'promo' %} nav__link--promo{% endif %}{% if is_active %} nav__link--active{% endif %}"{% if is_active %} aria-current="page"{% endif %}>{{ f[2] | escape }}</a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </nav>
+
+  {%- comment -%} ---------- Phone: quick links under the search bar ---------- {%- endcomment -%}
+  {%- if section.settings.show_quick_links -%}
+    <nav class="quick-links" aria-label="Quick links">
+      <ul class="quick-links__list" role="list">
+        {%- for row in nav_rows -%}
+          {%- assign f = row | split: '~~' -%}
+          {%- if f[0] == '1' and f[1] != 'shop' and f[1] != 'help' -%}
+            <li><a href="{{ f[3] }}" class="quick-links__chip{% if f[4] == 'promo' %} quick-links__chip--promo{% endif %}">{{ f[2] | escape }}</a></li>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- for row in nav_rows -%}
+          {%- assign f = row | split: '~~' -%}
+          {%- if f[0] == '2' and f[1] == 'shop' and f[4] != 'all' -%}
+            <li><a href="{{ f[3] }}" class="quick-links__chip">{{ f[2] | escape }}</a></li>
           {%- endif -%}
         {%- endfor -%}
       </ul>
@@ -98,7 +156,7 @@
   {%- endif -%}
 </header>
 
-{%- comment -%} Mobile bottom-sheet menu {%- endcomment -%}
+{%- comment -%} ---------- Phone menu (bottom sheet) ---------- {%- endcomment -%}
 <dialog class="sheet" id="MenuSheet" aria-label="Menu" data-menu-sheet>
   <div class="sheet__inner">
     <div class="sheet__handle" aria-hidden="true"></div>
@@ -106,46 +164,82 @@
       <p class="sheet__title">Menu</p>
       <button type="button" class="icon-button" data-close-dialog aria-label="Close menu">{% render 'icon', name: 'close' %}</button>
     </div>
-    {%- if menu != blank -%}
+    <div class="sheet__scroll">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="sheet__search">
+        <label for="SheetSearch" class="visually-hidden">Search products</label>
+        <input id="SheetSearch" class="input" type="search" name="q" placeholder="{{ section.settings.search_placeholder | escape }}">
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="submit" class="search-form__btn" aria-label="Search">{% render 'icon', name: 'search' %}</button>
+      </form>
+
+      {%- comment -%} Highlights first: New in / Deals / Visit us as big buttons {%- endcomment -%}
+      <ul class="sheet__highlights" role="list">
+        {%- for row in nav_rows -%}
+          {%- assign f = row | split: '~~' -%}
+          {%- if f[0] == '1' and f[1] != 'shop' and f[1] != 'help' -%}
+            <li><a href="{{ f[3] }}" class="sheet__highlight{% if f[4] == 'promo' %} sheet__highlight--promo{% endif %}">
+              {%- case f[1] -%}
+                {%- when 'visit' -%}{% render 'icon', name: 'pin' %}
+                {%- when 'deals' -%}{% render 'icon', name: 'tag' %}
+                {%- when 'new' -%}{% render 'icon', name: 'plus' %}
+                {%- else -%}{% render 'icon', name: 'arrow' %}
+              {%- endcase -%}
+              <span>{{ f[2] | escape }}</span></a></li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+
+      <p class="sheet__heading">Shop by category</p>
       <ul class="sheet__list" role="list">
-        {%- for link in menu.links -%}
-          {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
-          {%- if link.type == 'page_link' and link.object == blank -%}{%- continue -%}{%- endif -%}
+        {%- for row in nav_rows -%}
+          {%- assign f = row | split: '~~' -%}
+          {%- unless f[0] == '2' and f[1] == 'shop' -%}{%- continue -%}{%- endunless -%}
+          {%- liquid
+            assign subs = 0
+            for r2 in nav_rows offset: forloop.index
+              assign g = r2 | split: '~~'
+              if g[0] != '3'
+                break
+              endif
+              assign subs = subs | plus: 1
+            endfor
+          -%}
           <li>
-            {%- if link.links.size > 0 -%}
+            {%- if subs > 0 -%}
               <details class="sheet__details">
-                <summary class="sheet__link">{{ link.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
+                <summary class="sheet__link">{{ f[2] | escape }} {% render 'icon', name: 'chevron' %}</summary>
                 <ul class="sheet__sublist" role="list">
-                  {%- for child in link.links -%}
-                    {%- if child.type == 'collection_link' and child.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
-          {%- if child.type == 'page_link' and child.object == blank -%}{%- continue -%}{%- endif -%}
-                    <li>
-                      {%- if child.links.size > 0 -%}
-                        <details class="sheet__details">
-                          <summary class="sheet__sublink">{{ child.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
-                          <ul class="sheet__sublist" role="list">
-                            <li><a class="sheet__sublink" href="{{ child.url }}">All {{ child.title | escape }}</a></li>
-                            {%- for grandchild in child.links -%}
-                              {%- if grandchild.type == 'collection_link' and grandchild.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
-          {%- if grandchild.type == 'page_link' and grandchild.object == blank -%}{%- continue -%}{%- endif -%}
-                              <li><a class="sheet__sublink" href="{{ grandchild.url }}">{{ grandchild.title | escape }}</a></li>
-                            {%- endfor -%}
-                          </ul>
-                        </details>
-                      {%- else -%}
-                        <a class="sheet__sublink" href="{{ child.url }}">{{ child.title | escape }}</a>
-                      {%- endif -%}
-                    </li>
+                  <li><a class="sheet__sublink sheet__sublink--all" href="{{ f[3] }}">All {{ f[2] | escape }}</a></li>
+                  {%- for r2 in nav_rows offset: forloop.index -%}
+                    {%- assign g = r2 | split: '~~' -%}
+                    {%- if g[0] != '3' -%}{%- break -%}{%- endif -%}
+                    <li><a class="sheet__sublink" href="{{ g[3] }}">{{ g[2] | escape }}</a></li>
                   {%- endfor -%}
                 </ul>
               </details>
             {%- else -%}
-              <a class="sheet__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+              <a class="sheet__link{% if f[4] == 'all' %} sheet__link--all{% endif %}" href="{{ f[3] }}">{{ f[2] | escape }} {% render 'icon', name: 'arrow' %}</a>
             {%- endif -%}
           </li>
         {%- endfor -%}
       </ul>
-    {%- endif -%}
+
+      {%- comment -%} Other menus with items inside (Deals list, Help, or a Shopify menu) {%- endcomment -%}
+      {%- for row in nav_rows -%}
+        {%- assign f = row | split: '~~' -%}
+        {%- if f[0] != '1' or f[1] == 'shop' -%}{%- continue -%}{%- endif -%}
+        {%- assign next = nav_rows[forloop.index] | split: '~~' -%}
+        {%- if next[0] != '2' -%}{%- continue -%}{%- endif -%}
+        <p class="sheet__heading">{{ f[2] | escape }}</p>
+        <ul class="sheet__list" role="list">
+          {%- for r2 in nav_rows offset: forloop.index -%}
+            {%- assign g = r2 | split: '~~' -%}
+            {%- if g[0] == '1' -%}{%- break -%}{%- endif -%}
+            {%- if g[0] == '2' -%}<li><a class="sheet__link sheet__link--small" href="{{ g[3] }}">{{ g[2] | escape }}</a></li>{%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endfor -%}
+    </div>
     <div class="sheet__footer">
       <a href="tel:+{{ settings.phone_international }}" class="sheet__contact">{% render 'icon', name: 'phone' %} {{ settings.phone | escape }}</a>
       {%- if settings.whatsapp_enabled -%}
@@ -164,17 +258,37 @@
   "class": "section-header",
   "settings": [
     {
+      "type": "select",
+      "id": "nav_source",
+      "label": "Menu",
+      "options": [
+        { "value": "gbg", "label": "Built-in GBG menu (recommended)" },
+        { "value": "shopify", "label": "A Shopify menu (choose below)" }
+      ],
+      "default": "gbg",
+      "info": "The built-in menu is: Shop (all categories), New in, Deals, Visit us, Help. It only shows categories that have products and pages that exist, and updates itself."
+    },
+    {
       "type": "link_list",
       "id": "menu",
-      "label": "Menu",
-      "default": "main-menu",
-      "info": "Collections with no products are hidden automatically."
+      "label": "Shopify menu",
+      "info": "Only used when Menu is set to \"A Shopify menu\". Edit it in Online Store → Navigation."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_links",
+      "label": "Show quick links under the search bar on phones",
+      "default": true
     },
     {
       "type": "text",
       "id": "search_placeholder",
       "label": "Search placeholder",
       "default": "Search bags, shoes, homeware…"
+    },
+    {
+      "type": "paragraph",
+      "content": "The logo is changed in Theme settings (gear icon, bottom left) → Brand and logo."
     }
   ]
 }

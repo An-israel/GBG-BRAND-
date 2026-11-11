@@ -8,10 +8,8 @@
 {%- capture messages -%}
   {%- for block in section.blocks -%}
     {%- liquid
-      comment
-        End date: accepts YYYY-MM-DD (2026-12-05) or UK DD/MM/YYYY (05/12/2026).
-        Anything else is ignored (the message stays visible) and flagged in the editor.
-      endcomment
+      # End date: accepts YYYY-MM-DD (2026-12-05) or UK DD/MM/YYYY (05/12/2026).
+      # Anything else is ignored (the message stays visible) and flagged in the editor.
       assign end_raw = block.settings.end_date | strip
       assign end_iso = ''
       if end_raw != blank
@@ -44,8 +42,21 @@
     {%- endif -%}
     {%- if block.settings.text != blank and expired == false -%}
       <p class="announcement__msg{% if shown == 0 %} is-active{% endif %}" {{ block.shopify_attributes }}{% if end_iso != blank %} data-end="{{ end_iso }}"{% endif %}>
-        {%- if block.settings.link != blank -%}
-          <a href="{{ block.settings.link }}">{{ block.settings.text | escape }} {% render 'icon', name: 'arrow' %}</a>
+        {%- liquid
+          assign msg_link = block.settings.link
+          if msg_link contains '/pages/'
+            assign page_handle = msg_link | split: '/pages/' | last | split: '?' | first | split: '#' | first
+            if pages[page_handle].url == blank
+              if page_handle == 'visit-our-shop'
+                assign msg_link = routes.root_url | append: '#visit'
+              else
+                assign msg_link = ''
+              endif
+            endif
+          endif
+        -%}
+        {%- if msg_link != blank -%}
+          <a href="{{ msg_link }}">{{ block.settings.text | escape }} {% render 'icon', name: 'arrow' %}</a>
         {%- else -%}
           {{ block.settings.text | escape }}
         {%- endif -%}

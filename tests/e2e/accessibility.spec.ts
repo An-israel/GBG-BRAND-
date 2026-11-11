@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => unlockStorefront(page));
 
 const pages = LIVE
   ? ['/', '/collections/all', '/cart', '/search?q=bag', '/pages/visit-our-shop', '/pages/contact']
-  : ['/index', '/collection', '/product', '/product-variants', '/cart-full', '/search-empty', '/visit', '/faq', '/contact', '/404'];
+  : ['/index', '/fresh-index', '/sitemap', '/collection', '/product', '/product-variants', '/cart-full', '/search-empty', '/visit', '/faq', '/contact', '/404'];
 
 for (const p of pages) {
   test(`WCAG 2.2 AA – ${p}`, async ({ page }) => {

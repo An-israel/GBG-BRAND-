@@ -9,13 +9,15 @@
           "type": "menu",
           "settings": {
             "heading": "Shop",
+            "source": "shop",
             "menu": "footer-shop"
           }
         },
         "menu-help": {
           "type": "menu",
           "settings": {
-            "heading": "Customer care",
+            "heading": "Help & information",
+            "source": "help",
             "menu": "footer"
           }
         },

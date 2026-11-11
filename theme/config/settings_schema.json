@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "GBG Bargain Shop",
-    "theme_version": "1.0.1",
+    "theme_version": "1.1.0",
     "theme_author": "GBG Bargain Shop",
     "theme_documentation_url": "https://www.gbgbargainshop.co.uk",
     "theme_support_url": "https://www.gbgbargainshop.co.uk/pages/contact"
@@ -352,6 +352,23 @@
   {
     "name": "Products",
     "settings": [
+      {
+        "type": "select",
+        "id": "image_fit",
+        "label": "Product photos in grids and tiles",
+        "options": [
+          {
+            "value": "cover",
+            "label": "Fill the square (best for phone photos)"
+          },
+          {
+            "value": "contain",
+            "label": "Show the whole item on white (best for white-background photos)"
+          }
+        ],
+        "default": "cover",
+        "info": "Product pages always show the whole photo, with zoom."
+      },
       {
         "type": "checkbox",
         "id": "card_show_second_image",

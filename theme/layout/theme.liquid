@@ -61,7 +61,7 @@
     {%- endif -%}
   </head>
 
-  <body class="template-{{ request.page_type | handle }}">
+  <body class="template-{{ request.page_type | handle }} img-fit-{{ settings.image_fit | default: 'cover' }}">
     <a class="skip-link" href="#MainContent">Skip to content</a>
 
     {% sections 'header-group' %}

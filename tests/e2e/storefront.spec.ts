@@ -38,7 +38,7 @@ test('mobile menu opens as a bottom sheet and closes', async ({ page, isMobile }
   await page.getByRole('button', { name: 'Open menu' }).click();
   const sheet = page.locator('#MenuSheet');
   await expect(sheet).toBeVisible();
-  await expect(sheet.getByRole('link', { name: 'New Arrivals' })).toBeVisible();
+  await expect(sheet.getByRole('link', { name: 'New in' })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(sheet).toBeHidden();
 });

@@ -3,17 +3,53 @@
   The first image is preloaded (LCP) with fetchpriority="high".
 {%- endcomment -%}
 {%- liquid
-  assign image_ids = ''
+  # Photos: the owner's uploaded "Product photo" blocks come first. Any empty slots
+  # (up to 4) are filled automatically with real in-stock products from the chosen
+  # collection, each linking to the product with its real price. So the hero is never
+  # empty, and never shows stock photos.
+  assign uploaded = 0
   for block in section.blocks
-    if block.type == 'image'
-      if block.settings.image != blank or request.design_mode
-        assign image_ids = image_ids | append: block.id | append: ','
-      endif
+    if block.type == 'image' and block.settings.image != blank
+      assign uploaded = uploaded | plus: 1
     endif
   endfor
-  assign image_id_list = image_ids | split: ','
-  assign images = section.blocks | where: 'type', 'image'
-  assign image_count = image_id_list.size
+  assign need = 4 | minus: uploaded
+  if section.settings.fill_collection != blank
+    assign fill_src = section.settings.fill_collection
+  else
+    assign fill_src = collections.all
+  endif
+  assign auto_ids = ''
+  assign auto_count = 0
+  if section.settings.auto_fill and need > 0
+    for p in fill_src.products limit: 30
+      if p.featured_media and p.available
+        assign auto_ids = auto_ids | append: p.id | append: ','
+        assign auto_count = auto_count | plus: 1
+        if auto_count >= need
+          break
+        endif
+      endif
+    endfor
+  endif
+  assign image_count = uploaded | plus: auto_count
+  assign show_placeholders = false
+  if image_count == 0 and request.design_mode
+    assign show_placeholders = true
+    assign image_count = 4
+  endif
+  assign visit_url = routes.root_url | append: '#visit'
+  if pages['visit-our-shop'].url != blank
+    assign visit_url = pages['visit-our-shop'].url
+  endif
+  # The second button falls back to the Visit us block on the home page when its page doesn't exist yet
+  assign button_2_url = section.settings.button_2_link | default: visit_url
+  if button_2_url contains '/pages/'
+    assign b2_handle = button_2_url | split: '/pages/' | last | split: '?' | first | split: '#' | first
+    if pages[b2_handle].url == blank
+      assign button_2_url = visit_url
+    endif
+  endif
 -%}
 <section class="hero{% if section.settings.show_stripe %} hero--stripe{% endif %}{% if image_count == 0 %} hero--text-only{% endif %}" aria-labelledby="HeroHeading-{{ section.id }}">
   <div class="container hero__grid">
@@ -30,7 +66,7 @@
           <a href="{{ section.settings.button_1_link | default: routes.all_products_collection_url }}" class="button button--yellow button--large">{{ section.settings.button_1_label | escape }}</a>
         {%- endif -%}
         {%- if section.settings.button_2_label != blank -%}
-          <a href="{{ section.settings.button_2_link | default: '/pages/visit-our-shop' }}" class="button button--ghost button--large">{% render 'icon', name: 'pin' %} {{ section.settings.button_2_label | escape }}</a>
+          <a href="{{ button_2_url }}" class="button button--ghost button--large">{% render 'icon', name: 'pin' %} {{ section.settings.button_2_label | escape }}</a>
         {%- endif -%}
       </div>
     </div>
@@ -38,8 +74,9 @@
     {%- if image_count > 0 -%}
     {%- assign shown = 0 -%}
     <div class="hero__collage hero__collage--{{ image_count | at_most: 4 }}">
-      {%- for block in images -%}
-        {%- unless image_id_list contains block.id -%}{%- continue -%}{%- endunless -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type != 'image' -%}{%- continue -%}{%- endif -%}
+        {%- if block.settings.image == blank and show_placeholders == false -%}{%- continue -%}{%- endif -%}
         {%- assign shown = shown | plus: 1 -%}
         <figure class="hero__tile" {{ block.shopify_attributes }}>
           {%- if block.settings.image != blank -%}
@@ -64,12 +101,45 @@
             {%- endif -%}
           {%- else -%}
             {{ 'product-' | append: shown | placeholder_svg_tag: 'hero__img placeholder-svg' }}
+            <figcaption class="placeholder-note hero__hint">Click "Product photo" on the left to add a photo – or leave it and products fill in automatically.</figcaption>
           {%- endif -%}
-          {%- if block.settings.price_label != blank -%}
+          {%- if block.settings.price_label != blank and block.settings.image != blank -%}
             <figcaption class="hero__price-tag">{{ block.settings.price_label | escape }}</figcaption>
           {%- endif -%}
         </figure>
       {%- endfor -%}
+      {%- if auto_count > 0 -%}
+        {%- for p in fill_src.products limit: 30 -%}
+          {%- assign pid = p.id | append: ',' -%}
+          {%- assign key = ',' | append: pid -%}
+          {%- assign hay = ',' | append: auto_ids -%}
+          {%- unless hay contains key -%}{%- continue -%}{%- endunless -%}
+          {%- assign shown = shown | plus: 1 -%}
+          <a href="{{ p.url }}" class="hero__tile hero__tile--product">
+            {%- if shown == 1 -%}
+              {{ p.featured_media.preview_image | image_url: width: 1200 | image_tag:
+                widths: '300, 400, 600, 800, 1000, 1200',
+                sizes: '(min-width: 990px) 34vw, 62vw',
+                loading: 'eager',
+                fetchpriority: 'high',
+                preload: true,
+                alt: p.featured_media.alt | default: p.title,
+                class: 'hero__img'
+              }}
+            {%- else -%}
+              {{ p.featured_media.preview_image | image_url: width: 800 | image_tag:
+                widths: '200, 300, 400, 600, 800',
+                sizes: '(min-width: 990px) 17vw, 32vw',
+                loading: 'lazy',
+                alt: p.featured_media.alt | default: p.title,
+                class: 'hero__img'
+              }}
+            {%- endif -%}
+            <span class="hero__price-tag">{{ p.price | money }}</span>
+            <span class="visually-hidden">{{ p.title | escape }}</span>
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
     </div>
     {%- endif -%}
   </div>
@@ -92,7 +162,11 @@
     { "type": "url", "id": "button_1_link", "label": "First button link" },
     { "type": "text", "id": "button_2_label", "label": "Second button label", "default": "Visit Our Shop" },
     { "type": "url", "id": "button_2_link", "label": "Second button link" },
-    { "type": "checkbox", "id": "show_stripe", "label": "Show bargain stripe", "default": true }
+    { "type": "checkbox", "id": "show_stripe", "label": "Show bargain stripe", "default": true },
+    { "type": "header", "content": "Photos" },
+    { "type": "paragraph", "content": "To add your own photo: click a \"Product photo\" block in the list on the left, then \"Select image\". Empty slots fill themselves with real products (with their real price) when the option below is on." },
+    { "type": "checkbox", "id": "auto_fill", "label": "Fill empty photo slots with products from the shop", "default": true },
+    { "type": "collection", "id": "fill_collection", "label": "Take those products from", "info": "Leave empty to use all products (newest first if the shop's default order is newest)." }
   ],
   "max_blocks": 4,
   "blocks": [

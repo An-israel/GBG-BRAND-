@@ -2,6 +2,22 @@
 
 All notable changes to the GBG Bargain Shop theme and scripts. Versions follow semantic versioning; each release is tagged `vX.Y.Z`.
 
+## [1.1.0] – 2026-11-11
+Client feedback: the navigation and site map were hard to understand; pictures didn't show.
+### Changed
+- **Built-in GBG menu** (default): Shop · New in · Deals · Visit us · Help. Built from the shop's collections and pages, so it never shows the store's old DBS menus, empty collections or missing pages. One source (`snippets/nav-tree.liquid`) feeds the computer menu, phone menu, quick links, footer and site map. A Shopify menu can still be chosen in the Header settings.
+- Computer: "Shop" mega menu with every category and sub-category plus an "All products" button; "Deals" in yellow.
+- Phone: labelled MENU button; menu with search, big New in / Deals / Visit us buttons and "Shop by category"; quick-link chips under the search bar; compact contact row.
+- **Site map** at `/collections` (exists on every store), linked from Help and the footer.
+- Footer columns use the built-in lists (Shop, Help & information).
+### Fixed
+- Hero photo slots fill themselves with real in-stock products (real price, links to the product) until photos are uploaded.
+- Category tiles and "Today's finds" fall back to the shop's real collections and products; tiles use a product photo when a collection has no image.
+- "Visit Our Shop" buttons and announcement links go to the Visit us block on the home page until the page exists.
+- New setting: product photos fill the square (best for phone photos) or show the whole item on white.
+- Editor hints: where to add hero photos and where the logo is set.
+- Open-menu arrow no longer flips icons inside the menu.
+
 ## [1.0.1] – 2026-11-07
 Fixes from `docs/INSPECTION_REPORT.md` (sections A and C).
 ### Fixed

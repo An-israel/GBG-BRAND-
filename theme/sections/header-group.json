@@ -14,16 +14,23 @@
           }
         }
       },
-      "block_order": ["message-1"],
+      "block_order": [
+        "message-1"
+      ],
       "settings": {}
     },
     "header": {
       "type": "header",
       "settings": {
+        "nav_source": "gbg",
         "menu": "main-menu",
+        "show_quick_links": true,
         "search_placeholder": "Search bags, shoes, homeware…"
       }
     }
   },
-  "order": ["announcement", "header"]
+  "order": [
+    "announcement",
+    "header"
+  ]
 }

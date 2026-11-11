@@ -19,7 +19,7 @@ This repository contains everything needed to turn the existing Shopify store in
 | `tools/preview/` | Offline design preview: renders the real theme with sample data for screenshots |
 | `docs/` | Install guide, owner guide, staff SOP, setup checklist, engineering checklist (111 items), runbook, acceptance tests, handover |
 
-**Start here →** [`docs/INSTALL_ON_SHOPIFY.md`](docs/INSTALL_ON_SHOPIFY.md) · Owner questions → [`docs/TO_CONFIRM.md`](docs/TO_CONFIRM.md) · Design review → [`docs/DESIGN_REVIEW.md`](docs/DESIGN_REVIEW.md)
+**Site map / menu →** [`docs/SITE_MAP.md`](docs/SITE_MAP.md) · **Start here →** [`docs/INSTALL_ON_SHOPIFY.md`](docs/INSTALL_ON_SHOPIFY.md) · Owner questions → [`docs/TO_CONFIRM.md`](docs/TO_CONFIRM.md) · Design review → [`docs/DESIGN_REVIEW.md`](docs/DESIGN_REVIEW.md)
 
 ![Home page on a phone](docs/screenshots/index-390.png)
 

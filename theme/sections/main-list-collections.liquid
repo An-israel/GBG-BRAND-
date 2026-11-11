@@ -1,26 +1,88 @@
-<div class="section">
+{%- comment -%}
+  Site map (/collections – exists on every Shopify store, so it never 404s).
+  Built from snippets/nav-tree.liquid, so it always matches the menus.
+{%- endcomment -%}
+{%- capture nav_raw -%}{%- render 'nav-tree', source: 'gbg' -%}{%- endcapture -%}
+{%- assign nav_rows = nav_raw | strip | remove_first: '^^' | split: '^^' -%}
+<div class="section sitemap">
   <div class="container">
-    <h1 class="page-title">Shop by category</h1>
-    <ul class="category-grid" role="list">
-      {%- for c in collections -%}
-        {%- if c.products_count == 0 or c.handle == 'all' or c.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
-        <li class="category-tile">
-          <a href="{{ c.url }}" class="category-tile__link">
-            <span class="category-tile__media">
-              {%- if c.featured_image -%}
-                {{ c.featured_image | image_url: width: 600 | image_tag: widths: '160, 320, 480, 600', sizes: '(min-width: 990px) 15vw, 45vw', loading: 'lazy', alt: '', class: 'category-tile__img' }}
-              {%- else -%}
-                {{ 'collection-1' | placeholder_svg_tag: 'category-tile__img placeholder-svg' }}
-              {%- endif -%}
-            </span>
-            <span class="category-tile__label">{{ c.title | escape }} {% render 'icon', name: 'arrow' %}</span>
-          </a>
-        </li>
-      {%- endfor -%}
-    </ul>
+    {%- render 'breadcrumbs' -%}
+    <h1 class="page-title">{{ section.settings.heading | escape }}</h1>
+    {%- if section.settings.intro != blank -%}<p class="sitemap__intro">{{ section.settings.intro | escape }}</p>{%- endif -%}
+
+    <div class="sitemap__grid">
+      <section class="sitemap__group sitemap__group--wide" aria-labelledby="SitemapShop">
+        <h2 class="sitemap__heading" id="SitemapShop">{% render 'icon', name: 'tag' %} Shop by category</h2>
+        <ul class="sitemap__cats" role="list">
+          {%- for row in nav_rows -%}
+            {%- assign f = row | split: '~~' -%}
+            {%- unless f[0] == '2' and f[1] == 'shop' and f[4] != 'all' -%}{%- continue -%}{%- endunless -%}
+            <li class="sitemap__cat">
+              <a href="{{ f[3] }}" class="sitemap__cat-link">{{ f[2] | escape }}</a>
+              <ul class="sitemap__sub" role="list">
+                {%- for r2 in nav_rows offset: forloop.index -%}
+                  {%- assign g = r2 | split: '~~' -%}
+                  {%- if g[0] != '3' -%}{%- break -%}{%- endif -%}
+                  <li><a href="{{ g[3] }}">{{ g[2] | escape }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </li>
+          {%- endfor -%}
+          <li class="sitemap__cat"><a href="{{ routes.all_products_collection_url }}" class="sitemap__cat-link">All products</a></li>
+        </ul>
+      </section>
+
+      {%- capture offers -%}
+        {%- for row in nav_rows -%}
+          {%- assign f = row | split: '~~' -%}
+          {%- if f[0] == '1' and f[1] == 'new' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+          {%- if f[0] == '2' and f[1] == 'deals' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if offers != blank -%}
+        <section class="sitemap__group" aria-labelledby="SitemapDeals">
+          <h2 class="sitemap__heading" id="SitemapDeals">{% render 'icon', name: 'plus' %} New in &amp; deals</h2>
+          <ul class="sitemap__list" role="list">{{ offers }}</ul>
+        </section>
+      {%- endif -%}
+
+      <section class="sitemap__group" aria-labelledby="SitemapHelp">
+        <h2 class="sitemap__heading" id="SitemapHelp">{% render 'icon', name: 'pin' %} Visit us &amp; help</h2>
+        <ul class="sitemap__list" role="list">
+          <li><a href="{{ routes.root_url }}">Home page</a></li>
+          {%- for row in nav_rows -%}
+            {%- assign f = row | split: '~~' -%}
+            {%- if f[0] == '1' and f[1] == 'visit' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+            {%- if f[0] == '2' and f[1] == 'help' and f[2] != 'Site map' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+          {%- endfor -%}
+          <li><a href="{{ routes.search_url }}">Search</a></li>
+          <li><a href="{{ routes.cart_url }}">Your basket</a></li>
+          {%- if shop.customer_accounts_enabled -%}<li><a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">Your account</a></li>{%- endif -%}
+        </ul>
+      </section>
+
+      {%- capture policy_links -%}
+        {%- for policy in shop.policies -%}{%- if policy != blank -%}<li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>{%- endif -%}{%- endfor -%}
+        {%- if pages['cookie-policy'].url != blank -%}<li><a href="{{ pages['cookie-policy'].url }}">Cookie policy</a></li>{%- endif -%}
+      {%- endcapture -%}
+      {%- if policy_links != blank -%}
+        <section class="sitemap__group" aria-labelledby="SitemapLegal">
+          <h2 class="sitemap__heading" id="SitemapLegal">{% render 'icon', name: 'lock' %} Policies</h2>
+          <ul class="sitemap__list" role="list">{{ policy_links }}</ul>
+        </section>
+      {%- endif -%}
+    </div>
   </div>
 </div>
 
 {% schema %}
-{ "name": "Collections list", "class": "section-list-collections", "settings": [] }
+{
+  "name": "Site map",
+  "class": "section-list-collections",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Site map" },
+    { "type": "text", "id": "intro", "label": "Intro", "default": "Everything on the GBG Bargain Shop website in one place." },
+    { "type": "paragraph", "content": "This page builds itself from the shop's categories, deals and help pages – nothing to edit by hand." }
+  ]
+}
 {% endschema %}

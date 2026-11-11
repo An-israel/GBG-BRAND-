@@ -46,7 +46,19 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 - **Sold out one-off:** nothing to do – stock 0 shows "Sold out" and blocks checkout. Archive it later.
 - **Never delete** products that have orders – **Archive** them.
 
-## 3. Collections and menus
+## 3. Menus and site map
+
+The menu builds itself (see `docs/SITE_MAP.md`): **Shop · New in · Deals · Visit us · Help**. A category appears as soon as it
+has products; empty ones are hidden. The site map is at `/collections`. To use a hand-made menu instead: Customize → Header →
+Menu: "A Shopify menu".
+
+| I want to… | Where |
+|---|---|
+| Change hero photos | Customize → Home page → **Hero** → click a **Product photo** block on the left → Select image. Empty slots show real products automatically. |
+| Change the logo | Customize → ⚙ Theme settings (bottom left) → **Brand and logo**. |
+| Phone photos look small or have grey edges | ⚙ Theme settings → Products → **Product photos in grids** → "Fill the square". |
+
+## 3b. Collections
 
 - Collections are automatic: a product joins **Bags & Accessories** when it has the tag `bags`, **Clearance** with `clearance`,
   **Under £5** when its price is under £5, **New Arrivals** with `new-arrival`.

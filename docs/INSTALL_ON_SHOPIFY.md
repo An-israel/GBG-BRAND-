@@ -18,7 +18,7 @@ There are two ways in. Pick **A** if you just want to look at it. Pick **B** if 
 
 ## A. Upload the zip (no tools needed)
 
-1. Get the file `dist/gbg-bargain-shop-theme-v1.0.1.zip` from this repository
+1. Get the file `dist/gbg-bargain-shop-theme-v1.1.0.zip` from this repository
    (or build a fresh one: `npm ci && npm run theme:zip`).
 2. Shopify admin → **Online Store → Themes**.
 3. Scroll to **Theme library** → **Add theme** → **Upload zip file** → choose the zip → **Upload**.

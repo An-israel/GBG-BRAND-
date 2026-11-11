@@ -13,10 +13,8 @@
     if collection and collection.handle != 'all'
       assign source = collection
     else
-      comment
-        Most specific category that still has at least 2 other products;
-        otherwise the biggest category the product is in.
-      endcomment
+      # Most specific category that still has at least 2 other products;
+      # otherwise the biggest category the product is in.
       for c in product.collections
         if generic contains c.handle or c.products_count < 3
           continue

@@ -3,7 +3,7 @@
   and a click-to-load map (no third-party map loads until the visitor asks).
 {%- endcomment -%}
 {%- assign map_q = settings.map_embed_query | url_encode -%}
-<section class="section visit" aria-labelledby="Title-{{ section.id }}">
+<section class="section visit" id="visit" aria-labelledby="Title-{{ section.id }}">
   <div class="container visit__grid">
     <div class="visit__info reveal">
       {%- if section.settings.eyebrow != blank -%}<p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>{%- endif -%}
