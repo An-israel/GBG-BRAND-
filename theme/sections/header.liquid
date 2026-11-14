@@ -7,7 +7,15 @@
   which never shows the store's old menus, empty collections or missing pages.
 {%- endcomment -%}
 {%- capture nav_raw -%}{%- render 'nav-tree', source: section.settings.nav_source, menu: section.settings.menu -%}{%- endcapture -%}
-{%- assign nav_rows = nav_raw | strip | remove_first: '^^' | split: '^^' -%}
+{%- assign nav_rows = nav_raw | split: '^^' -%}
+{%- comment -%}
+  Rows start with 1, 2 or 3; anything else (e.g. a hidden Liquid error inside the snippet) is ignored
+  by every menu loop, and shown here in the theme editor only so it can be fixed.
+{%- endcomment -%}
+{%- assign nav_head = nav_rows.first | strip -%}
+{%- if request.design_mode and nav_head != blank -%}
+  <p class="placeholder-note" style="margin:0;border-radius:0">Menu note (only visible in the editor): {{ nav_head | escape | truncate: 300 }}</p>
+{%- endif -%}
 <header class="header" data-header>
   <div class="container header__row">
     <button type="button" class="header__menu-btn" aria-label="Open menu" aria-haspopup="dialog" aria-controls="MenuSheet" data-open-dialog="MenuSheet">

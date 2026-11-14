@@ -4,6 +4,8 @@
   always agree. Nothing here links to an empty collection or a missing page.
 
   Output: rows separated by "^^", fields by "~~":  level~~key~~title~~url~~flag
+    The output always starts with "^^"; readers split on "^^" and ignore any element that
+    doesn't start with 1/2/3 (so stray text or a Liquid error can never hide a menu item).
     level 1 = top menu item, 2 = item inside it, 3 = item inside a level-2 item
     flag    = promo (yellow), all (see-everything link), secondary (not in the top bar) or blank
 
@@ -76,7 +78,7 @@
   # The GBG categories haven't been created yet (fresh store, or the old DBS collections):
   # list whatever real collections have products instead.
   if shown_cats == 0
-    for c in collections
+    for c in collections limit: 50
       if c.products_count == 0 or generic contains c.handle
         continue
       endif

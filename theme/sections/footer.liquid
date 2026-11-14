@@ -20,7 +20,7 @@
     </div>
 
     {%- capture footer_nav_raw -%}{%- render 'nav-tree', source: 'gbg' -%}{%- endcapture -%}
-    {%- assign footer_nav = footer_nav_raw | strip | remove_first: '^^' | split: '^^' -%}
+    {%- assign footer_nav = footer_nav_raw | split: '^^' -%}
     {%- for block in section.blocks -%}
       {%- if block.type == 'menu' -%}
         {%- assign src = block.settings.source | default: 'shopify' -%}

@@ -227,3 +227,9 @@ await renderTemplate('list-collections', { ...req('list-collections'), page_titl
   await renderTemplate('index', { ...req('index'), ...freshGlobals, page_title: 'GBG Bargain Shop', __noHeroMock: true }, 'fresh-index.html');
   await renderTemplate('list-collections', { ...req('list-collections'), ...freshGlobals, page_title: 'Site map' }, 'fresh-sitemap.html');
 }
+
+// ---------- "Empty store" scenario: no products, no collections, no pages yet ----------
+{
+  const empty = asShopifyList({ all: { ...collections.all, products: [], products_count: 0, all_products_count: 0 } });
+  await renderTemplate('index', { ...req('index'), collections: empty, pages: {}, linklists: {}, page_title: 'GBG Bargain Shop', __noHeroMock: true }, 'empty-index.html');
+}

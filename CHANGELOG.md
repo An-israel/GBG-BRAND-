@@ -2,6 +2,10 @@
 
 All notable changes to the GBG Bargain Shop theme and scripts. Versions follow semantic versioning; each release is tagged `vX.Y.Z`.
 
+## [1.2.1] – 2026-11-14
+### Fixed
+- Header showed only "Visit Us" on the store: a Liquid error inside the menu snippet (looping over the store's collections) was glued onto the first menu row, so "Shop" and the rows after it were dropped. Menus now ignore any stray text, the collections loop is capped at 50 (Shopify's limit), and the theme editor shows a "Menu note" if anything goes wrong. Reproduced and verified with Shopify's own Liquid engine (`tools/shopify-liquid/`).
+
 ## [Tooling] – 2026-11-14
 - **Update in place:** `npm run theme:update` and the GitHub button *"Update the client's theme"* put new code into the EXISTING theme and merge the theme-editor files, so the client's logo, photos, texts, settings and section changes are kept (new sections/settings are added; sections she deleted stay deleted; renamed categories are carried over). A backup of her editor files is saved before each update. CI preview deploys use the same merge. Guide: `docs/UPDATING_THE_THEME.md`.
 - **Connect from GitHub:** new `shopify-theme` branch with the theme at its root (what Shopify requires); `.github/workflows/sync-shopify-branch.yml` keeps it in sync after every push, merging the client's editor commits. Fixes "Branch isn't a valid theme".
