@@ -15,7 +15,26 @@ that is already in the store, and everything the client did in the theme editor 
 
 Before every update, a **backup of her editor files** is saved (kept 90 days on GitHub).
 
-## One-time setup (about 10 minutes)
+## Option A (recommended): Shopify's "Connect from GitHub" – fully automatic
+
+**One-time:** Shopify admin → **Online Store → Themes → Import → Connect from GitHub** → account `An-israel`,
+repository `GBG-BRAND-`, branch **`shopify-theme`** → **Connect**.
+
+- Shopify adds a new theme to the Theme library linked to that branch. This is the theme the client customises
+  (and later publishes). The old zip-uploaded drafts can be deleted.
+- **Every update is automatic:** when the developer pushes a change, GitHub copies it into the `shopify-theme`
+  branch (`.github/workflows/sync-shopify-branch.yml`) and Shopify updates the connected theme by itself,
+  usually within a minute or two.
+- **Her editor work is kept:** when she saves in the theme editor, Shopify commits it to the `shopify-theme`
+  branch; the sync merges new code around it (same rules as the table above).
+- Only connect **`shopify-theme`** – the other branches (`gbg-shopify-theme-v1`, `dependabot/…`) are not themes.
+- "Branch isn't a valid theme" means a branch without the theme at its top level was chosen.
+- With a connected theme, do **not** also use Option B or zip uploads on that same theme.
+- Don't edit files in the `shopify-theme` branch by hand – it is rewritten from `theme/` on every update.
+
+## Option B: update button (theme uploaded as a zip, not connected)
+
+### One-time setup (about 10 minutes)
 
 **1. Get a Theme Access password (free app made by Shopify)**
 1. Shopify admin → **Apps** → search **"Theme Access"** (by Shopify) → **Install**.
@@ -34,7 +53,7 @@ Online Store → Themes → on the GBG theme the client is working in click **Cu
 
 Never paste the password in a chat, email or file – only in that GitHub secret box.
 
-## Every update (about 2 minutes)
+### Every update (about 2 minutes)
 
 1. GitHub → **Actions** → **"Update the client's theme"** → **Run workflow**.
 2. Leave **mode = check only** → **Run**. Open the run: the log lists what will be added (new sections/settings)

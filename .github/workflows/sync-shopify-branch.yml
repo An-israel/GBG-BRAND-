@@ -1,0 +1,60 @@
+name: Sync theme to the Shopify branch
+
+# Shopify → Online Store → Themes → Import → Connect from GitHub → branch "shopify-theme".
+# Shopify needs the theme at the ROOT of the connected branch, so this copies theme/ into
+# that branch after every change. Shopify then updates the connected theme by itself.
+# The client's theme-editor work (which Shopify commits to the same branch) is merged, never
+# overwritten. See docs/UPDATING_THE_THEME.md.
+
+on:
+  push:
+    branches: [gbg-shopify-theme-v1, main, master]
+    paths: ['theme/**', 'scripts/sync-theme-branch.ts', 'scripts/lib/theme-merge.ts']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-shopify-branch
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    # Only from the repository's default branch, so test branches never reach the store.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    env:
+      TARGET: shopify-theme
+      HEAD_MSG: ${{ github.event.head_commit.message || 'manual sync' }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: source }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: source/package-lock.json }
+      - run: npm ci
+        working-directory: source
+      - name: Theme Check (stop if the code has errors)
+        run: npm run theme:check
+        working-directory: source
+      - name: Sync into the shopify-theme branch (retries if Shopify commits at the same moment)
+        working-directory: source
+        run: |
+          git config --global user.name "gbg-theme-sync[bot]"
+          git config --global user.email "gbg-theme-sync@users.noreply.github.com"
+          REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          for attempt in 1 2 3 4 5; do
+            rm -rf ../branch
+            if git ls-remote --exit-code --heads "$REPO_URL" "$TARGET" >/dev/null; then
+              git clone --quiet --depth 1 --branch "$TARGET" "$REPO_URL" ../branch
+            else
+              mkdir ../branch && git -C ../branch init --quiet -b "$TARGET" && git -C ../branch remote add origin "$REPO_URL"
+            fi
+            npx tsx scripts/sync-theme-branch.ts --branch-dir ../branch
+            git -C ../branch add -A
+            if git -C ../branch diff --cached --quiet; then echo "Already up to date."; exit 0; fi
+            git -C ../branch commit --quiet -m "Theme update from ${GITHUB_SHA::7}: $(printf '%s' "$HEAD_MSG" | head -n 1)"
+            if git -C ../branch push --quiet origin "HEAD:$TARGET"; then echo "Pushed – Shopify will update the connected theme."; exit 0; fi
+            echo "Shopify committed at the same time – retrying ($attempt)…"; sleep $((attempt * 5))
+          done
+          echo "::error::Could not update the shopify-theme branch"; exit 1
