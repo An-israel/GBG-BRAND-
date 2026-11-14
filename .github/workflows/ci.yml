@@ -42,7 +42,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with: { name: playwright-report-offline, path: playwright-report }
 
@@ -66,7 +66,7 @@ jobs:
       # Code is pushed and the theme-editor content is MERGED (never overwritten), so the owner's
       # logo, photos, texts and settings made in the editor are always kept.
       - run: npm run theme:update -- --theme ${{ vars.SHOPIFY_PREVIEW_THEME_ID }} --store ${{ vars.SHOPIFY_STORE_DOMAIN }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with: { name: preview-theme-editor-backup, path: "backup/theme-json/", retention-days: 30 }
 
@@ -115,6 +115,6 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with: { name: playwright-report-preview, path: playwright-report }
