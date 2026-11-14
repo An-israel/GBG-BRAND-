@@ -121,8 +121,15 @@
         <div class="product__fulfilment">
           {%- if collection_only -%}
             <p class="fulfil fulfil--collection">{% render 'icon', name: 'store' %} <span>{{ settings.collection_only_note | escape }}</span></p>
-          {%- elsif settings.claim_uk_delivery and settings.product_delivery_note != blank -%}
-            <p class="fulfil">{% render 'icon', name: 'truck' %} <span>{{ settings.product_delivery_note | escape }}</span></p>
+          {%- else -%}
+            {%- if settings.claim_free_delivery -%}
+              <p class="fulfil">{% render 'icon', name: 'delivery' %} <span><strong>Free UK delivery</strong> on orders of £{{ settings.free_delivery_threshold }} and above.</span></p>
+            {%- elsif settings.claim_uk_delivery and settings.product_delivery_note != blank -%}
+              <p class="fulfil">{% render 'icon', name: 'truck' %} <span>{{ settings.product_delivery_note | escape }}</span></p>
+            {%- endif -%}
+            {%- if settings.claim_fast_track -%}
+              <p class="fulfil fulfil--fast">{% render 'icon', name: 'fast' %} <span><strong>Fast Track:</strong> order by {{ settings.fast_track_cutoff | escape }} {{ settings.fast_track_days | escape }} and we send it the same day.</span></p>
+            {%- endif -%}
           {%- endif -%}
           <pickup-availability class="pickup" data-variant-id="{{ current_variant.id }}" data-base-url="{{ routes.root_url }}" {% unless current_variant.available %}hidden{% endunless %}></pickup-availability>
         </div>

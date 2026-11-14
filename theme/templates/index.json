@@ -35,27 +35,32 @@
         "img-4"
       ],
       "settings": {
-        "eyebrow": "Liverpool's treasure-hunt bargain shop",
+        "eyebrow": "Liverpool's bargain shop – online and in store",
         "heading": "Big bargains. Small prices.",
         "text": "Discover great-value bags, shoes, jewellery, home essentials and everyday finds at GBG Bargain Shop. Shop online or visit our Liverpool store.",
         "button_1_label": "Shop All Bargains",
         "button_1_link": "/collections/all",
-        "button_2_label": "Visit Our Shop",
-        "button_2_link": "/pages/visit-our-shop",
-        "show_stripe": true
+        "button_2_label": "Visit Our Liverpool Store",
+        "button_2_link": "",
+        "show_stripe": true,
+        "auto_fill": true
       }
     },
     "value-strip": {
       "type": "value-strip",
-      "settings": {}
+      "settings": {
+        "collect_title": "Click & Collect",
+        "collect_text": "Order online and collect free from our Liverpool store.",
+        "fast_title": "Fast Track"
+      }
     },
     "categories": {
       "type": "category-grid",
       "blocks": {
-        "cat-bags-accessories": {
+        "cat-bags": {
           "type": "category",
           "settings": {
-            "collection": "bags-accessories",
+            "collection": "bags",
             "label": "Bags"
           }
         },
@@ -66,42 +71,42 @@
             "label": "Shoes"
           }
         },
-        "cat-jewellery-watches": {
+        "cat-jewellery": {
           "type": "category",
           "settings": {
-            "collection": "jewellery-watches",
+            "collection": "jewellery",
             "label": "Jewellery"
           }
         },
-        "cat-fashion": {
+        "cat-clothing": {
           "type": "category",
           "settings": {
-            "collection": "fashion",
-            "label": "Fashion"
+            "collection": "clothing",
+            "label": "Clothing"
           }
         },
-        "cat-home-kitchen": {
+        "cat-home-living": {
           "type": "category",
           "settings": {
-            "collection": "home-kitchen",
-            "label": "Home & Kitchen"
+            "collection": "home-living",
+            "label": "Home & Living"
           }
         },
-        "cat-electronics-gadgets": {
+        "cat-electronics": {
           "type": "category",
           "settings": {
-            "collection": "electronics-gadgets",
+            "collection": "electronics",
             "label": "Electronics"
           }
         }
       },
       "block_order": [
-        "cat-bags-accessories",
+        "cat-bags",
         "cat-shoes",
-        "cat-jewellery-watches",
-        "cat-fashion",
-        "cat-home-kitchen",
-        "cat-electronics-gadgets"
+        "cat-jewellery",
+        "cat-clothing",
+        "cat-home-living",
+        "cat-electronics"
       ],
       "settings": {
         "heading": "Shop by category",
@@ -173,11 +178,55 @@
       "settings": {
         "background": "gold-soft"
       }
+    },
+    "promos": {
+      "type": "promo-tiles",
+      "blocks": {
+        "promo-under5": {
+          "type": "tile",
+          "settings": {
+            "heading": "Under £5",
+            "text": "Everyday finds for less",
+            "collection": "under-5",
+            "badge": "",
+            "button_label": "Shop now"
+          }
+        },
+        "promo-clearance": {
+          "type": "tile",
+          "settings": {
+            "heading": "Clearance",
+            "text": "Last chance to grab a bargain",
+            "collection": "clearance",
+            "badge": "",
+            "button_label": "Shop now"
+          }
+        },
+        "promo-new": {
+          "type": "tile",
+          "settings": {
+            "heading": "New Arrivals",
+            "text": "Fresh stock every week",
+            "collection": "new-arrivals",
+            "badge": "",
+            "button_label": "See what's new"
+          }
+        }
+      },
+      "block_order": [
+        "promo-under5",
+        "promo-clearance",
+        "promo-new"
+      ],
+      "settings": {
+        "label": "Offers"
+      }
     }
   },
   "order": [
     "hero",
     "value-strip",
+    "promos",
     "categories",
     "featured",
     "visit",

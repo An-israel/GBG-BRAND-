@@ -1,37 +1,48 @@
-{%- comment -%} Trust claims. Each one only renders when switched on in Theme settings → Trust claims. {%- endcomment -%}
+{%- comment -%}
+  Icon strip: Click & Collect · Fast Track · Free delivery. Each promise only shows when
+  it is switched on in Theme settings → Icon strip and promises (and set up in Shopify).
+{%- endcomment -%}
 {%- capture items -%}
-  {%- if settings.claim_value -%}
-    <li class="value-strip__item">{% render 'icon', name: 'tag' %}<span><strong>Great value</strong> {{ section.settings.value_text | escape }}</span></li>
-  {%- endif -%}
-  {%- if settings.claim_secure_checkout -%}
-    <li class="value-strip__item">{% render 'icon', name: 'lock' %}<span><strong>Secure checkout</strong> {{ section.settings.secure_text | escape }}</span></li>
-  {%- endif -%}
-  {%- if settings.claim_uk_delivery -%}
-    <li class="value-strip__item">{% render 'icon', name: 'truck' %}<span><strong>UK delivery</strong> {{ section.settings.delivery_text | escape }}</span></li>
-  {%- endif -%}
   {%- if settings.claim_free_collection -%}
-    <li class="value-strip__item">{% render 'icon', name: 'store' %}<span><strong>Free Liverpool collection</strong> {{ section.settings.collection_text | escape }}</span></li>
+    <li class="usp">
+      {%- render 'icon', name: 'collect' -%}
+      <p class="usp__title">{{ section.settings.collect_title | escape }}</p>
+      <p class="usp__text">{{ section.settings.collect_text | escape }}{% if settings.pickup_ready_time != blank %} {{ settings.pickup_ready_time | escape }}{% endif %}</p>
+    </li>
+  {%- endif -%}
+  {%- if settings.claim_fast_track -%}
+    <li class="usp">
+      {%- render 'icon', name: 'fast' -%}
+      <p class="usp__title">{{ section.settings.fast_title | escape }}</p>
+      <p class="usp__text">Order by {{ settings.fast_track_cutoff | escape }} {{ settings.fast_track_days | escape }} and we send it the same day.</p>
+    </li>
+  {%- endif -%}
+  {%- if settings.claim_free_delivery -%}
+    <li class="usp">
+      {%- render 'icon', name: 'delivery' -%}
+      <p class="usp__title">Free delivery over £{{ settings.free_delivery_threshold }}</p>
+      <p class="usp__text">Free UK delivery on orders of £{{ settings.free_delivery_threshold }} and above.</p>
+    </li>
   {%- endif -%}
 {%- endcapture -%}
 {%- if items != blank -%}
-  <section class="value-strip" aria-label="Why shop with us">
-    <ul class="container value-strip__list" role="list">{{ items }}</ul>
+  <section class="usps" aria-label="Why shop with us">
+    <ul class="container usps__list" role="list">{{ items }}</ul>
   </section>
 {%- elsif request.design_mode -%}
-  <p class="container placeholder-note">Value strip hidden: switch claims on in Theme settings → Trust claims once they are set up.</p>
+  <p class="container placeholder-note">Icon strip hidden: switch promises on in Theme settings → Icon strip and promises once they are set up.</p>
 {%- endif -%}
 
 {% schema %}
 {
-  "name": "Value strip",
+  "name": "Icon strip",
   "class": "section-value-strip",
   "settings": [
-    { "type": "paragraph", "content": "Claims are switched on and off in Theme settings → Trust claims." },
-    { "type": "text", "id": "value_text", "label": "Great value text", "default": "on every shelf" },
-    { "type": "text", "id": "secure_text", "label": "Secure checkout text", "default": "powered by Shopify" },
-    { "type": "text", "id": "delivery_text", "label": "UK delivery text", "default": "cost shown before you pay" },
-    { "type": "text", "id": "collection_text", "label": "Collection text", "default": "from Unit M10" }
+    { "type": "paragraph", "content": "Switch each promise on or off (and set the cut-off time and free delivery amount) in Theme settings → Icon strip and promises." },
+    { "type": "text", "id": "collect_title", "label": "Click & Collect title", "default": "Click & Collect" },
+    { "type": "text", "id": "collect_text", "label": "Click & Collect text", "default": "Order online and collect free from our Liverpool store." },
+    { "type": "text", "id": "fast_title", "label": "Fast Track title", "default": "Fast Track" }
   ],
-  "presets": [{ "name": "Value strip" }]
+  "presets": [{ "name": "Icon strip" }]
 }
 {% endschema %}

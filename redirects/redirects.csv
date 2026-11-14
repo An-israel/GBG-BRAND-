@@ -1,5 +1,5 @@
 Redirect from,Redirect to
 # Fill in after running npm run backup and npm run audit:dbs. Map each old DBS URL to the closest GBG page.
 # Examples (replace with real old paths – do not import these lines as-is):
-# /collections/dbs-bags,/collections/bags-accessories
+# /collections/dbs-bags,/collections/bags
 # /pages/about-dbs,/pages/about

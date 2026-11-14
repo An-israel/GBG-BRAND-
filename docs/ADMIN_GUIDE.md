@@ -56,6 +56,9 @@ Menu: "A Shopify menu".
 |---|---|
 | Change hero photos | Customize → Home page → **Hero** → click a **Product photo** block on the left → Select image. Empty slots show real products automatically. |
 | Change the logo | Customize → ⚙ Theme settings (bottom left) → **Brand and logo**. |
+| Add the shop's own category photos | Customize → Home page → **Category grid** → click a category → **Photo**. Square photos work best. Until then a product photo is used. |
+| Change the 3 promo tiles (Under £5, Clearance, New Arrivals) | Customize → Home page → **Promo tiles** → each tile: headline, collection, optional photo, optional yellow badge (genuine offers only). |
+| Icon strip (Click & Collect, Fast Track, free delivery) | ⚙ Theme settings → **Icon strip and promises**: switch each on/off, cut-off time (2pm), days (Monday–Friday), free delivery amount (£80). These also show on product pages and in the basket. |
 | Phone photos look small or have grey edges | ⚙ Theme settings → Products → **Product photos in grids** → "Fill the square". |
 
 ## 3b. Collections

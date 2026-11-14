@@ -54,7 +54,7 @@ export const products = [
   product({ title: '45 litre clear storage box with lid', price: 650, sku: 'GBG-HOM-003', images: ['storage'], condition: 'New', tags: ['home', 'storage'], collectionOnly: true }),
   product({ title: 'Portable Bluetooth speaker, black', colour: 'Black', price: 1499, sku: 'GBG-ELE-001', images: ['speaker'], condition: 'Customer return', tested: 'Tested working', notes: 'Light scuff on the base. Charging cable included.', tags: ['electronics', 'speakers', 'new-arrival'] }),
   product({ title: 'Yellow desk lamp with metal base', price: 799, sku: 'GBG-ELE-002', images: ['lamp'], condition: 'Unchecked', tested: 'Untested', tags: ['electronics', 'small-electronics', 'last-chance'] }),
-  product({ title: 'Purple knitted winter scarf', colour: 'Purple', price: 350, sku: 'GBG-FAS-001', images: ['scarf'], condition: 'New', tags: ['fashion', 'womens-fashion', 'under-5'] }),
+  product({ title: 'Purple knitted winter scarf', colour: 'Purple', price: 350, sku: 'GBG-FAS-001', images: ['scarf'], condition: 'New', tags: ['clothing', 'womens-clothing', 'under-5'] }),
 ];
 
 const byTag = (t) => products.filter((p) => p.tags.includes(t));
@@ -73,13 +73,13 @@ function collection(handle, title, prods, description = '') {
 
 export const collections = {
   all: collection('all', 'Shop all', products),
-  'bags-accessories': collection('bags-accessories', 'Bags & Accessories', byTag('bags'), '<p>Handbags, backpacks, purses and travel bags at bargain prices – every one checked and clearly labelled with its condition. [FOR APPROVAL]</p>'),
+  bags: collection('bags', 'Bags', byTag('bags'), '<p>Handbags, backpacks, purses and travel bags at bargain prices – every one checked and clearly labelled with its condition. [FOR APPROVAL]</p>'),
   shoes: collection('shoes', 'Shoes', byTag('shoes')),
-  'jewellery-watches': collection('jewellery-watches', 'Jewellery & Watches', byTag('jewellery')),
-  fashion: collection('fashion', 'Fashion', byTag('fashion')),
-  'home-kitchen': collection('home-kitchen', 'Home & Kitchen', byTag('home')),
-  'electronics-gadgets': collection('electronics-gadgets', 'Electronics & Gadgets', byTag('electronics')),
-  'beauty-personal-care': collection('beauty-personal-care', 'Beauty & Personal Care', []),
+  jewellery: collection('jewellery', 'Jewellery', byTag('jewellery')),
+  clothing: collection('clothing', 'Clothing', byTag('clothing')),
+  'home-living': collection('home-living', 'Home & Living', byTag('home')),
+  electronics: collection('electronics', 'Electronics', byTag('electronics')),
+  'beauty-personal-care': collection('beauty-personal-care', 'Beauty', []),
   bargains: collection('bargains', 'Best Bargains', products.filter((p) => p.compare_at_price || p.price < 500)),
   'new-arrivals': collection('new-arrivals', 'New Arrivals', byTag('new-arrival')),
   'under-5': collection('under-5', 'Under £5', byTag('under-5')),
@@ -114,12 +114,12 @@ export const linklists = {
   'main-menu': {
     links: [
       link('Shop', '/collections/all', [
-        link('Bags & Accessories', '/collections/bags-accessories', [link('Handbags', '/collections/handbags'), link('Backpacks', '/collections/backpacks'), link('Purses', '/collections/purses'), link('Travel', '/collections/travel')]),
+        link('Bags & Accessories', '/collections/bags', [link('Handbags', '/collections/handbags'), link('Backpacks', '/collections/backpacks'), link('Purses', '/collections/purses'), link('Travel', '/collections/travel')]),
         link('Shoes', '/collections/shoes', [link('Women', '/collections/womens-shoes'), link('Men', '/collections/mens-shoes'), link('Kids', '/collections/kids-shoes')]),
-        link('Jewellery & Watches', '/collections/jewellery-watches', [link('Earrings', '/collections/earrings'), link('Necklaces', '/collections/necklaces'), link('Bracelets', '/collections/bracelets'), link('Watches', '/collections/watches')]),
-        link('Fashion', '/collections/fashion'),
-        link('Home & Kitchen', '/collections/home-kitchen', [link('Cookware', '/collections/cookware'), link('Storage', '/collections/storage')]),
-        link('Electronics & Gadgets', '/collections/electronics-gadgets', [link('Speakers', '/collections/speakers')]),
+        link('Jewellery & Watches', '/collections/jewellery', [link('Earrings', '/collections/earrings'), link('Necklaces', '/collections/necklaces'), link('Bracelets', '/collections/bracelets'), link('Watches', '/collections/watches')]),
+        link('Fashion', '/collections/clothing'),
+        link('Home & Kitchen', '/collections/home-living', [link('Cookware', '/collections/cookware'), link('Storage', '/collections/storage')]),
+        link('Electronics & Gadgets', '/collections/electronics', [link('Speakers', '/collections/speakers')]),
         link('Beauty & Personal Care', '/collections/beauty-personal-care'),
         link('Shop all', '/collections/all'),
       ]),
@@ -131,7 +131,7 @@ export const linklists = {
     ],
   },
   footer: { links: [link('Contact us', '/pages/contact'), link('FAQs', '/pages/faqs'), link('Delivery', '/policies/shipping-policy'), link('Click & Collect', '/pages/click-and-collect'), link('Returns & refunds', '/policies/refund-policy'), link('About us', '/pages/about')] },
-  'footer-shop': { links: [link('Bags & Accessories', '/collections/bags-accessories'), link('Shoes', '/collections/shoes'), link('Jewellery & Watches', '/collections/jewellery-watches'), link('Home & Kitchen', '/collections/home-kitchen'), link('Beauty', '/collections/beauty-personal-care'), link('New Arrivals', '/collections/new-arrivals'), link('Clearance', '/collections/clearance')] },
+  'footer-shop': { links: [link('Bags & Accessories', '/collections/bags'), link('Shoes', '/collections/shoes'), link('Jewellery & Watches', '/collections/jewellery'), link('Home & Kitchen', '/collections/home-living'), link('Beauty', '/collections/beauty-personal-care'), link('New Arrivals', '/collections/new-arrivals'), link('Clearance', '/collections/clearance')] },
 };
 
 export const pages = {

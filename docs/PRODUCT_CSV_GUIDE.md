@@ -30,9 +30,10 @@ can also be imported in Shopify admin if needed.
 | **Internal notes** | Staff only – never shown. Shelf, pallet, supplier. | `Shelf B2` |
 | SEO Title / SEO Description | Optional. Up to 70 / 160 characters. | |
 
-**Category tags:** `bags`, `handbags`, `backpacks`, `purses`, `travel`, `shoes`, `womens-shoes`, `mens-shoes`, `kids-shoes`,
-`jewellery`, `earrings`, `necklaces`, `bracelets`, `watches`, `fashion`, `womens-fashion`, `mens-fashion`, `kids-fashion`,
-`home`, `cookware`, `storage`, `household`, `electronics`, `speakers`, `small-electronics`, `tech-accessories`, `beauty`.
+**Category tags** (the website's categories: Bags · Shoes · Jewellery · Clothing · Home & Living · Electronics · Beauty):
+`bags`, `handbags`, `backpacks`, `purses`, `travel`, `shoes`, `womens-shoes`, `mens-shoes`, `kids-shoes`,
+`jewellery`, `earrings`, `necklaces`, `bracelets`, `watches`, `clothing`, `womens-clothing`, `mens-clothing`, `kids-clothing`,
+`home` (Home & Living), `cookware`, `storage`, `household`, `electronics`, `speakers`, `small-electronics`, `tech-accessories`, `beauty`.
 Use the main tag **and** the sub-tag (e.g. `bags, handbags`).
 
 ## Check it

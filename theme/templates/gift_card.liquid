@@ -13,7 +13,7 @@
   <body class="template-gift-card">
     <main class="section">
       <div class="container container--form gift-card">
-        <p class="password__logo"><span class="logo-text"><span class="logo-text__mark">GBG</span><span class="logo-text__word">Bargain Shop</span></span></p>
+        <p class="password__logo"><span class="logo-text logo-text--stacked"><span class="logo-text__name"><span class="logo-text__gbg">GBG</span> <span class="logo-text__bargain">Bargain Shop</span></span><span class="logo-text__tagline">Big bargains. Small prices.</span></span></p>
         <h1 class="page-title">Your gift card</h1>
         <p class="price price--large"><span class="price__regular">{{ gift_card.balance | money }}</span></p>
         {%- if gift_card.expired or gift_card.enabled == false -%}

@@ -2,6 +2,18 @@
 
 All notable changes to the GBG Bargain Shop theme and scripts. Versions follow semantic versioning; each release is tagged `vX.Y.Z`.
 
+## [1.2.0] – 2026-11-14
+Client direction: look like an established UK bargain retailer (her samples: Toolstation, flexykart, her mock-up).
+### Changed
+- Header follows the launch pack: **Shop ▾ · New Arrivals · Clearance · Visit Us**; Help moves to the footer, phone menu and site map. Deals sit inside the Shop menu.
+- Text logo "GBG BARGAIN SHOP" (gold) with the tagline "BIG BARGAINS. SMALL PRICES."; labelled header icons (Our store · Sign in · Basket) on computers.
+- Yellow bar: "Shop online • Visit us in Liverpool".
+- Bold banner: patterned navy background, big yellow "BIG BARGAINS. SMALL PRICES.", buttons "Shop All Bargains" / "Visit Our Liverpool Store".
+- New **promo tiles** section (Under £5 · Clearance · New Arrivals) in Toolstation style.
+- **Icon strip** reduced to the client's three promises: Click & Collect · Fast Track (order by 2pm Mon–Fri, sent the same day) · Free delivery over £80 – gold line icons on a light band, settings in Theme settings → Icon strip and promises. Fast Track and free delivery also show on product pages; the basket shows "Spend £x more for free UK delivery".
+- Categories renamed to the client's mock-up: **Bags · Shoes · Jewellery · Clothing · Home & Living · Electronics** (handles `bags`, `shoes`, `jewellery`, `clothing`, `home-living`, `electronics`; product tags `clothing`, `womens-clothing`… replace `fashion`).
+- Category tiles: rounded photo with the name underneath (3 per row on phones); each tile takes the shop's own photo.
+
 ## [1.1.0] – 2026-11-11
 Client feedback: the navigation and site map were hard to understand; pictures didn't show.
 ### Changed

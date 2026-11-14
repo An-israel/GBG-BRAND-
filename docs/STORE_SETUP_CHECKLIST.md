@@ -83,6 +83,13 @@ Admin API scopes (nothing more):
 - [ ] ✋ Test: basket with a collection-only item → checkout offers **only Pickup**. Mixed basket (normal + collection-only) → checkout cannot ship the bulky item. Record evidence.
 - [ ] ✋ Theme setting **Trust claims → UK delivery**: switch on only now.
 
+## 6b. Promises shown in the icon strip (switched ON in theme v1.2.0)
+
+The owner confirmed these, so they are on by default. Check each is really set up before launch:
+- [ ] **Free UK delivery on orders of £80 and above** – General profile → UK zone → a **£0 rate with condition "orders £80 and up"** (and normal rates below £80). If the amount changes, update Theme settings → Icon strip and promises.
+- [ ] **Fast Track** – staff can send every order placed **by 2pm Monday–Friday the same day** (if not, change the cut-off/days or switch it off).
+- [ ] **Click & Collect** – local pickup switched on for Unit M10 (§4).
+
 ## 7. Tax (brief §9.4)
 
 - [ ] ⚠ Owner/accountant confirms VAT status.

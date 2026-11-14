@@ -1,0 +1,73 @@
+{%- comment -%}
+  Three bold promo tiles under the hero (client samples: Toolstation-style).
+  Navy tile, big yellow headline, a real product photo, optional yellow badge.
+  A tile hides itself if its collection has no products. Badges must be genuine
+  (e.g. only write "SAVE 15%" when that discount is really set up).
+{%- endcomment -%}
+{%- capture tiles -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign c = block.settings.collection
+      if c == blank or c.products_count == 0
+        continue
+      endif
+      assign tile_image = block.settings.image
+      if tile_image == blank
+        for p in c.products limit: 10
+          if p.featured_media and p.available
+            assign tile_image = p.featured_media.preview_image
+            break
+          endif
+        endfor
+      endif
+    -%}
+    <li class="promo-tile reveal" {{ block.shopify_attributes }}>
+      <a href="{{ c.url }}" class="promo-tile__link">
+        <span class="promo-tile__copy">
+          <span class="promo-tile__heading">{{ block.settings.heading | default: c.title | escape }}</span>
+          {%- if block.settings.text != blank -%}<span class="promo-tile__text">{{ block.settings.text | escape }}</span>{%- endif -%}
+          <span class="promo-tile__cta">{{ block.settings.button_label | default: 'Shop now' | escape }} {% render 'icon', name: 'arrow' %}</span>
+        </span>
+        {%- if tile_image -%}
+          <span class="promo-tile__media">
+            {{ tile_image | image_url: width: 500 | image_tag: widths: '200, 300, 400, 500', sizes: '(min-width: 990px) 14vw, 40vw', loading: 'lazy', alt: '', class: 'promo-tile__img' }}
+          </span>
+        {%- endif -%}
+        {%- if block.settings.badge != blank -%}<span class="promo-tile__badge">{{ block.settings.badge | escape }}</span>{%- endif -%}
+      </a>
+    </li>
+  {%- endfor -%}
+{%- endcapture -%}
+{%- if tiles != blank -%}
+  <section class="promo-tiles" aria-label="{{ section.settings.label | escape }}">
+    <ul class="container promo-tiles__list" role="list">{{ tiles }}</ul>
+  </section>
+{%- elsif request.design_mode -%}
+  <p class="container placeholder-note">Promo tiles are hidden until their collections have products.</p>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Promo tiles",
+  "class": "section-promo-tiles",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Name for screen readers", "default": "Offers" }
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Promo tile",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Headline", "default": "Under £5" },
+        { "type": "text", "id": "text", "label": "Small text" },
+        { "type": "collection", "id": "collection", "label": "Collection", "info": "The tile hides itself while this collection has no products." },
+        { "type": "image_picker", "id": "image", "label": "Photo (optional)", "info": "Defaults to a product from the collection. A cut-out on white looks best." },
+        { "type": "text", "id": "badge", "label": "Yellow badge (optional)", "info": "Only genuine offers, e.g. \"SAVE 15%\" when that discount is really set up." },
+        { "type": "text", "id": "button_label", "label": "Link text", "default": "Shop now" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Promo tiles", "blocks": [{ "type": "tile" }, { "type": "tile" }, { "type": "tile" }] }]
+}
+{% endschema %}

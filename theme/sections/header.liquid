@@ -29,7 +29,10 @@
             class: 'header__logo-img'
           }}
         {%- else -%}
-          <span class="logo-text"><span class="logo-text__mark">GBG</span><span class="logo-text__word">Bargain Shop</span></span>
+          <span class="logo-text logo-text--stacked">
+            <span class="logo-text__name"><span class="logo-text__gbg">GBG</span> <span class="logo-text__bargain">Bargain Shop</span></span>
+            {%- if section.settings.show_tagline -%}<span class="logo-text__tagline">{{ section.settings.tagline | escape }}</span>{%- endif -%}
+          </span>
         {%- endif -%}
       </a>
     </div>
@@ -46,14 +49,23 @@
       </form>
     </predictive-search>
 
+    {%- liquid
+      assign store_url = routes.root_url | append: '#visit'
+      if pages['visit-our-shop'].url != blank
+        assign store_url = pages['visit-our-shop'].url
+      endif
+    -%}
     <div class="header__icons">
+      <a href="{{ store_url }}" class="header__icon header__store">
+        {%- render 'icon', name: 'pin' -%}<span class="header__icon-label">Our store</span>
+      </a>
       {%- if shop.customer_accounts_enabled -%}
-        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="icon-button header__account" aria-label="{% if customer %}Your account{% else %}Log in{% endif %}">
-          {%- render 'icon', name: 'account' -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon header__account">
+          {%- render 'icon', name: 'account' -%}<span class="header__icon-label">{% if customer %}Account{% else %}Sign in{% endif %}</span>
         </a>
       {%- endif -%}
-      <a href="{{ cart_url }}" class="icon-button header__cart" data-cart-toggle aria-label="Basket, {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}" aria-haspopup="dialog">
-        {%- render 'icon', name: 'basket' -%}
+      <a href="{{ cart_url }}" class="header__icon header__cart" data-cart-toggle aria-label="Basket, {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'items' }}" aria-haspopup="dialog">
+        {%- render 'icon', name: 'basket' -%}<span class="header__icon-label" aria-hidden="true">Basket</span>
         <span class="header__cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
       </a>
     </div>
@@ -64,7 +76,7 @@
     <ul class="container nav" role="list">
       {%- for row in nav_rows -%}
         {%- assign f = row | split: '~~' -%}
-        {%- if f[0] != '1' -%}{%- continue -%}{%- endif -%}
+        {%- if f[0] != '1' or f[4] == 'secondary' -%}{%- continue -%}{%- endif -%}
         {%- liquid
           assign kids = 0
           assign mega = false
@@ -180,7 +192,7 @@
             <li><a href="{{ f[3] }}" class="sheet__highlight{% if f[4] == 'promo' %} sheet__highlight--promo{% endif %}">
               {%- case f[1] -%}
                 {%- when 'visit' -%}{% render 'icon', name: 'pin' %}
-                {%- when 'deals' -%}{% render 'icon', name: 'tag' %}
+                {%- when 'clearance' -%}{% render 'icon', name: 'tag' %}
                 {%- when 'new' -%}{% render 'icon', name: 'plus' %}
                 {%- else -%}{% render 'icon', name: 'arrow' %}
               {%- endcase -%}
@@ -266,7 +278,7 @@
         { "value": "shopify", "label": "A Shopify menu (choose below)" }
       ],
       "default": "gbg",
-      "info": "The built-in menu is: Shop (all categories), New in, Deals, Visit us, Help. It only shows categories that have products and pages that exist, and updates itself."
+      "info": "The built-in menu is: Shop (all categories and deals) · New Arrivals · Clearance · Visit Us. Help is in the footer and phone menu. It only shows categories that have products and pages that exist, and updates itself."
     },
     {
       "type": "link_list",
@@ -274,6 +286,8 @@
       "label": "Shopify menu",
       "info": "Only used when Menu is set to \"A Shopify menu\". Edit it in Online Store → Navigation."
     },
+    { "type": "checkbox", "id": "show_tagline", "label": "Show tagline under the text logo", "default": true, "info": "Only used until a logo image is uploaded." },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Big bargains. Small prices." },
     {
       "type": "checkbox",
       "id": "show_quick_links",

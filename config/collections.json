@@ -2,8 +2,8 @@
   "_comment": "Store structure as code. setup-store.ts creates these smart collections ONLY when matching products exist (never empty collections). Descriptions are draft copy [FOR APPROVAL]. Products join a category by tag.",
   "collections": [
     {
-      "handle": "bags-accessories",
-      "title": "Bags & Accessories",
+      "handle": "bags",
+      "title": "Bags",
       "rules": [
         {
           "column": "TAG",
@@ -17,7 +17,7 @@
     {
       "handle": "handbags",
       "title": "Handbags",
-      "parent": "bags-accessories",
+      "parent": "bags",
       "rules": [
         {
           "column": "TAG",
@@ -31,7 +31,7 @@
     {
       "handle": "backpacks",
       "title": "Backpacks",
-      "parent": "bags-accessories",
+      "parent": "bags",
       "rules": [
         {
           "column": "TAG",
@@ -45,7 +45,7 @@
     {
       "handle": "purses",
       "title": "Purses",
-      "parent": "bags-accessories",
+      "parent": "bags",
       "rules": [
         {
           "column": "TAG",
@@ -59,7 +59,7 @@
     {
       "handle": "travel",
       "title": "Travel",
-      "parent": "bags-accessories",
+      "parent": "bags",
       "rules": [
         {
           "column": "TAG",
@@ -126,8 +126,8 @@
       "description": "Kids' trainers and shoes. [FOR APPROVAL]"
     },
     {
-      "handle": "jewellery-watches",
-      "title": "Jewellery & Watches",
+      "handle": "jewellery",
+      "title": "Jewellery",
       "rules": [
         {
           "column": "TAG",
@@ -141,7 +141,7 @@
     {
       "handle": "earrings",
       "title": "Earrings",
-      "parent": "jewellery-watches",
+      "parent": "jewellery",
       "rules": [
         {
           "column": "TAG",
@@ -155,7 +155,7 @@
     {
       "handle": "necklaces",
       "title": "Necklaces",
-      "parent": "jewellery-watches",
+      "parent": "jewellery",
       "rules": [
         {
           "column": "TAG",
@@ -169,7 +169,7 @@
     {
       "handle": "bracelets",
       "title": "Bracelets",
-      "parent": "jewellery-watches",
+      "parent": "jewellery",
       "rules": [
         {
           "column": "TAG",
@@ -183,7 +183,7 @@
     {
       "handle": "watches",
       "title": "Watches",
-      "parent": "jewellery-watches",
+      "parent": "jewellery",
       "rules": [
         {
           "column": "TAG",
@@ -195,63 +195,63 @@
       "description": "Everyday watches at bargain prices. [FOR APPROVAL]"
     },
     {
-      "handle": "fashion",
-      "title": "Fashion",
+      "handle": "clothing",
+      "title": "Clothing",
       "rules": [
         {
           "column": "TAG",
           "relation": "EQUALS",
-          "condition": "fashion"
+          "condition": "clothing"
         }
       ],
       "seoDescription": "Bargain clothing for women, men and kids from GBG Bargain Shop, Liverpool.",
       "description": "Selected clothing – strong one-off pieces and repeatable styles. [FOR APPROVAL]"
     },
     {
-      "handle": "womens-fashion",
-      "title": "Women's Fashion",
-      "parent": "fashion",
+      "handle": "womens-clothing",
+      "title": "Women's Clothing",
+      "parent": "clothing",
       "rules": [
         {
           "column": "TAG",
           "relation": "EQUALS",
-          "condition": "womens-fashion"
+          "condition": "womens-clothing"
         }
       ],
       "seoDescription": "Women's clothing at bargain prices from GBG Bargain Shop, Liverpool.",
       "description": "Women's clothing and accessories. [FOR APPROVAL]"
     },
     {
-      "handle": "mens-fashion",
-      "title": "Men's Fashion",
-      "parent": "fashion",
+      "handle": "mens-clothing",
+      "title": "Men's Clothing",
+      "parent": "clothing",
       "rules": [
         {
           "column": "TAG",
           "relation": "EQUALS",
-          "condition": "mens-fashion"
+          "condition": "mens-clothing"
         }
       ],
       "seoDescription": "Men's clothing at bargain prices from GBG Bargain Shop, Liverpool.",
       "description": "Men's clothing and accessories. [FOR APPROVAL]"
     },
     {
-      "handle": "kids-fashion",
-      "title": "Kids' Fashion",
-      "parent": "fashion",
+      "handle": "kids-clothing",
+      "title": "Kids' Clothing",
+      "parent": "clothing",
       "rules": [
         {
           "column": "TAG",
           "relation": "EQUALS",
-          "condition": "kids-fashion"
+          "condition": "kids-clothing"
         }
       ],
       "seoDescription": "Kids' clothing at bargain prices from GBG Bargain Shop, Liverpool.",
       "description": "Kids' clothing. [FOR APPROVAL]"
     },
     {
-      "handle": "home-kitchen",
-      "title": "Home & Kitchen",
+      "handle": "home-living",
+      "title": "Home & Living",
       "rules": [
         {
           "column": "TAG",
@@ -265,7 +265,7 @@
     {
       "handle": "cookware",
       "title": "Cookware",
-      "parent": "home-kitchen",
+      "parent": "home-living",
       "rules": [
         {
           "column": "TAG",
@@ -279,7 +279,7 @@
     {
       "handle": "storage",
       "title": "Storage",
-      "parent": "home-kitchen",
+      "parent": "home-living",
       "rules": [
         {
           "column": "TAG",
@@ -293,7 +293,7 @@
     {
       "handle": "household-essentials",
       "title": "Household Essentials",
-      "parent": "home-kitchen",
+      "parent": "home-living",
       "rules": [
         {
           "column": "TAG",
@@ -305,8 +305,8 @@
       "description": "Everyday essentials for the home. [FOR APPROVAL]"
     },
     {
-      "handle": "electronics-gadgets",
-      "title": "Electronics & Gadgets",
+      "handle": "electronics",
+      "title": "Electronics",
       "rules": [
         {
           "column": "TAG",
@@ -320,7 +320,7 @@
     {
       "handle": "speakers",
       "title": "Speakers",
-      "parent": "electronics-gadgets",
+      "parent": "electronics",
       "rules": [
         {
           "column": "TAG",
@@ -334,7 +334,7 @@
     {
       "handle": "small-electronics",
       "title": "Small Electronics",
-      "parent": "electronics-gadgets",
+      "parent": "electronics",
       "rules": [
         {
           "column": "TAG",
@@ -348,7 +348,7 @@
     {
       "handle": "tech-accessories",
       "title": "Accessories",
-      "parent": "electronics-gadgets",
+      "parent": "electronics",
       "rules": [
         {
           "column": "TAG",
@@ -361,7 +361,7 @@
     },
     {
       "handle": "beauty-personal-care",
-      "title": "Beauty & Personal Care",
+      "title": "Beauty",
       "rules": [
         {
           "column": "TAG",
@@ -454,10 +454,10 @@
     "necklaces",
     "bracelets",
     "watches",
-    "fashion",
-    "womens-fashion",
-    "mens-fashion",
-    "kids-fashion",
+    "clothing",
+    "womens-clothing",
+    "mens-clothing",
+    "kids-clothing",
     "home",
     "cookware",
     "storage",
@@ -475,5 +475,6 @@
     "tech-accessories"
   ],
   "_lastChance": "Set \"lastChanceIncludesStockOfOne\": true to ALSO put every product with exactly 1 in stock into Last Chance. Leave false if most listings are one-offs (they would all land in Last Chance).",
-  "lastChanceIncludesStockOfOne": false
+  "lastChanceIncludesStockOfOne": false,
+  "_categories": "Main categories (in menu order): bags, shoes, jewellery, clothing, home-living, electronics, beauty-personal-care. Names match the client mock-up."
 }

@@ -74,7 +74,7 @@ export interface ValidateOptions {
 }
 
 const IMAGE_EXT = /\.(jpe?g|png|webp|heic|heif)$/i;
-const COLOUR_EXPECTED = new Set(['bags', 'shoes', 'fashion', 'handbags', 'backpacks', 'purses', 'womens-shoes', 'mens-shoes', 'kids-shoes', 'womens-fashion', 'mens-fashion', 'kids-fashion']);
+const COLOUR_EXPECTED = new Set(['bags', 'shoes', 'clothing', 'handbags', 'backpacks', 'purses', 'womens-shoes', 'mens-shoes', 'kids-shoes', 'womens-clothing', 'mens-clothing', 'kids-clothing']);
 const DBS_RE = /\bdbs\b/i;
 
 export const splitTags = (t: string | undefined) => (t || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);

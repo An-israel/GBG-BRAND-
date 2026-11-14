@@ -771,3 +771,92 @@ dialog::backdrop { background: rgb(11 31 58 / 0.55); backdrop-filter: blur(2px);
 .sheet__inner { max-height: 92vh; }
 .sheet__footer { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 4px 12px; padding-top: 8px; }
 .sheet__contact { font-size: 0.9375rem; }
+
+/* ---------- Header v3: labelled icons + stacked text logo (client mock-up) ---------- */
+.header__icon { position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-width: 48px; min-height: 48px; padding: 4px 6px; border-radius: var(--radius-small); color: var(--white); text-decoration: none; }
+.header__icon:hover { background: rgb(255 255 255 / 0.12); color: var(--white); }
+.header__icon .icon { width: 22px; height: 22px; }
+.header__icon-label { font-size: 0.6875rem; font-weight: 600; line-height: 1; letter-spacing: 0.02em; }
+.header__icon .header__cart-count { top: 0; right: 2px; }
+@media (max-width: 420px) { .header__store { display: none; } }
+@media (min-width: 990px) { .header__icon { min-width: 60px; } .header__icon-label { font-size: 0.75rem; } }
+
+.logo-text--stacked { flex-direction: column; align-items: flex-start; gap: 3px; }
+.logo-text__name { font: 800 1.25rem/1 var(--font-heading); text-transform: uppercase; letter-spacing: 0.01em; white-space: nowrap; }
+.logo-text__gbg { color: var(--white); }
+.logo-text__bargain { color: var(--gold); }
+.logo-text__tagline { font: 600 0.625rem/1 var(--font-body); letter-spacing: 0.12em; text-transform: uppercase; color: #DCE3EE; white-space: nowrap; }
+@media (min-width: 750px) { .logo-text__name { font-size: 1.625rem; } .logo-text__tagline { font-size: 0.75rem; } }
+
+/* ---------- Icon strip (client example: gold line icons on a light band) ---------- */
+.usps { background: #F6F6F9; border-top: 1px solid var(--gold-soft); border-bottom: 1px solid var(--border); }
+.usps__list { display: grid; gap: 18px; padding-top: 24px; padding-bottom: 24px; }
+@media (min-width: 750px) { .usps__list { grid-template-columns: repeat(3, 1fr); gap: 24px; padding-top: 32px; padding-bottom: 32px; } }
+.usp { display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; align-items: start; }
+.usp .icon { grid-row: span 2; width: 44px; height: 44px; color: #A9831C; }
+.usp__title { margin: 0 0 2px; font: 700 1rem var(--font-body); color: var(--ink); }
+.usp__text { margin: 0; font-size: 0.875rem; color: var(--muted); }
+@media (min-width: 750px) { .usp { grid-template-columns: 1fr; justify-items: center; text-align: center; } .usp .icon { grid-row: auto; width: 48px; height: 48px; margin-bottom: 10px; } .usp__title { font-size: 1.0625rem; } }
+
+.free-delivery { margin: 0 0 14px; padding: 12px 14px; border-radius: var(--radius); background: var(--paper); }
+.free-delivery__text { margin: 0 0 8px; font-size: 0.9375rem; }
+.free-delivery__text--done { color: var(--success); display: flex; gap: 6px; align-items: center; }
+.free-delivery__bar { height: 8px; border-radius: 4px; background: #E3E5EA; overflow: hidden; }
+.free-delivery__bar span { display: block; height: 100%; background: var(--yellow); border-radius: 4px; }
+.fulfil--fast { background: #FFF8D6; }
+.template-gift-card .logo-text__gbg, .template-gift-card .logo-text__tagline { color: var(--navy); }
+
+/* ---------- Bold banner pattern (Toolstation-style) + promo tiles ---------- */
+:root {
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23C9A227' stroke-width='2' opacity='.22'%3E%3Cpath d='M14 30V18a2 2 0 0 1 2-2h12l16 16-14 14z'/%3E%3Ccircle cx='21' cy='23' r='2'/%3E%3Cpath d='M74 80h22l-2 22H76z'/%3E%3Cpath d='M80 80v-4a5 5 0 0 1 10 0v4'/%3E%3Ccircle cx='92' cy='26' r='12'/%3E%3Cpath d='M88 26h8M92 22v8'/%3E%3Cpath d='M16 86h20M16 94h14M16 102h8'/%3E%3C/g%3E%3C/svg%3E");
+}
+.hero { background-color: var(--navy); background-image: var(--pattern); background-size: 120px 120px; }
+.hero__heading { color: var(--yellow); text-transform: uppercase; letter-spacing: -0.01em; }
+.hero__text { color: var(--white); }
+
+.promo-tiles { background: var(--white); padding: 20px 0 8px; }
+.promo-tiles__list { display: grid; gap: 12px; }
+@media (min-width: 750px) { .promo-tiles__list { grid-template-columns: repeat(3, 1fr); gap: 16px; } .promo-tiles { padding-top: 28px; } }
+.promo-tile__link { position: relative; display: grid; grid-template-columns: 1fr 42%; align-items: center; min-height: 150px; padding: 16px; border-radius: var(--radius); overflow: hidden; text-decoration: none;
+  background-color: var(--navy); background-image: var(--pattern); background-size: 90px 90px; box-shadow: 0 2px 0 var(--gold); transition: transform 0.15s var(--ease), box-shadow 0.15s; }
+.promo-tile__link:hover { transform: translateY(-3px); box-shadow: 0 2px 0 var(--gold), var(--shadow-lift); }
+@media (min-width: 990px) { .promo-tile__link { min-height: 200px; padding: 22px; } }
+.promo-tile__copy { display: grid; gap: 6px; align-content: center; position: relative; z-index: 1; }
+.promo-tile__heading { font: 800 clamp(1.5rem, 5vw, 2.25rem)/0.95 var(--font-heading); color: var(--yellow); text-transform: uppercase; }
+.promo-tile__text { color: #DCE3EE; font-size: 0.875rem; }
+.promo-tile__cta { display: inline-flex; align-items: center; gap: 6px; justify-self: start; margin-top: 6px; padding: 7px 14px; border-radius: var(--radius-pill); background: var(--yellow); color: var(--navy); font-weight: 700; font-size: 0.875rem; }
+.promo-tile__media { align-self: stretch; display: grid; place-items: center; }
+.promo-tile__img { width: 100%; aspect-ratio: 1; object-fit: contain; background: var(--white); border-radius: 50%; padding: 8%; box-shadow: 0 6px 18px rgb(0 0 0 / 0.25); }
+.img-fit-cover .promo-tile__img { object-fit: cover; padding: 0; }
+.promo-tile__badge { position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center; min-width: 64px; min-height: 64px; padding: 6px; border-radius: 50%; background: var(--yellow); color: var(--navy); font: 800 0.875rem/1.05 var(--font-heading); text-align: center; text-transform: uppercase; transform: rotate(-8deg); box-shadow: 0 4px 10px rgb(0 0 0 / 0.25); }
+
+/* ---------- Category tiles: client mock-up style (rounded photo, name underneath) ---------- */
+.category-tile__link { border: 0; background: none; gap: 10px; }
+.category-tile__link:hover { box-shadow: none; transform: none; }
+.category-tile__media { border-radius: 18px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); transition: transform 0.2s var(--ease), box-shadow 0.2s; }
+.category-tile__link:hover .category-tile__media { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+.category-tile__label { justify-content: center; padding: 0 4px; background: none; border: 0; color: var(--navy); font: 700 1.0625rem var(--font-heading); text-align: center; }
+.category-tile__label .icon { display: none; }
+.category-tile__link:hover .category-tile__label { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 749px) {
+  .category-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .category-tile__media { border-radius: 14px; }
+  .category-tile__label { font-size: 0.875rem; line-height: 1.2; }
+}
+.usps__list { align-items: start; }
+.usp { align-content: start; }
+.promo-tile__link { grid-template-columns: minmax(0, 1fr) 38%; gap: 10px; }
+.promo-tile__heading { font-size: clamp(1.4rem, 5vw, 2rem); overflow-wrap: anywhere; }
+@media (min-width: 750px) and (max-width: 1199px) { .promo-tile__heading { font-size: 1.5rem; } }
+.promo-tile__media { min-width: 0; }
+.promo-tile__img { max-width: 150px; margin-left: auto; }
+.hero { background-image: linear-gradient(90deg, var(--navy) 0%, rgb(11 31 58 / 0.85) 45%, rgb(11 31 58 / 0) 75%), var(--pattern); background-size: auto, 120px 120px; }
+@media (max-width: 749px) {
+  .header__icon-label { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .header__icon { min-width: 44px; padding: 4px; }
+  .header__icons { gap: 0; }
+  .logo-text__name { font-size: 1.125rem; }
+  .logo-text__tagline { font-size: 0.5625rem; letter-spacing: 0.1em; }
+  .promo-tile__link { min-height: 128px; padding: 14px; }
+  .promo-tile__img { max-width: 112px; }
+}

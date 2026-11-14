@@ -280,20 +280,19 @@ async function setupMenus() {
     else if (f) hiddenPages.push(p.handle);
   }
   const shopChildren = clean([
-    categoryItem('bags-accessories'), categoryItem('shoes'), categoryItem('jewellery-watches'), categoryItem('fashion'),
-    categoryItem('home-kitchen'), categoryItem('electronics-gadgets'), categoryItem('beauty-personal-care'),
+    categoryItem('bags'), categoryItem('shoes'), categoryItem('jewellery'), categoryItem('clothing'),
+    categoryItem('home-living'), categoryItem('electronics'), categoryItem('beauty-personal-care'),
     url('Shop all', '/collections/all'),
   ]);
+  // Launch pack header: Shop, New Arrivals, Clearance, Visit Us (Help lives in the footer).
   const main = clean([
     { title: 'Shop', type: 'HTTP', url: '/collections/all', items: shopChildren },
-    col('new-arrivals'),
-    col('bargains', 'Bargains', clean([col('under-5'), col('clearance'), col('last-chance')])) ?? col('under-5', 'Bargains'),
-    col('clearance'),
-    page('visit-our-shop', 'Visit Our Shop'),
-    { title: 'Help', type: 'HTTP', url: pageIds.has('contact') ? '/pages/contact' : '/policies/refund-policy', items: clean([page('contact', 'Contact us'), page('faqs', 'FAQs'), url('Delivery', '/policies/shipping-policy'), url('Returns & refunds', '/policies/refund-policy'), url('Privacy', '/policies/privacy-policy'), url('Terms', '/policies/terms-of-service')]) },
+    col('new-arrivals', 'New Arrivals') ?? url('New Arrivals', '/collections/all?sort_by=created-descending'),
+    col('clearance', 'Clearance') ?? col('last-chance', 'Clearance') ?? col('under-5', 'Clearance'),
+    page('visit-our-shop', 'Visit Us') ?? url('Visit Us', '/#visit'),
   ]);
   const footer = clean([page('contact', 'Contact us'), page('faqs', 'FAQs'), page('shipping-delivery', 'Delivery'), page('click-and-collect', 'Click & Collect'), url('Returns & refunds', '/policies/refund-policy'), page('about', 'About us')]);
-  const footerShop = clean([col('bags-accessories'), col('shoes'), col('jewellery-watches'), col('home-kitchen'), col('electronics-gadgets'), col('new-arrivals'), col('clearance')]);
+  const footerShop = clean([col('bags'), col('shoes'), col('jewellery'), col('clothing'), col('home-living'), col('electronics'), col('new-arrivals'), col('clearance')]);
   if (hiddenPages.length) log.warn(`menus: left out hidden pages (customers would get "page not found"): ${[...new Set(hiddenPages)].join(', ')}. Publish them, then run: npm run setup:store -- --only menus`);
   await upsertMenu('main-menu', 'Main menu', main);
   await upsertMenu('footer', 'Customer care', footer);

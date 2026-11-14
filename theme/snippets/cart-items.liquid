@@ -54,6 +54,24 @@
       <span>Subtotal</span>
       <span class="cart-summary__amount">{{ cart.total_price | money_with_currency }}</span>
     </p>
+    {%- if settings.claim_free_delivery and settings.free_delivery_threshold > 0 -%}
+      {%- liquid
+        assign threshold = settings.free_delivery_threshold | times: 100
+        assign remaining = threshold | minus: cart.total_price
+        assign pct = cart.total_price | times: 100 | divided_by: threshold
+        if pct > 100
+          assign pct = 100
+        endif
+      -%}
+      <div class="free-delivery" role="status">
+        {%- if remaining > 0 -%}
+          <p class="free-delivery__text">Spend <strong>{{ remaining | money }}</strong> more for <strong>free UK delivery</strong>.</p>
+        {%- else -%}
+          <p class="free-delivery__text free-delivery__text--done">{% render 'icon', name: 'check' %} Your order qualifies for <strong>free UK delivery</strong>.</p>
+        {%- endif -%}
+        <div class="free-delivery__bar" aria-hidden="true"><span style="width: {{ pct }}%"></span></div>
+      </div>
+    {%- endif -%}
     <ul class="cart-notes" role="list">
       {%- if settings.claim_free_collection and settings.cart_collection_note != blank -%}
         <li>{% render 'icon', name: 'store' %} {{ settings.cart_collection_note | escape }}</li>

@@ -7,7 +7,7 @@ test('home page shows brand, hero and categories', async ({ page }) => {
   await page.goto(url('/', '/index'));
   await expect(page.locator('h1')).toContainText('Big bargains');
   await expect(page.getByRole('link', { name: /Shop All Bargains/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Visit Our Shop/ }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: /Visit Our Liverpool Store/ }).first()).toBeVisible();
 });
 
 test('no "DBS" text on any key page (brand crawler)', async ({ page }) => {
@@ -38,7 +38,7 @@ test('mobile menu opens as a bottom sheet and closes', async ({ page, isMobile }
   await page.getByRole('button', { name: 'Open menu' }).click();
   const sheet = page.locator('#MenuSheet');
   await expect(sheet).toBeVisible();
-  await expect(sheet.getByRole('link', { name: 'New in' })).toBeVisible();
+  await expect(sheet.getByRole('link', { name: 'New Arrivals' })).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(sheet).toBeHidden();
 });

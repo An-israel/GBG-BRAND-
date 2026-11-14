@@ -175,8 +175,8 @@ async function renderTemplate(name, extra, file) {
 const req = (page_type, extra = {}) => ({ request: { page_type, design_mode: false, origin: 'https://www.gbgbargainshop.co.uk', locale: { iso_code: 'en' } }, ...extra });
 const productPage = products[0];
 await renderTemplate('index', { ...req('index'), page_title: 'GBG Bargain Shop' }, 'index.html');
-await renderTemplate('collection', { ...req('collection'), collection: collections['bags-accessories'], page_title: 'Bags & Accessories' }, 'collection.html');
-await renderTemplate('product', { ...req('product'), product: productPage, collection: collections['bags-accessories'], page_title: productPage.title, recommendations: { performed: true, products_count: 4, products: products.slice(5, 9) } }, 'product.html');
+await renderTemplate('collection', { ...req('collection'), collection: collections.bags, page_title: 'Bags & Accessories' }, 'collection.html');
+await renderTemplate('product', { ...req('product'), product: productPage, collection: collections.bags, page_title: productPage.title, recommendations: { performed: true, products_count: 4, products: products.slice(5, 9) } }, 'product.html');
 await renderTemplate('product', { ...req('product'), product: products[3], page_title: products[3].title, recommendations: { performed: false } }, 'product-variants.html');
 await renderTemplate('product', { ...req('product'), product: products[11], page_title: products[11].title, recommendations: { performed: false } }, 'product-electrical.html');
 await renderTemplate('product', { ...req('product'), product: products[10], page_title: products[10].title, recommendations: { performed: false } }, 'product-collection-only.html');
@@ -194,8 +194,8 @@ const cartFull = { ...base.cart, item_count: 2, total_price: 1749, items: [
 await renderTemplate('cart', { ...req('cart'), cart: cartFull, page_title: 'Your basket' }, 'cart-full.html');
 // Same product with the delivery/collection claims switched OFF (honesty check) and no VAT number.
 {
-  const off = { ...settings, claim_uk_delivery: false, claim_free_collection: false, vat_number: '' };
-  await renderTemplate('product', { ...req('product'), settings: off, product: products[0], collection: collections['bags-accessories'], page_title: products[0].title, recommendations: { performed: false } }, 'product-claims-off.html');
+  const off = { ...settings, claim_uk_delivery: false, claim_free_collection: false, claim_free_delivery: false, claim_fast_track: false, vat_number: '' };
+  await renderTemplate('product', { ...req('product'), settings: off, product: products[0], collection: collections.bags, page_title: products[0].title, recommendations: { performed: false } }, 'product-claims-off.html');
   await renderTemplate('index', { ...req('index'), settings: off, page_title: 'GBG Bargain Shop' }, 'index-claims-off.html');
 }
 // Account login (password-reset box) and a search with results + filters.

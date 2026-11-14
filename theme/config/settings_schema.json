@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "GBG Bargain Shop",
-    "theme_version": "1.1.0",
+    "theme_version": "1.2.0",
     "theme_author": "GBG Bargain Shop",
     "theme_documentation_url": "https://www.gbgbargainshop.co.uk",
     "theme_support_url": "https://www.gbgbargainshop.co.uk/pages/contact"
@@ -270,37 +270,76 @@
     ]
   },
   {
-    "name": "Trust claims",
+    "name": "Icon strip and promises",
     "settings": [
       {
         "type": "paragraph",
-        "content": "Each claim only appears on the site when it is switched on here. Only switch a claim on when it is actually set up in Shopify."
+        "content": "These promises appear in the icon strip, on product pages and in the basket – only when switched on. Only switch one on when it is really set up in Shopify."
       },
       {
-        "type": "checkbox",
-        "id": "claim_value",
-        "label": "Great value",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "claim_secure_checkout",
-        "label": "Secure checkout",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "claim_uk_delivery",
-        "label": "UK delivery",
-        "default": false,
-        "info": "Switch on when delivery zones and rates are live. Also controls the delivery notes on product pages and in the basket."
+        "type": "header",
+        "content": "Click & Collect"
       },
       {
         "type": "checkbox",
         "id": "claim_free_collection",
-        "label": "Free Liverpool collection",
+        "label": "Show Click & Collect",
         "default": false,
-        "info": "Switch on when local pickup is enabled for the Unit M10 location. Also controls the collection reminder in the basket and the Click & Collect box in Visit Us."
+        "info": "Needs local pickup switched on for the Unit M10 location (Settings → Shipping and delivery → Local pickup)."
+      },
+      {
+        "type": "header",
+        "content": "Fast Track (same-day dispatch)"
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_fast_track",
+        "label": "Show Fast Track",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "fast_track_cutoff",
+        "label": "Order cut-off time",
+        "default": "2pm"
+      },
+      {
+        "type": "text",
+        "id": "fast_track_days",
+        "label": "Days",
+        "default": "Monday–Friday"
+      },
+      {
+        "type": "header",
+        "content": "Free delivery"
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_free_delivery",
+        "label": "Show free delivery",
+        "default": false,
+        "info": "Needs a free shipping rate for orders over the amount below (Settings → Shipping and delivery)."
+      },
+      {
+        "type": "range",
+        "id": "free_delivery_threshold",
+        "label": "Free delivery on orders of",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "unit": "£",
+        "default": 80
+      },
+      {
+        "type": "header",
+        "content": "Paid UK delivery"
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_uk_delivery",
+        "label": "UK delivery is available",
+        "default": false,
+        "info": "Shows the delivery notes on product pages and in the basket once delivery rates are live."
       }
     ]
   },
