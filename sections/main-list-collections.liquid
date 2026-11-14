@@ -3,7 +3,7 @@
   Built from snippets/nav-tree.liquid, so it always matches the menus.
 {%- endcomment -%}
 {%- capture nav_raw -%}{%- render 'nav-tree', source: 'gbg' -%}{%- endcapture -%}
-{%- assign nav_rows = nav_raw | strip | remove_first: '^^' | split: '^^' -%}
+{%- assign nav_rows = nav_raw | split: '^^' -%}
 <div class="section sitemap">
   <div class="container">
     {%- render 'breadcrumbs' -%}

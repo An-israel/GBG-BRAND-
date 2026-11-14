@@ -37,7 +37,7 @@
 {%- endcomment -%}
 {%- if real_tiles == 0 -%}
   {%- capture nav_raw -%}{%- render 'nav-tree', source: 'gbg' -%}{%- endcapture -%}
-  {%- assign nav_rows = nav_raw | strip | remove_first: '^^' | split: '^^' -%}
+  {%- assign nav_rows = nav_raw | split: '^^' -%}
   {%- capture tiles -%}
     {%- for row in nav_rows -%}
       {%- assign f = row | split: '~~' -%}
