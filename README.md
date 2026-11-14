@@ -19,7 +19,7 @@ This repository contains everything needed to turn the existing Shopify store in
 | `tools/preview/` | Offline design preview: renders the real theme with sample data for screenshots |
 | `docs/` | Install guide, owner guide, staff SOP, setup checklist, engineering checklist (111 items), runbook, acceptance tests, handover |
 
-**Site map / menu →** [`docs/SITE_MAP.md`](docs/SITE_MAP.md) · **Start here →** [`docs/INSTALL_ON_SHOPIFY.md`](docs/INSTALL_ON_SHOPIFY.md) · Owner questions → [`docs/TO_CONFIRM.md`](docs/TO_CONFIRM.md) · Design review → [`docs/DESIGN_REVIEW.md`](docs/DESIGN_REVIEW.md)
+**Updating a theme the client already uses →** [`docs/UPDATING_THE_THEME.md`](docs/UPDATING_THE_THEME.md) (no re-upload, her editor work is kept) · **Site map / menu →** [`docs/SITE_MAP.md`](docs/SITE_MAP.md) · **Start here →** [`docs/INSTALL_ON_SHOPIFY.md`](docs/INSTALL_ON_SHOPIFY.md) · Owner questions → [`docs/TO_CONFIRM.md`](docs/TO_CONFIRM.md) · Design review → [`docs/DESIGN_REVIEW.md`](docs/DESIGN_REVIEW.md)
 
 ![Home page on a phone](docs/screenshots/index-390.png)
 
@@ -27,7 +27,7 @@ This repository contains everything needed to turn the existing Shopify store in
 
 ## Setup
 
-Requirements: Node.js 20+ (22 recommended), and for theme work the Shopify CLI (`npm i -g @shopify/cli@3`).
+Requirements: Node.js 20+ (22 recommended), and for theme work the Shopify CLI (`npm i -g @shopify/cli@5`).
 
 ```bash
 npm ci

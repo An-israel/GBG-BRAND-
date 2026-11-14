@@ -1,5 +1,9 @@
 # Installing the GBG theme on Shopify
 
+> **Upload the zip only once.** Every later version is sent into the same theme with the
+> *"Update the client's theme"* button on GitHub, keeping everything done in the theme editor –
+> see [`UPDATING_THE_THEME.md`](UPDATING_THE_THEME.md).
+
 This puts the new theme on the existing store **without changing what customers see**. The current
 live theme stays live until the owner signs off (brief §2, "Work safely").
 
@@ -32,7 +36,7 @@ There are two ways in. Pick **A** if you just want to look at it. Pick **B** if 
 
 ```bash
 npm ci
-npm install -g @shopify/cli@3
+npm install -g @shopify/cli@5
 shopify theme push --path theme --unpublished --store <your-store>.myshopify.com
 # prints the new theme ID and a preview link – keep the ID
 shopify theme dev  --path theme --store <your-store>.myshopify.com   # live-reloading local preview

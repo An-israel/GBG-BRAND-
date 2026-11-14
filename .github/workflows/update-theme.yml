@@ -1,0 +1,64 @@
+name: Update the client's theme
+
+# One click: GitHub → Actions → "Update the client's theme" → Run workflow.
+# Puts the latest code into the EXISTING theme in Shopify and keeps everything the client
+# did in the theme editor (logo, photos, texts, settings). See docs/UPDATING_THE_THEME.md.
+#
+# One-time setup (repository Settings → Secrets and variables → Actions):
+#   secret   SHOPIFY_CLI_THEME_TOKEN  – password from Shopify's free "Theme Access" app
+#   variable SHOPIFY_STORE_DOMAIN     – e.g. gbg-bargain-shop.myshopify.com
+#   variable SHOPIFY_THEME_ID         – (optional) the theme to update when none is typed in
+
+on:
+  workflow_dispatch:
+    inputs:
+      theme_id:
+        description: "Theme ID (number in the address bar of Customize). Empty = the saved SHOPIFY_THEME_ID"
+        required: false
+      mode:
+        description: "Check first (dry run), or update"
+        type: choice
+        options: [check only, update]
+        default: check only
+      live:
+        description: "This theme is the PUBLISHED (live) one – I want to update it"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-theme
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      SHOPIFY_STORE_DOMAIN: ${{ vars.SHOPIFY_STORE_DOMAIN }}
+      SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+      SHOPIFY_THEME_ID: ${{ inputs.theme_id || vars.SHOPIFY_THEME_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Theme Check (stop if the code has errors)
+        run: npm run theme:check
+      - run: npm install -g @shopify/cli@5
+      - name: Update the theme, keeping the client's editor work
+        run: |
+          ARGS="--theme $SHOPIFY_THEME_ID --store $SHOPIFY_STORE_DOMAIN"
+          if [ "${{ inputs.mode }}" = "check only" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${{ inputs.live }}" = "true" ]; then ARGS="$ARGS --allow-live"; fi
+          npm run theme:update -- $ARGS
+      - name: Keep the backup of her editor files (90 days)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: theme-editor-backup-${{ github.run_id }}
+          path: |
+            backup/theme-json/
+            logs/
+          retention-days: 90

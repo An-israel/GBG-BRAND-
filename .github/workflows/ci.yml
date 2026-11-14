@@ -59,14 +59,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm install -g @shopify/cli@3
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm install -g @shopify/cli@5
       # Deploys ONLY to the unpublished preview theme. The live theme is published by hand after sign-off.
-      # Theme-editor content (settings_data.json, template and section-group JSON) is NOT uploaded,
-      # so the owner's banners, texts and settings made in the editor are never overwritten.
-      - run: >-
-          shopify theme push --path theme --theme ${{ vars.SHOPIFY_PREVIEW_THEME_ID }} --nodelete --json
-          --ignore config/settings_data.json --ignore "templates/*.json" --ignore "templates/customers/*.json" --ignore "sections/*-group.json"
+      # Code is pushed and the theme-editor content is MERGED (never overwritten), so the owner's
+      # logo, photos, texts and settings made in the editor are always kept.
+      - run: npm run theme:update -- --theme ${{ vars.SHOPIFY_PREVIEW_THEME_ID }} --store ${{ vars.SHOPIFY_STORE_DOMAIN }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: preview-theme-editor-backup, path: "backup/theme-json/", retention-days: 30 }
 
   lighthouse-offline:
     name: Lighthouse CI (every pull request, offline preview)

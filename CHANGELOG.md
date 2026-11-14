@@ -2,6 +2,10 @@
 
 All notable changes to the GBG Bargain Shop theme and scripts. Versions follow semantic versioning; each release is tagged `vX.Y.Z`.
 
+## [Tooling] – 2026-11-14
+- **Update in place:** `npm run theme:update` and the GitHub button *"Update the client's theme"* put new code into the EXISTING theme and merge the theme-editor files, so the client's logo, photos, texts, settings and section changes are kept (new sections/settings are added; sections she deleted stay deleted; renamed categories are carried over). A backup of her editor files is saved before each update. CI preview deploys use the same merge. Guide: `docs/UPDATING_THE_THEME.md`.
+- Shopify CLI references moved to version 5.
+
 ## [1.2.0] – 2026-11-14
 Client direction: look like an established UK bargain retailer (her samples: Toolstation, flexykart, her mock-up).
 ### Changed
