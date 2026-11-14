@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-list-collections",
+      "settings": {
+        "heading": "Site map",
+        "intro": "Everything on the GBG Bargain Shop website in one place."
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

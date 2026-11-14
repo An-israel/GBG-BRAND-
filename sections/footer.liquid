@@ -1,0 +1,136 @@
+<footer class="footer">
+  <div class="footer__rule" aria-hidden="true"></div>
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <p class="footer__logo">
+        <span class="logo-text logo-text--stacked"><span class="logo-text__name"><span class="logo-text__gbg">GBG</span> <span class="logo-text__bargain">Bargain Shop</span></span><span class="logo-text__tagline">Big bargains. Small prices.</span></span>
+      </p>
+      {%- if section.settings.tagline != blank -%}<p class="footer__tagline">{{ section.settings.tagline | escape }}</p>{%- endif -%}
+      {%- render 'address' -%}
+      <ul class="footer__contact" role="list">
+        <li><a href="tel:+{{ settings.phone_international }}" data-track="contact">{% render 'icon', name: 'phone' %} {{ settings.phone | escape }}</a></li>
+        {%- if settings.email != blank -%}
+          <li><a href="mailto:{{ settings.email }}" data-track="contact">{% render 'icon', name: 'mail' %} {{ settings.email | escape }}</a></li>
+        {%- endif -%}
+        {%- if settings.whatsapp_enabled -%}
+          <li><a href="https://wa.me/{{ settings.phone_international }}" target="_blank" rel="noopener" data-track="whatsapp_click">{% render 'icon', name: 'whatsapp' %} WhatsApp us</a></li>
+        {%- endif -%}
+        <li><a href="{% render 'directions-url' %}" target="_blank" rel="noopener" data-track="directions_click">{% render 'icon', name: 'pin' %} Get directions</a></li>
+      </ul>
+    </div>
+
+    {%- capture footer_nav_raw -%}{%- render 'nav-tree', source: 'gbg' -%}{%- endcapture -%}
+    {%- assign footer_nav = footer_nav_raw | strip | remove_first: '^^' | split: '^^' -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'menu' -%}
+        {%- assign src = block.settings.source | default: 'shopify' -%}
+        {%- if src == 'shopify' and block.settings.menu == blank -%}{%- continue -%}{%- endif -%}
+        <nav class="footer__col" aria-label="{{ block.settings.heading | escape }}" {{ block.shopify_attributes }}>
+          <h2 class="footer__heading">{{ block.settings.heading | escape }}</h2>
+          <ul class="footer__links" role="list">
+            {%- if src == 'shop' -%}
+              {%- comment -%} Built-in: categories with products, then New in and the deals {%- endcomment -%}
+              {%- for row in footer_nav -%}
+                {%- assign f = row | split: '~~' -%}
+                {%- if f[0] == '2' and f[1] == 'shop' and f[4] != 'all' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+                {%- if f[0] == '1' and f[1] == 'new' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+                {%- if f[0] == '2' and f[1] == 'deals' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+              {%- endfor -%}
+              <li><a href="{{ routes.all_products_collection_url }}">All products</a></li>
+            {%- elsif src == 'help' -%}
+              {%- comment -%} Built-in: help pages that exist, policies, visit us and the site map {%- endcomment -%}
+              {%- for row in footer_nav -%}
+                {%- assign f = row | split: '~~' -%}
+                {%- if f[0] == '1' and f[1] == 'visit' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endif -%}
+                {%- if f[0] == '2' and f[1] == 'help' -%}{%- unless f[3] contains 'tel:' -%}<li><a href="{{ f[3] }}">{{ f[2] | escape }}</a></li>{%- endunless -%}{%- endif -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for link in block.settings.menu.links -%}
+                {%- if link.type == 'collection_link' and link.object.products_count == 0 -%}{%- continue -%}{%- endif -%}
+                {%- if link.type == 'page_link' and link.object == blank -%}{%- continue -%}{%- endif -%}
+                <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- elsif block.type == 'hours' -%}
+        <div class="footer__col" {{ block.shopify_attributes }}>
+          <h2 class="footer__heading">{{ block.settings.heading | escape }}</h2>
+          {%- render 'opening-hours' -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="container footer__bottom">
+    {%- render 'social-icons' -%}
+    {%- render 'payment-icons' -%}
+    <div class="footer__legal">
+      <p>© {{ 'now' | date: '%Y' }} {{ settings.shop_display_name | default: shop.name | escape }}
+        {%- if settings.legal_entity != blank %} is a trading name of {{ settings.legal_entity | escape }}{% endif -%}
+        {%- if settings.company_number != blank %}. Company number {{ settings.company_number | escape }}{% endif -%}
+        {%- if settings.vat_number != blank %}. VAT number {{ settings.vat_number | escape }}{% endif -%}.
+      </p>
+      {%- if request.design_mode and settings.legal_entity == blank -%}
+        <p class="placeholder-note">[TO CONFIRM] Add the legal entity name in Theme settings → Shop details.</p>
+      {%- endif -%}
+      <ul class="footer__policies" role="list">
+        {%- for policy in shop.policies -%}
+          {%- if policy != blank -%}<li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>{%- endif -%}
+        {%- endfor -%}
+        {%- if section.settings.cookie_page != blank -%}
+          <li><a href="{{ section.settings.cookie_page.url }}">Cookie policy</a></li>
+        {%- endif -%}
+        <li><button type="button" class="link footer__cookie-btn" data-cookie-preferences hidden>Cookie settings</button></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Big bargains. Small prices. Bags, shoes, jewellery, homeware and everyday finds in Liverpool."
+    },
+    { "type": "page", "id": "cookie_page", "label": "Cookie policy page" }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Customer care" },
+        {
+          "type": "select",
+          "id": "source",
+          "label": "Links",
+          "options": [
+            { "value": "shop", "label": "Built-in: shop categories" },
+            { "value": "help", "label": "Built-in: help and information" },
+            { "value": "shopify", "label": "A Shopify menu (choose below)" }
+          ],
+          "default": "help",
+          "info": "Built-in lists only show categories with products and pages that exist."
+        },
+        { "type": "link_list", "id": "menu", "label": "Shopify menu", "info": "Only used when Links is set to \"A Shopify menu\"." }
+      ]
+    },
+    {
+      "type": "hours",
+      "name": "Opening hours",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Opening hours" },
+        { "type": "paragraph", "content": "Hours are edited in Theme settings → Shop details." }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,12 @@
+{%- comment -%}
+  Optional newsletter prompt (feature flag). theme.js only opens it from the
+  visitor's second page view, once per 30 days, never over the basket.
+{%- endcomment -%}
+<dialog class="modal" id="NewsletterPopup" aria-labelledby="NewsletterPopupTitle" data-newsletter-popup>
+  <div class="modal__inner">
+    <button type="button" class="icon-button modal__close" data-close-dialog aria-label="Close">{% render 'icon', name: 'close' %}</button>
+    <h2 class="h3" id="NewsletterPopupTitle">{{ settings.newsletter_popup_heading | escape }}</h2>
+    <p>{{ settings.newsletter_popup_text | escape }}</p>
+    {%- render 'newsletter-form', id: 'Popup' -%}
+  </div>
+</dialog>

@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "sections": {
+    "sections/footer-group.json": [
+      "footer"
+    ],
+    "sections/header-group.json": [
+      "announcement",
+      "header"
+    ],
+    "templates/404.json": [
+      "main"
+    ],
+    "templates/article.json": [
+      "main"
+    ],
+    "templates/blog.json": [
+      "main"
+    ],
+    "templates/cart.json": [
+      "main"
+    ],
+    "templates/collection.json": [
+      "main"
+    ],
+    "templates/customers/account.json": [
+      "main"
+    ],
+    "templates/customers/activate_account.json": [
+      "main"
+    ],
+    "templates/customers/addresses.json": [
+      "main"
+    ],
+    "templates/customers/login.json": [
+      "main"
+    ],
+    "templates/customers/order.json": [
+      "main"
+    ],
+    "templates/customers/register.json": [
+      "main"
+    ],
+    "templates/customers/reset_password.json": [
+      "main"
+    ],
+    "templates/index.json": [
+      "hero",
+      "value-strip",
+      "categories",
+      "featured",
+      "visit",
+      "clearance",
+      "newsletter",
+      "promos"
+    ],
+    "templates/list-collections.json": [
+      "main"
+    ],
+    "templates/page.contact.json": [
+      "main",
+      "form"
+    ],
+    "templates/page.faq.json": [
+      "main",
+      "faq"
+    ],
+    "templates/page.json": [
+      "main"
+    ],
+    "templates/page.visit.json": [
+      "main",
+      "visit",
+      "photos"
+    ],
+    "templates/password.json": [
+      "main"
+    ],
+    "templates/product.json": [
+      "main",
+      "related"
+    ],
+    "templates/search.json": [
+      "main"
+    ]
+  }
+}

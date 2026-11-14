@@ -1,0 +1,236 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "blocks": {
+        "img-1": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        },
+        "img-2": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        },
+        "img-3": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        },
+        "img-4": {
+          "type": "image",
+          "settings": {
+            "price_label": ""
+          }
+        }
+      },
+      "block_order": [
+        "img-1",
+        "img-2",
+        "img-3",
+        "img-4"
+      ],
+      "settings": {
+        "eyebrow": "Liverpool's bargain shop – online and in store",
+        "heading": "Big bargains. Small prices.",
+        "text": "Discover great-value bags, shoes, jewellery, home essentials and everyday finds at GBG Bargain Shop. Shop online or visit our Liverpool store.",
+        "button_1_label": "Shop All Bargains",
+        "button_1_link": "/collections/all",
+        "button_2_label": "Visit Our Liverpool Store",
+        "button_2_link": "",
+        "show_stripe": true,
+        "auto_fill": true
+      }
+    },
+    "value-strip": {
+      "type": "value-strip",
+      "settings": {
+        "collect_title": "Click & Collect",
+        "collect_text": "Order online and collect free from our Liverpool store.",
+        "fast_title": "Fast Track"
+      }
+    },
+    "categories": {
+      "type": "category-grid",
+      "blocks": {
+        "cat-bags": {
+          "type": "category",
+          "settings": {
+            "collection": "bags",
+            "label": "Bags"
+          }
+        },
+        "cat-shoes": {
+          "type": "category",
+          "settings": {
+            "collection": "shoes",
+            "label": "Shoes"
+          }
+        },
+        "cat-jewellery": {
+          "type": "category",
+          "settings": {
+            "collection": "jewellery",
+            "label": "Jewellery"
+          }
+        },
+        "cat-clothing": {
+          "type": "category",
+          "settings": {
+            "collection": "clothing",
+            "label": "Clothing"
+          }
+        },
+        "cat-home-living": {
+          "type": "category",
+          "settings": {
+            "collection": "home-living",
+            "label": "Home & Living"
+          }
+        },
+        "cat-electronics": {
+          "type": "category",
+          "settings": {
+            "collection": "electronics",
+            "label": "Electronics"
+          }
+        }
+      },
+      "block_order": [
+        "cat-bags",
+        "cat-shoes",
+        "cat-jewellery",
+        "cat-clothing",
+        "cat-home-living",
+        "cat-electronics"
+      ],
+      "settings": {
+        "heading": "Shop by category",
+        "background": "white"
+      }
+    },
+    "featured": {
+      "type": "featured-products",
+      "blocks": {
+        "tab-bargains": {
+          "type": "tab",
+          "settings": {
+            "label": "Best Bargains",
+            "collection": "bargains"
+          }
+        },
+        "tab-new": {
+          "type": "tab",
+          "settings": {
+            "label": "New Arrivals",
+            "collection": "new-arrivals"
+          }
+        }
+      },
+      "block_order": [
+        "tab-bargains",
+        "tab-new"
+      ],
+      "settings": {
+        "heading": "Today's finds",
+        "products_to_show": 8,
+        "background": "paper"
+      }
+    },
+    "visit": {
+      "type": "visit-us",
+      "settings": {
+        "show_map": true,
+        "show_collection": true,
+        "structured_data": false
+      }
+    },
+    "clearance": {
+      "type": "clearance-banner",
+      "blocks": {
+        "under-5": {
+          "type": "shortcut",
+          "settings": {
+            "label": "Under £5",
+            "collection": "under-5"
+          }
+        },
+        "last-chance": {
+          "type": "shortcut",
+          "settings": {
+            "label": "Last Chance",
+            "collection": "last-chance"
+          }
+        }
+      },
+      "block_order": [
+        "under-5",
+        "last-chance"
+      ],
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "background": "gold-soft"
+      }
+    },
+    "promos": {
+      "type": "promo-tiles",
+      "blocks": {
+        "promo-under5": {
+          "type": "tile",
+          "settings": {
+            "heading": "Under £5",
+            "text": "Everyday finds for less",
+            "collection": "under-5",
+            "badge": "",
+            "button_label": "Shop now"
+          }
+        },
+        "promo-clearance": {
+          "type": "tile",
+          "settings": {
+            "heading": "Clearance",
+            "text": "Last chance to grab a bargain",
+            "collection": "clearance",
+            "badge": "",
+            "button_label": "Shop now"
+          }
+        },
+        "promo-new": {
+          "type": "tile",
+          "settings": {
+            "heading": "New Arrivals",
+            "text": "Fresh stock every week",
+            "collection": "new-arrivals",
+            "badge": "",
+            "button_label": "See what's new"
+          }
+        }
+      },
+      "block_order": [
+        "promo-under5",
+        "promo-clearance",
+        "promo-new"
+      ],
+      "settings": {
+        "label": "Offers"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "value-strip",
+    "promos",
+    "categories",
+    "featured",
+    "visit",
+    "clearance",
+    "newsletter"
+  ]
+}

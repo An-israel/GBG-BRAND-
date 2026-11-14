@@ -1,0 +1,486 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "GBG Bargain Shop",
+    "theme_version": "1.2.0",
+    "theme_author": "GBG Bargain Shop",
+    "theme_documentation_url": "https://www.gbgbargainshop.co.uk",
+    "theme_support_url": "https://www.gbgbargainshop.co.uk/pages/contact"
+  },
+  {
+    "name": "Brand and logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo",
+        "info": "Upload the approved GBG logo (transparent PNG or SVG). If empty, a text logo is shown."
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width (desktop)",
+        "min": 80,
+        "max": 260,
+        "step": 10,
+        "unit": "px",
+        "default": 150
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Square image, at least 96 x 96px."
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Default social preview image",
+        "info": "Used when a page has no image of its own. 1200 x 628px recommended."
+      }
+    ]
+  },
+  {
+    "name": "Colours",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Approved GBG palette. Every text pairing has been checked against WCAG AA. Yellow is for promotions only and always carries navy text. Never put gold text on white."
+      },
+      {
+        "type": "color",
+        "id": "color_navy",
+        "label": "Navy (header, footer, buttons, headings)",
+        "default": "#0B1F3A"
+      },
+      {
+        "type": "color",
+        "id": "color_navy_700",
+        "label": "Navy 700 (hover, secondary surfaces)",
+        "default": "#153461"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold (accents, rules, badges, icons)",
+        "default": "#C9A227"
+      },
+      {
+        "type": "color",
+        "id": "color_gold_soft",
+        "label": "Gold soft (subtle panels)",
+        "default": "#F3E7C1"
+      },
+      {
+        "type": "color",
+        "id": "color_yellow",
+        "label": "Yellow (promotions only)",
+        "default": "#FFD60A"
+      },
+      {
+        "type": "color",
+        "id": "color_white",
+        "label": "White (background, cards)",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_paper",
+        "label": "Paper (alternate sections)",
+        "default": "#F7F7F5"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Ink (body text)",
+        "default": "#16181D"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Muted (secondary text)",
+        "default": "#5D6470"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success",
+        "default": "#1E7F4F"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Error",
+        "default": "#B42318"
+      }
+    ]
+  },
+  {
+    "name": "Shop details",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "These details appear in the footer, the Visit Us block, contact page and search-engine data. Leave a field empty until the owner confirms it – never guess."
+      },
+      {
+        "type": "text",
+        "id": "shop_display_name",
+        "label": "Shop name",
+        "default": "GBG Bargain Shop"
+      },
+      {
+        "type": "text",
+        "id": "legal_entity",
+        "label": "Legal entity name",
+        "info": "[TO CONFIRM] For example \"GBG Retail Ltd\". Shown in the footer copyright line."
+      },
+      {
+        "type": "text",
+        "id": "company_number",
+        "label": "Company number",
+        "info": "[TO CONFIRM] Leave empty if not a limited company."
+      },
+      {
+        "type": "text",
+        "id": "vat_number",
+        "label": "VAT number",
+        "info": "[TO CONFIRM] Leave empty if not VAT-registered. \"Price includes VAT\" only shows on product pages when this is filled in."
+      },
+      {
+        "type": "text",
+        "id": "address_line_1",
+        "label": "Address line 1",
+        "default": "Unit M10, Stanley Meat Market"
+      },
+      {
+        "type": "text",
+        "id": "address_line_2",
+        "label": "Address line 2",
+        "default": "Prescot Road"
+      },
+      {
+        "type": "text",
+        "id": "address_city",
+        "label": "Town / city",
+        "default": "Liverpool"
+      },
+      {
+        "type": "text",
+        "id": "address_postcode",
+        "label": "Postcode",
+        "default": "L13 3AS"
+      },
+      {
+        "type": "text",
+        "id": "geo_lat",
+        "label": "Latitude (for search engines)",
+        "info": "[TO CONFIRM] Copy from Google Maps, e.g. 53.4170"
+      },
+      {
+        "type": "text",
+        "id": "geo_lng",
+        "label": "Longitude (for search engines)",
+        "info": "[TO CONFIRM] Copy from Google Maps, e.g. -2.9300"
+      },
+      {
+        "type": "text",
+        "id": "phone",
+        "label": "Telephone (as displayed)",
+        "default": "07344 670317"
+      },
+      {
+        "type": "text",
+        "id": "phone_international",
+        "label": "Telephone (international format, digits only)",
+        "default": "447344670317",
+        "info": "Used for tel: links and WhatsApp."
+      },
+      {
+        "type": "text",
+        "id": "email",
+        "label": "Customer email",
+        "info": "[TO CONFIRM]"
+      },
+      {
+        "type": "textarea",
+        "id": "opening_hours",
+        "label": "Opening hours (one line per row)",
+        "info": "[TO CONFIRM] Shop hours only – not the wholesale warehouse hours. Example: Monday–Saturday: 9:00am–5:30pm"
+      },
+      {
+        "type": "text",
+        "id": "opening_hours_schema",
+        "label": "Opening hours for search engines",
+        "info": "Optional. Comma-separated, e.g. Mo-Sa 09:00-17:30, Su 10:00-16:00"
+      },
+      {
+        "type": "text",
+        "id": "response_time",
+        "label": "Reply-time promise",
+        "info": "[TO CONFIRM] e.g. We reply within 1 working day."
+      },
+      {
+        "type": "text",
+        "id": "pickup_ready_time",
+        "label": "Collection ready time",
+        "info": "[TO CONFIRM] Must match the pickup setting in Shopify, e.g. Usually ready in 24 hours."
+      },
+      {
+        "type": "url",
+        "id": "directions_url",
+        "label": "Google Maps directions link",
+        "info": "Optional. If empty, a directions link is built from the address."
+      },
+      {
+        "type": "text",
+        "id": "map_embed_query",
+        "label": "Map search text",
+        "default": "Stanley Meat Market, Prescot Road, Liverpool L13 3AS"
+      }
+    ]
+  },
+  {
+    "name": "Social and WhatsApp",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "whatsapp_enabled",
+        "label": "Show WhatsApp links",
+        "default": false,
+        "info": "Turn on only when the owner confirms the number uses WhatsApp Business."
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL",
+        "info": "[TO CONFIRM]"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL",
+        "info": "[TO CONFIRM]"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL",
+        "info": "[TO CONFIRM]"
+      }
+    ]
+  },
+  {
+    "name": "Icon strip and promises",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "These promises appear in the icon strip, on product pages and in the basket – only when switched on. Only switch one on when it is really set up in Shopify."
+      },
+      {
+        "type": "header",
+        "content": "Click & Collect"
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_free_collection",
+        "label": "Show Click & Collect",
+        "default": false,
+        "info": "Needs local pickup switched on for the Unit M10 location (Settings → Shipping and delivery → Local pickup)."
+      },
+      {
+        "type": "header",
+        "content": "Fast Track (same-day dispatch)"
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_fast_track",
+        "label": "Show Fast Track",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "fast_track_cutoff",
+        "label": "Order cut-off time",
+        "default": "2pm"
+      },
+      {
+        "type": "text",
+        "id": "fast_track_days",
+        "label": "Days",
+        "default": "Monday–Friday"
+      },
+      {
+        "type": "header",
+        "content": "Free delivery"
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_free_delivery",
+        "label": "Show free delivery",
+        "default": false,
+        "info": "Needs a free shipping rate for orders over the amount below (Settings → Shipping and delivery)."
+      },
+      {
+        "type": "range",
+        "id": "free_delivery_threshold",
+        "label": "Free delivery on orders of",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "unit": "£",
+        "default": 80
+      },
+      {
+        "type": "header",
+        "content": "Paid UK delivery"
+      },
+      {
+        "type": "checkbox",
+        "id": "claim_uk_delivery",
+        "label": "UK delivery is available",
+        "default": false,
+        "info": "Shows the delivery notes on product pages and in the basket once delivery rates are live."
+      }
+    ]
+  },
+  {
+    "name": "Cart and delivery",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "When something is added to the basket",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Open the basket drawer"
+          },
+          {
+            "value": "page",
+            "label": "Go to the basket page"
+          }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "text",
+        "id": "cart_collection_note",
+        "label": "Collection reminder",
+        "default": "Free collection from our Liverpool shop – choose it at checkout where available."
+      },
+      {
+        "type": "text",
+        "id": "cart_delivery_note",
+        "label": "Delivery note",
+        "default": "UK delivery costs are shown at checkout before you pay. No hidden fees."
+      },
+      {
+        "type": "text",
+        "id": "product_delivery_note",
+        "label": "Product page delivery note",
+        "default": "UK delivery available. The exact cost is shown at checkout before you pay."
+      },
+      {
+        "type": "text",
+        "id": "collection_only_note",
+        "label": "Collection-only note",
+        "default": "Collection only – this item is too large to post. Collect it free from Unit M10."
+      }
+    ]
+  },
+  {
+    "name": "Products",
+    "settings": [
+      {
+        "type": "select",
+        "id": "image_fit",
+        "label": "Product photos in grids and tiles",
+        "options": [
+          {
+            "value": "cover",
+            "label": "Fill the square (best for phone photos)"
+          },
+          {
+            "value": "contain",
+            "label": "Show the whole item on white (best for white-background photos)"
+          }
+        ],
+        "default": "cover",
+        "info": "Product pages always show the whole photo, with zoom."
+      },
+      {
+        "type": "checkbox",
+        "id": "card_show_second_image",
+        "label": "Show second image on hover",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_quick_add",
+        "label": "Quick add on product cards",
+        "default": true,
+        "info": "Only for products without options."
+      },
+      {
+        "type": "page",
+        "id": "returns_page",
+        "label": "Returns page link (optional)",
+        "info": "If empty, the Shopify refund policy is used."
+      },
+      {
+        "type": "page",
+        "id": "delivery_page",
+        "label": "Delivery page link (optional)",
+        "info": "If empty, the Shopify shipping policy is used."
+      },
+      {
+        "type": "page",
+        "id": "conditions_page",
+        "label": "Condition guide page (optional)",
+        "info": "FAQ page that explains each condition label."
+      },
+      {
+        "type": "checkbox",
+        "id": "google_returns_info",
+        "label": "Tell Google about the returns window",
+        "default": true,
+        "info": "Adds the return period to product data for Google. UK online orders always have at least 14 days."
+      },
+      {
+        "type": "range",
+        "id": "returns_days",
+        "label": "Returns window (days)",
+        "min": 14,
+        "max": 60,
+        "step": 1,
+        "unit": "d",
+        "default": 14,
+        "info": "Must match the Refund policy. Delivery prices are not sent to Google until rates are confirmed."
+      }
+    ]
+  },
+  {
+    "name": "Newsletter prompt",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "newsletter_popup_enabled",
+        "label": "Show newsletter prompt",
+        "default": false,
+        "info": "Never shown on a visitor's first page. Shown at most once every 30 days and easy to close."
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_heading",
+        "label": "Heading",
+        "default": "Hear about new bargains first"
+      },
+      {
+        "type": "textarea",
+        "id": "newsletter_popup_text",
+        "label": "Text",
+        "default": "Get an email when fresh stock lands in the shop. No spam – unsubscribe any time."
+      }
+    ]
+  }
+]

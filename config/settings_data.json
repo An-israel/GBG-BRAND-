@@ -1,0 +1,18 @@
+{
+  "current": "Default",
+  "presets": {
+    "Default": {
+      "logo_width": 150,
+      "whatsapp_enabled": false,
+      "claim_uk_delivery": true,
+      "claim_free_collection": true,
+      "cart_type": "drawer",
+      "newsletter_popup_enabled": false,
+      "claim_fast_track": true,
+      "fast_track_cutoff": "2pm",
+      "fast_track_days": "Monday–Friday",
+      "claim_free_delivery": true,
+      "free_delivery_threshold": 80
+    }
+  }
+}

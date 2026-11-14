@@ -1,0 +1,48 @@
+{%- comment -%}
+  Icon strip: Click & Collect · Fast Track · Free delivery. Each promise only shows when
+  it is switched on in Theme settings → Icon strip and promises (and set up in Shopify).
+{%- endcomment -%}
+{%- capture items -%}
+  {%- if settings.claim_free_collection -%}
+    <li class="usp">
+      {%- render 'icon', name: 'collect' -%}
+      <p class="usp__title">{{ section.settings.collect_title | escape }}</p>
+      <p class="usp__text">{{ section.settings.collect_text | escape }}{% if settings.pickup_ready_time != blank %} {{ settings.pickup_ready_time | escape }}{% endif %}</p>
+    </li>
+  {%- endif -%}
+  {%- if settings.claim_fast_track -%}
+    <li class="usp">
+      {%- render 'icon', name: 'fast' -%}
+      <p class="usp__title">{{ section.settings.fast_title | escape }}</p>
+      <p class="usp__text">Order by {{ settings.fast_track_cutoff | escape }} {{ settings.fast_track_days | escape }} and we send it the same day.</p>
+    </li>
+  {%- endif -%}
+  {%- if settings.claim_free_delivery -%}
+    <li class="usp">
+      {%- render 'icon', name: 'delivery' -%}
+      <p class="usp__title">Free delivery over £{{ settings.free_delivery_threshold }}</p>
+      <p class="usp__text">Free UK delivery on orders of £{{ settings.free_delivery_threshold }} and above.</p>
+    </li>
+  {%- endif -%}
+{%- endcapture -%}
+{%- if items != blank -%}
+  <section class="usps" aria-label="Why shop with us">
+    <ul class="container usps__list" role="list">{{ items }}</ul>
+  </section>
+{%- elsif request.design_mode -%}
+  <p class="container placeholder-note">Icon strip hidden: switch promises on in Theme settings → Icon strip and promises once they are set up.</p>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Icon strip",
+  "class": "section-value-strip",
+  "settings": [
+    { "type": "paragraph", "content": "Switch each promise on or off (and set the cut-off time and free delivery amount) in Theme settings → Icon strip and promises." },
+    { "type": "text", "id": "collect_title", "label": "Click & Collect title", "default": "Click & Collect" },
+    { "type": "text", "id": "collect_text", "label": "Click & Collect text", "default": "Order online and collect free from our Liverpool store." },
+    { "type": "text", "id": "fast_title", "label": "Fast Track title", "default": "Fast Track" }
+  ],
+  "presets": [{ "name": "Icon strip" }]
+}
+{% endschema %}

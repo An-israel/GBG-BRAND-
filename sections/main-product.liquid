@@ -1,0 +1,202 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign collection_only = false
+  if product.metafields.custom.collection_only.value == true
+    assign collection_only = true
+  endif
+  assign condition_notes = product.metafields.custom.condition_notes.value
+  assign dimensions = product.metafields.custom.dimensions.value
+  assign tested = product.metafields.custom.tested.value
+  assign colour = product.metafields.custom.colour.value
+  assign returns_url = settings.returns_page.url | default: shop.refund_policy.url
+  assign delivery_url = settings.delivery_page.url | default: shop.shipping_policy.url
+-%}
+<div class="product" data-product data-section-id="{{ section.id }}" data-product-id="{{ product.id }}">
+  <div class="container">
+    {%- render 'breadcrumbs' -%}
+    <div class="product__grid">
+      {%- comment -%} Gallery: swipe on mobile, tap to zoom {%- endcomment -%}
+      <div class="product__gallery" data-gallery>
+        <ul class="gallery" role="list" data-gallery-track aria-label="Product photos">
+          {%- for media in product.media -%}
+            <li class="gallery__slide" id="Slide-{{ media.id }}" data-media-id="{{ media.id }}">
+              {%- if media.media_type == 'image' -%}
+                {%- liquid
+                  assign img_loading = 'lazy'
+                  if forloop.first
+                    assign img_loading = 'eager'
+                  endif
+                -%}
+                <button type="button" class="gallery__zoom" data-zoom="{{ media.preview_image | image_url: width: 2048 }}" aria-label="Zoom photo {{ forloop.index }} of {{ product.media.size }}">
+                  {{ media.preview_image | image_url: width: 1200 | image_tag:
+                    widths: '360, 480, 600, 800, 1000, 1200',
+                    sizes: '(min-width: 990px) 55vw, 100vw',
+                    loading: img_loading,
+                    alt: media.alt | default: product.title,
+                    class: 'gallery__img'
+                  }}
+                  <span class="gallery__zoom-icon" aria-hidden="true">{% render 'icon', name: 'zoom' %}</span>
+                </button>
+              {%- else -%}
+                {{ media | media_tag: image_size: '1200x', autoplay: false, loop: false, controls: true, preload: 'none' }}
+              {%- endif -%}
+            </li>
+          {%- else -%}
+            <li class="gallery__slide">{{ 'product-1' | placeholder_svg_tag: 'gallery__img placeholder-svg' }}</li>
+          {%- endfor -%}
+        </ul>
+        {%- if product.media.size > 1 -%}
+          <ul class="gallery__thumbs" role="list" aria-label="Choose a photo">
+            {%- for media in product.media -%}
+              <li>
+                <button type="button" class="gallery__thumb" data-thumb="Slide-{{ media.id }}" aria-label="Show photo {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}>
+                  {{ media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', width: 80, height: 80, alt: '' }}
+                </button>
+              </li>
+            {%- endfor -%}
+          </ul>
+          <p class="gallery__counter" aria-hidden="true"><span data-gallery-current>1</span> / {{ product.media.size }}</p>
+        {%- endif -%}
+      </div>
+
+      <div class="product__info">
+        <div class="product__badges">
+          {%- if product.tags contains 'clearance' -%}<span class="badge badge--clearance">Clearance</span>{%- endif -%}
+          {%- if collection_only -%}<span class="badge badge--outline">{% render 'icon', name: 'store' %} Collection only</span>{%- endif -%}
+        </div>
+        <h1 class="product__title">{{ product.title | escape }}</h1>
+
+        <div class="product__price" data-product-price>
+          {%- render 'price', product: product, variant: current_variant, size: 'large' -%}
+        </div>
+        {%- if cart.taxes_included and settings.vat_number != blank -%}<p class="product__tax">Price includes VAT.</p>{%- endif -%}
+
+        <div data-product-stock>{%- render 'stock-status', variant: current_variant -%}</div>
+
+        {%- render 'condition-badge', product: product, explain: true -%}
+        {%- if condition_notes != blank -%}
+          <div class="product__notes">
+            <h2 class="product__notes-title">Condition notes</h2>
+            <p>{{ condition_notes | escape | newline_to_br }}</p>
+          </div>
+        {%- endif -%}
+
+        {%- form 'product', product, id: 'ProductForm', class: 'product-form', novalidate: 'novalidate', data-product-form: 'main' -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              {%- assign option_index0 = forloop.index0 -%}
+              {%- assign option_position = forloop.index -%}
+              <fieldset class="option">
+                <legend class="option__legend">{{ option.name | escape }}: <span data-option-selected="{{ forloop.index0 }}">{{ option.selected_value | escape }}</span></legend>
+                <div class="option__values">
+                  {%- for value in option.values -%}
+                    <input type="radio" class="option__input visually-hidden" id="Option-{{ section.id }}-{{ option_index0 }}-{{ forloop.index0 }}"
+                      name="option{{ option_position }}" value="{{ value | escape }}" data-option-index="{{ option_index0 }}"
+                      {% if option.selected_value == value %}checked{% endif %}>
+                    <label class="option__label{% unless value.available %} option__label--unavailable{% endunless %}" for="Option-{{ section.id }}-{{ option_index0 }}-{{ forloop.index0 }}">
+                      {{ value | escape }}{% unless value.available %}<span class="visually-hidden"> (sold out)</span>{% endunless %}
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endfor -%}
+            <script type="application/json" data-variants>
+              [{%- for v in product.variants -%}{"id":{{ v.id }},"options":{{ v.options | json }},"available":{{ v.available | json }},"price":{{ v.price | json }},"compare_at_price":{% if v.compare_at_price %}{{ v.compare_at_price }}{% else %}null{% endif %},"price_html":{{ v.price | money | json }},"compare_html":{{ v.compare_at_price | money | json }},"saving_html":{{ v.compare_at_price | minus: v.price | money | json }},"sku":{{ v.sku | json }},"qty":{% if v.inventory_management == 'shopify' %}{{ v.inventory_quantity | json }}{% else %}null{% endif %},"featured_media":{% if v.featured_media %}{{ v.featured_media.id }}{% else %}null{% endif %}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+            </script>
+          {%- endunless -%}
+
+          {%- if section.settings.cta_text != blank -%}
+            <p class="product__cta">{{ section.settings.cta_text | escape }}</p>
+          {%- endif -%}
+          <div class="product-form__buttons" data-main-atc>
+            <button type="submit" name="add" class="button button--large button--full" data-add-button {% unless current_variant.available %}disabled{% endunless %}>
+              <span data-add-label>{% if current_variant.available %}Add to basket{% else %}Sold out{% endif %}</span>
+            </button>
+          </div>
+          <p class="form-message form-message--error" role="alert" data-form-error hidden></p>
+        {%- endform -%}
+
+        <div class="product__fulfilment">
+          {%- if collection_only -%}
+            <p class="fulfil fulfil--collection">{% render 'icon', name: 'store' %} <span>{{ settings.collection_only_note | escape }}</span></p>
+          {%- else -%}
+            {%- if settings.claim_free_delivery -%}
+              <p class="fulfil">{% render 'icon', name: 'delivery' %} <span><strong>Free UK delivery</strong> on orders of £{{ settings.free_delivery_threshold }} and above.</span></p>
+            {%- elsif settings.claim_uk_delivery and settings.product_delivery_note != blank -%}
+              <p class="fulfil">{% render 'icon', name: 'truck' %} <span>{{ settings.product_delivery_note | escape }}</span></p>
+            {%- endif -%}
+            {%- if settings.claim_fast_track -%}
+              <p class="fulfil fulfil--fast">{% render 'icon', name: 'fast' %} <span><strong>Fast Track:</strong> order by {{ settings.fast_track_cutoff | escape }} {{ settings.fast_track_days | escape }} and we send it the same day.</span></p>
+            {%- endif -%}
+          {%- endif -%}
+          <pickup-availability class="pickup" data-variant-id="{{ current_variant.id }}" data-base-url="{{ routes.root_url }}" {% unless current_variant.available %}hidden{% endunless %}></pickup-availability>
+        </div>
+
+        {%- if dimensions != blank or tested != blank or colour != blank or product.description != blank -%}
+          <div class="product__details">
+            {%- if dimensions != blank or tested != blank or colour != blank -%}
+              <dl class="spec">
+                {%- if colour != blank -%}<div><dt>Colour</dt><dd>{{ colour | escape }}</dd></div>{%- endif -%}
+                {%- if dimensions != blank -%}<div><dt>Size / dimensions</dt><dd>{{ dimensions | escape }}</dd></div>{%- endif -%}
+                {%- if tested != blank and tested != 'Not applicable' -%}<div><dt>Electrical check</dt><dd>{{ tested | escape }}</dd></div>{%- endif -%}
+                {%- if current_variant.sku != blank -%}<div><dt>Item code</dt><dd data-sku>{{ current_variant.sku | escape }}</dd></div>{%- endif -%}
+              </dl>
+            {%- endif -%}
+            {%- if product.description != blank -%}
+              <div class="rte product__description">{{ product.description }}</div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        <ul class="product__links" role="list">
+          {%- if returns_url != blank -%}<li><a href="{{ returns_url }}">Returns &amp; refunds</a></li>{%- endif -%}
+          {%- if delivery_url != blank -%}<li><a href="{{ delivery_url }}">Delivery &amp; collection</a></li>{%- endif -%}
+          {%- if settings.conditions_page != blank -%}<li><a href="{{ settings.conditions_page.url }}">Condition guide</a></li>{%- endif -%}
+        </ul>
+
+        {%- if settings.whatsapp_enabled and settings.phone_international != blank -%}
+          {%- capture wa_text -%}Hi GBG, I have a question about: {{ product.title }} – {{ request.origin }}{{ product.url }}{%- endcapture -%}
+          <a class="button button--secondary button--full whatsapp-btn" href="https://wa.me/{{ settings.phone_international }}?text={{ wa_text | url_encode }}" target="_blank" rel="noopener" data-track="whatsapp_click">
+            {% render 'icon', name: 'whatsapp' %} Ask about this item on WhatsApp
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Sticky add-to-basket bar (mobile), shown once the main button scrolls away {%- endcomment -%}
+  <div class="sticky-atc" data-sticky-atc aria-hidden="true" hidden>
+    <div class="sticky-atc__info">
+      <p class="sticky-atc__title">{{ product.title | escape }}</p>
+      <p class="sticky-atc__price" data-sticky-price>{{ current_variant.price | money }}</p>
+    </div>
+    <button type="submit" form="ProductForm" class="button" data-sticky-button tabindex="-1" {% unless current_variant.available %}disabled{% endunless %}>
+      {% if current_variant.available %}Add to basket{% else %}Sold out{% endif %}
+    </button>
+  </div>
+
+  <dialog class="zoom-modal" data-zoom-modal aria-label="Zoomed photo">
+    <button type="button" class="icon-button zoom-modal__close" data-close-dialog aria-label="Close zoom">{% render 'icon', name: 'close' %}</button>
+    <img alt="" width="2048" height="2048" data-zoom-img>
+  </dialog>
+</div>
+
+{%- render 'structured-data-product', product: product -%}
+
+{% schema %}
+{
+  "name": "Product information",
+  "class": "section-main-product",
+  "settings": [
+    { "type": "paragraph", "content": "Notes for delivery, collection-only and returns are edited in Theme settings → Cart and delivery / Products." },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Text above the Add to basket button",
+      "default": "Find something you love? Add it to your basket or choose collection at checkout where available."
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,63 @@
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign condition = product.metafields.custom.condition.value
+  assign item_condition = 'https://schema.org/NewCondition'
+  case condition
+    when 'Open box', 'Customer return', 'Used', 'Unchecked'
+      assign item_condition = 'https://schema.org/UsedCondition'
+  endcase
+
+  # Only send a barcode as GTIN when it looks like a real one (8, 12, 13 or 14 digits).
+  # Internal shelf/SKU barcodes would be flagged as invalid by Google.
+  assign barcode = variant.barcode | strip
+  assign non_digits = barcode | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+  assign gtin = ''
+  if barcode != blank and non_digits == blank
+    assign bl = barcode.size
+    if bl == 8 or bl == 12 or bl == 13 or bl == 14
+      assign gtin = barcode
+    endif
+  endif
+-%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": {{ product.title | json }},
+    "url": {{ request.origin | append: product.url | json }},
+    {%- if product.featured_media %}
+    "image": [
+      {%- for media in product.media limit: 5 -%}
+        {{ media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ],
+    {%- endif %}
+    "description": {{ product.description | strip_html | strip_newlines | truncate: 500 | json }},
+    {%- if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
+    {%- if gtin != blank %}"gtin": {{ gtin | json }},{% endif %}
+    {%- if product.vendor != blank and product.vendor != shop.name and product.vendor != settings.shop_display_name %}"brand": { "@type": "Brand", "name": {{ product.vendor | json }} },{% endif %}
+    "offers": [
+      {%- for v in product.variants -%}
+      {
+        "@type": "Offer",
+        {%- if v.sku != blank %}"sku": {{ v.sku | json }},{% endif %}
+        "url": {{ request.origin | append: v.url | json }},
+        "price": {{ v.price | divided_by: 100.0 | json }},
+        "priceCurrency": {{ cart.currency.iso_code | json }},
+        "itemCondition": {{ item_condition | json }},
+        "availability": "https://schema.org/{% if v.available %}InStock{% else %}OutOfStock{% endif %}",
+        "seller": { "@type": "Organization", "name": {{ settings.shop_display_name | default: shop.name | json }} }
+        {%- if settings.google_returns_info -%},
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "GB",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": {{ settings.returns_days | default: 14 }},
+          "returnMethod": ["https://schema.org/ReturnByMail", "https://schema.org/ReturnInStore"]
+        }
+        {%- endif -%}
+      }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>

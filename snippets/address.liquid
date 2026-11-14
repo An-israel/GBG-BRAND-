@@ -1,0 +1,6 @@
+<address class="address">
+  <strong>{{ settings.shop_display_name | default: shop.name | escape }}</strong><br>
+  {{ settings.address_line_1 | escape }}<br>
+  {%- if settings.address_line_2 != blank %}{{ settings.address_line_2 | escape }}<br>{% endif -%}
+  {{ settings.address_city | escape }}, {{ settings.address_postcode | escape }}
+</address>

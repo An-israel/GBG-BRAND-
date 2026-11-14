@@ -1,0 +1,108 @@
+{%- comment -%}
+  Yellow announcement bar with navy text. Each message can have an optional
+  end date – it hides automatically after that date (checked on the server
+  and again in the browser, because pages can be cached).
+{%- endcomment -%}
+{%- assign today = 'now' | date: '%Y%m%d' | plus: 0 -%}
+{%- assign shown = 0 -%}
+{%- capture messages -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      # End date: accepts YYYY-MM-DD (2026-12-05) or UK DD/MM/YYYY (05/12/2026).
+      # Anything else is ignored (the message stays visible) and flagged in the editor.
+      assign end_raw = block.settings.end_date | strip
+      assign end_iso = ''
+      if end_raw != blank
+        if end_raw contains '/'
+          assign parts = end_raw | split: '/'
+          if parts.size == 3 and parts[2].size == 4
+            assign dd = parts[0] | prepend: '0' | slice: -2, 2
+            assign mm = parts[1] | prepend: '0' | slice: -2, 2
+            assign end_iso = parts[2] | append: '-' | append: mm | append: '-' | append: dd
+          endif
+        else
+          assign parts = end_raw | split: '-'
+          if parts.size == 3 and parts[0].size == 4
+            assign dd = parts[2] | prepend: '0' | slice: -2, 2
+            assign mm = parts[1] | prepend: '0' | slice: -2, 2
+            assign end_iso = parts[0] | append: '-' | append: mm | append: '-' | append: dd
+          endif
+        endif
+      endif
+      assign expired = false
+      if end_iso != blank
+        assign end_num = end_iso | remove: '-' | plus: 0
+        if end_num > 0 and today > end_num
+          assign expired = true
+        endif
+      endif
+    -%}
+    {%- if request.design_mode and end_raw != blank and end_iso == blank -%}
+      <p class="placeholder-note">End date "{{ end_raw | escape }}" not understood – use 2026-12-05 or 05/12/2026. The message will not hide automatically.</p>
+    {%- endif -%}
+    {%- if block.settings.text != blank and expired == false -%}
+      <p class="announcement__msg{% if shown == 0 %} is-active{% endif %}" {{ block.shopify_attributes }}{% if end_iso != blank %} data-end="{{ end_iso }}"{% endif %}>
+        {%- liquid
+          assign msg_link = block.settings.link
+          if msg_link contains '/pages/'
+            assign page_handle = msg_link | split: '/pages/' | last | split: '?' | first | split: '#' | first
+            if pages[page_handle].url == blank
+              if page_handle == 'visit-our-shop'
+                assign msg_link = routes.root_url | append: '#visit'
+              else
+                assign msg_link = ''
+              endif
+            endif
+          endif
+        -%}
+        {%- if msg_link != blank -%}
+          <a href="{{ msg_link }}">{{ block.settings.text | escape }} {% render 'icon', name: 'arrow' %}</a>
+        {%- else -%}
+          {{ block.settings.text | escape }}
+        {%- endif -%}
+      </p>
+      {%- assign shown = shown | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- if messages != blank -%}
+  <div class="announcement{% if shown > 1 %} announcement--multi{% endif %}" role="region" aria-label="Announcement" data-announcement>
+    <div class="container announcement__inner">
+      <div class="announcement__msgs" aria-live="off">{{ messages }}</div>
+      {%- if shown > 1 -%}
+        <button type="button" class="announcement__next" data-announcement-next aria-label="Show next announcement">{% render 'icon', name: 'arrow' %}</button>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "class": "section-announcement",
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Shop online • Visit us in Liverpool – Unit M10, Stanley Meat Market",
+          "info": "Only genuine messages. No unverified discount claims."
+        },
+        { "type": "url", "id": "link", "label": "Link" },
+        {
+          "type": "text",
+          "id": "end_date",
+          "label": "End date (optional)",
+          "info": "Format 2026-12-05 or 05/12/2026. The message hides automatically after this date."
+        }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Announcement bar", "blocks": [{ "type": "message" }] }]
+}
+{% endschema %}

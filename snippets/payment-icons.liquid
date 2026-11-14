@@ -1,0 +1,9 @@
+{%- comment -%} Only methods that are actually enabled in Shopify are listed. {%- endcomment -%}
+{%- if shop.enabled_payment_types.size > 0 -%}
+  <ul class="payment-icons" role="list">
+    <li class="visually-hidden">Payment methods we accept</li>
+    {%- for type in shop.enabled_payment_types -%}
+      <li class="payment-icons__item">{{ type | payment_type_svg_tag: class: 'payment-icon' }}</li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

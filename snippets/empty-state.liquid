@@ -1,0 +1,29 @@
+{%- comment -%}
+  On-brand empty state with links to Bargains and New Arrivals.
+  Params: heading, text, show_search (boolean)
+{%- endcomment -%}
+<div class="empty-state">
+  <div class="empty-state__tag" aria-hidden="true">{% render 'icon', name: 'tag' %}</div>
+  <h2 class="empty-state__heading">{{ heading }}</h2>
+  {%- if text != blank -%}<p class="empty-state__text">{{ text }}</p>{%- endif -%}
+  {%- if show_search -%}
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-inline">
+      <label for="EmptySearch" class="visually-hidden">Search the shop</label>
+      <input id="EmptySearch" type="search" name="q" placeholder="Search bags, shoes, homeware…" class="input">
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="submit" class="button">Search</button>
+    </form>
+  {%- endif -%}
+  <div class="empty-state__actions">
+    {%- assign bargains = collections['bargains'] -%}
+    {%- assign new_arrivals = collections['new-arrivals'] -%}
+    {%- if bargains.products_count > 0 -%}
+      <a href="{{ bargains.url }}" class="button">Shop bargains</a>
+    {%- else -%}
+      <a href="{{ routes.all_products_collection_url }}" class="button">Shop all</a>
+    {%- endif -%}
+    {%- if new_arrivals.products_count > 0 -%}
+      <a href="{{ new_arrivals.url }}" class="button button--secondary">New arrivals</a>
+    {%- endif -%}
+  </div>
+</div>

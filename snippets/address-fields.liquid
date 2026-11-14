@@ -1,0 +1,12 @@
+<div class="field"><label for="AddrFirst{{ id }}">First name</label><input class="input" id="AddrFirst{{ id }}" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name"></div>
+<div class="field"><label for="AddrLast{{ id }}">Last name</label><input class="input" id="AddrLast{{ id }}" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name"></div>
+<div class="field"><label for="Addr1{{ id }}">Address</label><input class="input" id="Addr1{{ id }}" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1"></div>
+<div class="field"><label for="Addr2{{ id }}">Address line 2</label><input class="input" id="Addr2{{ id }}" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2"></div>
+<div class="field"><label for="AddrCity{{ id }}">Town / city</label><input class="input" id="AddrCity{{ id }}" name="address[city]" value="{{ form.city }}" autocomplete="address-level2"></div>
+<div class="field"><label for="AddrZip{{ id }}">Postcode</label><input class="input" id="AddrZip{{ id }}" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code"></div>
+<div class="field">
+  <label for="AddrCountry{{ id }}">Country</label>
+  <select class="select" id="AddrCountry{{ id }}" name="address[country]" autocomplete="country" data-default="{{ form.country | default: 'United Kingdom' | escape }}">{{ all_country_option_tags }}</select>
+</div>
+<div class="field"><label for="AddrPhone{{ id }}">Phone</label><input class="input" type="tel" id="AddrPhone{{ id }}" name="address[phone]" value="{{ form.phone }}" autocomplete="tel"></div>
+<label class="checkbox"><input type="checkbox" name="address[default]" value="1"{% if form.set_as_default_checkbox %} checked{% endif %}><span>Set as default address</span></label>

@@ -1,0 +1,15 @@
+{%- comment -%}
+  Basket drawer. Uses <dialog> for built-in focus trapping and Escape.
+  Contents re-render via the Section Rendering API (section: cart-drawer).
+{%- endcomment -%}
+<dialog class="drawer drawer--right" id="CartDrawer" aria-labelledby="CartDrawerTitle" data-cart-drawer>
+  <div class="drawer__inner">
+    <div class="drawer__header">
+      <h2 class="drawer__title" id="CartDrawerTitle">Your basket</h2>
+      <button type="button" class="icon-button" data-close-dialog aria-label="Close basket">{% render 'icon', name: 'close' %}</button>
+    </div>
+    <div class="drawer__body" id="CartDrawerContents" data-cart-contents>
+      {%- render 'cart-items' -%}
+    </div>
+  </div>
+</dialog>

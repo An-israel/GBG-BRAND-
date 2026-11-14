@@ -1,0 +1,25 @@
+{%- liquid
+  assign has_social = false
+  if settings.social_instagram != blank or settings.social_tiktok != blank or settings.social_facebook != blank
+    assign has_social = true
+  endif
+  if settings.whatsapp_enabled and settings.phone_international != blank
+    assign has_social = true
+  endif
+-%}
+{%- if has_social -%}
+  <ul class="social" role="list">
+    {%- if settings.social_instagram != blank -%}
+      <li><a href="{{ settings.social_instagram }}" class="social__link" target="_blank" rel="noopener">{% render 'icon', name: 'instagram' %}<span class="visually-hidden">Instagram (opens in a new tab)</span></a></li>
+    {%- endif -%}
+    {%- if settings.social_tiktok != blank -%}
+      <li><a href="{{ settings.social_tiktok }}" class="social__link" target="_blank" rel="noopener">{% render 'icon', name: 'tiktok' %}<span class="visually-hidden">TikTok (opens in a new tab)</span></a></li>
+    {%- endif -%}
+    {%- if settings.social_facebook != blank -%}
+      <li><a href="{{ settings.social_facebook }}" class="social__link" target="_blank" rel="noopener">{% render 'icon', name: 'facebook' %}<span class="visually-hidden">Facebook (opens in a new tab)</span></a></li>
+    {%- endif -%}
+    {%- if settings.whatsapp_enabled and settings.phone_international != blank -%}
+      <li><a href="https://wa.me/{{ settings.phone_international }}" class="social__link" target="_blank" rel="noopener" data-track="whatsapp_click">{% render 'icon', name: 'whatsapp' %}<span class="visually-hidden">WhatsApp (opens in a new tab)</span></a></li>
+    {%- endif -%}
+  </ul>
+{%- endif -%}

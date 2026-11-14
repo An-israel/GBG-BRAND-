@@ -1,0 +1,19 @@
+<div class="section cart-page">
+  <div class="container container--narrow">
+    <h1 class="page-title">Your basket</h1>
+    <div data-cart-contents data-cart-page>
+      {%- render 'cart-items' -%}
+    </div>
+    {%- if cart.item_count > 0 -%}
+      <p class="cart-page__continue"><a href="{{ routes.all_products_collection_url }}" class="link-arrow">Continue shopping {% render 'icon', name: 'arrow' %}</a></p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Basket",
+  "class": "section-main-cart",
+  "settings": []
+}
+{% endschema %}

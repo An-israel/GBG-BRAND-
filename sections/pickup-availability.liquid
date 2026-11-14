@@ -1,0 +1,22 @@
+{%- comment -%}
+  Rendered via /variants/{id}/?section_id=pickup-availability (Shopify
+  pickup-availability API). Shows only when local pickup is enabled.
+{%- endcomment -%}
+{%- assign pick_up_availabilities = product_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+{%- if pick_up_availabilities.size > 0 -%}
+  <div class="pickup__inner">
+    {%- for availability in pick_up_availabilities -%}
+      <p class="fulfil fulfil--pickup">
+        {%- render 'icon', name: 'store' -%}
+        <span>
+          {%- if availability.available -%}
+            <strong>Free collection from {{ availability.location.name | escape }}.</strong>
+            {{ availability.pick_up_time | escape }}
+          {%- else -%}
+            Collection is not currently available for this item from {{ availability.location.name | escape }}.
+          {%- endif -%}
+        </span>
+      </p>
+    {%- endfor -%}
+  </div>
+{%- endif -%}

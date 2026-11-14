@@ -1,0 +1,59 @@
+{%- comment -%}
+  Visible breadcrumbs + BreadcrumbList structured data.
+{%- endcomment -%}
+{%- liquid
+  assign crumbs_names = 'Home'
+  assign crumbs_urls = routes.root_url
+  case request.page_type
+    when 'collection'
+      assign crumbs_names = crumbs_names | append: '|||' | append: collection.title
+      assign crumbs_urls = crumbs_urls | append: '|||' | append: collection.url
+    when 'product'
+      if collection
+        assign crumbs_names = crumbs_names | append: '|||' | append: collection.title
+        assign crumbs_urls = crumbs_urls | append: '|||' | append: collection.url
+      endif
+      assign crumbs_names = crumbs_names | append: '|||' | append: product.title
+      assign crumbs_urls = crumbs_urls | append: '|||' | append: product.url
+    when 'page'
+      assign crumbs_names = crumbs_names | append: '|||' | append: page.title
+      assign crumbs_urls = crumbs_urls | append: '|||' | append: page.url
+    when 'list-collections'
+      assign crumbs_names = crumbs_names | append: '|||Site map'
+      assign crumbs_urls = crumbs_urls | append: '|||' | append: routes.collections_url
+    when 'search'
+      assign crumbs_names = crumbs_names | append: '|||Search'
+      assign crumbs_urls = crumbs_urls | append: '|||' | append: routes.search_url
+  endcase
+  assign names = crumbs_names | split: '|||'
+  assign urls = crumbs_urls | split: '|||'
+-%}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    {%- for name in names -%}
+      <li>
+        {%- if forloop.last -%}
+          <span aria-current="page">{{ name | escape }}</span>
+        {%- else -%}
+          <a href="{{ urls[forloop.index0] }}">{{ name | escape }}</a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ol>
+</nav>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {%- for name in names -%}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "name": {{ name | json }},
+          "item": {{ request.origin | append: urls[forloop.index0] | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  }
+</script>

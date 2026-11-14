@@ -1,0 +1,22 @@
+{%- paginate blog.articles by 12 -%}
+<div class="section">
+  <div class="container">
+    <h1 class="page-title">{{ blog.title | escape }}</h1>
+    <ul class="article-grid" role="list">
+      {%- for article in blog.articles -%}
+        <li class="card card--text">
+          {%- if article.image -%}
+            <a href="{{ article.url }}" class="card__media" tabindex="-1" aria-hidden="true">{{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: '', class: 'card__img' }}</a>
+          {%- endif -%}
+          <h2 class="card__title"><a href="{{ article.url }}" class="card__link">{{ article.title | escape }}</a></h2>
+          <p class="card__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
+        </li>
+      {%- endfor -%}
+    </ul>
+    {%- if paginate.pages > 1 -%}{{ paginate | default_pagination }}{%- endif -%}
+  </div>
+</div>
+{%- endpaginate -%}
+{% schema %}
+{ "name": "Blog posts", "class": "section-main-blog", "settings": [] }
+{% endschema %}
