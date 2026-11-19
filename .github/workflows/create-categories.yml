@@ -76,6 +76,6 @@ jobs:
             ls -t logs/*.log 2>/dev/null | head -1 | xargs -r grep -E '\[(INFO|WARN|ERROR)\]' | sed -E 's/^[^ ]+ //' | tail -80
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always() && env.MODE != 'tidy'
         with: { name: create-categories-log, path: logs/, if-no-files-found: ignore }
