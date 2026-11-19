@@ -23,7 +23,7 @@ jobs:
       SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
       SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
