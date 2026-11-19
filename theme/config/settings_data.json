@@ -12,7 +12,10 @@
       "fast_track_cutoff": "2pm",
       "fast_track_days": "Monday–Friday",
       "claim_free_delivery": true,
-      "free_delivery_threshold": 80
+      "free_delivery_threshold": 80,
+      "show_empty_categories": true,
+      "empty_category_heading": "New stock coming soon",
+      "empty_category_text": "We're adding items to this category now. Pop into our Liverpool shop or check back soon."
     }
   }
 }

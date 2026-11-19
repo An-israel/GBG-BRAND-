@@ -43,20 +43,20 @@ test('mobile menu opens as a bottom sheet and closes', async ({ page, isMobile }
   await expect(sheet).toBeHidden();
 });
 
-test('empty collections are hidden from navigation', async ({ page }) => {
+test('categories show before products, and every menu link works', async ({ page }) => {
   await page.goto(url('/', '/index'));
   const hrefs = await page.locator('header a[href*="/collections/"], #MenuSheet a[href*="/collections/"]').evaluateAll((as) => as.map((a) => (a as HTMLAnchorElement).getAttribute('href')));
   if (!LIVE) {
-    // Mock data: Beauty, Travel, Men's/Kids' shoes and Bracelets have no products.
+    // Mock data: Beauty, Travel, Men's/Kids' shoes and Bracelets exist but have no products yet –
+    // the launch pack wants the categories in place first, so they are listed.
     for (const empty of ['beauty-personal-care', 'travel', 'mens-shoes', 'kids-shoes', 'bracelets']) {
-      expect(hrefs.some((h) => h?.endsWith(`/collections/${empty}`))).toBe(false);
+      expect(hrefs.some((h) => h?.endsWith(`/collections/${empty}`)), empty).toBe(true);
     }
     return;
   }
-  for (const h of [...new Set(hrefs)].slice(0, 30)) {
-    const res = await page.request.get(url(`${h}/products.json?limit=1`));
-    const body = await res.json();
-    expect(body.products.length, `${h} is empty but linked in the menu`).toBeGreaterThan(0);
+  for (const h of [...new Set(hrefs)].slice(0, 40)) {
+    const res = await page.request.get(url(h!));
+    expect(res.status(), `${h} is linked in the menu but does not open`).toBe(200);
   }
 });
 

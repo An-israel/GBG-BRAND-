@@ -75,15 +75,15 @@ describe('theme update merge – her work always wins', () => {
 describe('renames between versions', () => {
   it('moves her category blocks to the new collection names and keeps her photos', () => {
     const live = { sections: { categories: { type: 'category-grid', settings: {}, blocks: {
-      a: { type: 'category', settings: { collection: 'bags-accessories', label: 'Bags', image: 'shopify://shop_images/her-bags.jpg' } },
-      b: { type: 'category', settings: { collection: 'fashion', label: 'Fashion' } },
-      c: { type: 'category', settings: { collection: 'home-kitchen', label: 'Our homeware' } },
+      a: { type: 'category', settings: { collection: 'bags', label: 'Bags', image: 'shopify://shop_images/her-bags.jpg' } },
+      b: { type: 'category', settings: { collection: 'clothing', label: 'Clothing' } },
+      c: { type: 'category', settings: { collection: 'home-living', label: 'Our homeware' } },
     } } }, order: ['categories'] };
     const { result, report } = mergeSectionFile('templates/index.json', live, live, ['categories']);
     const b = result.sections.categories.blocks;
-    expect(b.a.settings).toEqual({ collection: 'bags', label: 'Bags', image: 'shopify://shop_images/her-bags.jpg' });
-    expect(b.b.settings).toEqual({ collection: 'clothing', label: 'Clothing' });
-    expect(b.c.settings).toEqual({ collection: 'home-living', label: 'Our homeware' }); // her own label kept
+    expect(b.a.settings).toEqual({ collection: 'bags-accessories', label: 'Bags', image: 'shopify://shop_images/her-bags.jpg' });
+    expect(b.b.settings).toEqual({ collection: 'fashion', label: 'Fashion' });
+    expect(b.c.settings).toEqual({ collection: 'home-kitchen', label: 'Our homeware' }); // her own label kept
     expect(report.renamed?.length).toBe(4);
   });
 });

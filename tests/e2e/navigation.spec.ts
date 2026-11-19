@@ -19,8 +19,8 @@ test('Shop opens a mega menu with categories and an All products button', async 
   test.skip(isMobile, 'computer menu');
   await page.goto('/index');
   await page.locator('.nav__details summary', { hasText: 'Shop' }).click();
-  await expect(page.locator('.mega__heading', { hasText: /^Bags$/ })).toBeVisible();
-  await expect(page.locator('.mega__heading', { hasText: 'Deals' })).toBeVisible();
+  await expect(page.locator('.mega__heading', { hasText: /^Bags & Accessories$/ })).toBeVisible();
+  await expect(page.locator('.mega__heading', { hasText: 'Bargains / Clearance' })).toBeVisible();
   await expect(page.locator('.mega__link', { hasText: 'Handbags' })).toBeVisible();
   await expect(page.locator('.mega__all')).toHaveAttribute('href', '/collections/all');
 });
@@ -58,8 +58,8 @@ test('phone: quick links and the menu buttons', async ({ page, isMobile }) => {
   const sheet = page.locator('#MenuSheet');
   await expect(sheet.locator('.sheet__highlight', { hasText: 'Clearance' })).toBeVisible();
   await expect(sheet.locator('#SheetSearch')).toBeVisible();
-  await sheet.locator('summary', { hasText: /^\s*Bags\s*$/ }).click();
-  await expect(sheet.getByRole('link', { name: 'All Bags' })).toBeVisible();
+  await sheet.locator('summary', { hasText: /^\s*Bags & Accessories\s*$/ }).click();
+  await expect(sheet.getByRole('link', { name: 'All Bags & Accessories' })).toBeVisible();
   await expect(sheet.getByRole('link', { name: 'Handbags' })).toBeVisible();
 });
 
@@ -94,9 +94,33 @@ test('basket shows how much more is needed for free delivery', async ({ page }) 
   await expect(page.locator('[data-cart-page] .free-delivery')).toContainText(/Spend £\d+\.\d\d more for free UK delivery/);
 });
 
-test('home page: bold banner, promo tiles and the mock-up category names', async ({ page }) => {
+test('home page: bold banner, promo tiles and the launch-pack categories', async ({ page }) => {
   await page.goto('/index');
   await expect(page.locator('.promo-tile__heading')).toHaveText(['Under £5', 'Clearance', 'New Arrivals']);
   const cats = (await page.locator('.category-tile__label').allInnerTexts()).map((t) => t.trim());
-  expect(cats).toEqual(['Bags', 'Shoes', 'Jewellery', 'Clothing', 'Home & Living', 'Electronics']);
+  expect(cats).toEqual(['Bags', 'Shoes', 'Jewellery', 'Fashion', 'Home & Kitchen', 'Electronics']);
+});
+
+test('categories come first: the launch-pack site map shows before any product is uploaded', async ({ page }) => {
+  await page.goto('/categories-first-index');
+  // every main category is a home page tile, marked "Coming soon"
+  await expect(page.locator('.category-tile__label')).toHaveText(['Bags', 'Shoes', 'Jewellery', 'Fashion', 'Home & Kitchen', 'Electronics']);
+  await expect(page.locator('.category-tile__soon')).toHaveCount(6);
+  // and the whole site map is in the menu
+  const nav = await page.locator('#MenuSheet a, #MenuSheet summary').allInnerTexts();
+  const text = nav.map((t) => t.trim()).join('|');
+  for (const name of ['Bags & Accessories', 'Shoes', 'Jewellery & Watches', 'Fashion', 'Home & Kitchen', 'Electronics & Gadgets', 'Beauty & Personal Care', 'Bargains / Clearance',
+    'Handbags', 'Backpacks', 'Purses', 'Travel', 'Earrings', 'Necklaces', 'Bracelets', 'Watches', 'Cookware', 'Storage', 'Household Essentials', 'Speakers', 'Small Electronics', 'Under £5', 'Clearance', 'Last Chance']) {
+    expect(text, name).toContain(name);
+  }
+  await page.goto('/categories-first-sitemap');
+  await expect(page.locator('.sitemap__cat-link')).toHaveText(['Bags & Accessories', 'Shoes', 'Jewellery & Watches', 'Fashion', 'Home & Kitchen', 'Electronics & Gadgets', 'Beauty & Personal Care', 'Bargains / Clearance', 'All products']);
+});
+
+test('an empty category says new stock is coming soon and lists its sub-categories', async ({ page }) => {
+  await page.goto('/categories-first-collection');
+  await expect(page.getByRole('heading', { name: 'New stock coming soon' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Visit us in Liverpool', exact: true })).toBeVisible();
+  await expect(page.locator('.coming-soon__subs .chip')).toHaveText(['Handbags', 'Backpacks', 'Purses', 'Travel']);
+  await expect(page.locator('[data-facets-form]')).toHaveCount(0);
 });

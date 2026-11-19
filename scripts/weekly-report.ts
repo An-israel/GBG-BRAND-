@@ -56,16 +56,27 @@ async function main() {
     if (!p.condition?.value) noCondition.push(label);
     const missing = p.media.nodes.filter((m: any) => m.mediaContentType === 'IMAGE' && !(m.alt || '').trim()).length;
     if (missing) noAlt.push(`${label} – ${missing} image(s)`);
-    if (p.tags.includes('new-arrival') && new Date(p.createdAt).getTime() < cutoff) oldNew.push({ id: p.id, title: label, created: p.createdAt.slice(0, 10) });
+    const inNew = p.tags.includes('new-arrival') || p.collections.nodes.some((c: any) => c.handle === 'new-arrivals');
+    if (inNew && new Date(p.createdAt).getTime() < cutoff) oldNew.push({ id: p.id, title: label, created: p.createdAt.slice(0, 10) });
   }
 
   if (args.flags['remove-old-tags']) {
+    // New Arrivals is a hand-picked (manual) category: take old items out of it too.
+    const na = await client.query(`query { collectionByHandle(handle: "new-arrivals") { id ruleSet { appliedDisjunctively } } }`);
+    const naId: string | undefined = na.collectionByHandle && !na.collectionByHandle.ruleSet ? na.collectionByHandle.id : undefined;
+    if (naId && oldNew.length) {
+      for (let i = 0; i < oldNew.length; i += 250) {
+        const r = await client.mutate(`mutation($id: ID!, $productIds: [ID!]!) { collectionRemoveProducts(id: $id, productIds: $productIds) { userErrors { field message } } }`,
+          { id: naId, productIds: oldNew.slice(i, i + 250).map((p) => p.id) }, { collectionRemoveProducts: { userErrors: [] } }, 'remove old items from New Arrivals');
+        checkUserErrors('collectionRemoveProducts', r.collectionRemoveProducts);
+      }
+    }
     for (const p of oldNew) {
       const r = await client.mutate(`mutation($id: ID!, $tags: [String!]!) { tagsRemove(id: $id, tags: $tags) { userErrors { field message } } }`,
         { id: p.id, tags: ['new-arrival'] }, { tagsRemove: { userErrors: [] } }, `tagsRemove ${p.title}`);
       checkUserErrors('tagsRemove', r.tagsRemove);
     }
-    log.info(`${args.dryRun ? '[dry-run] would remove' : 'removed'} "new-arrival" from ${oldNew.length} product(s)`);
+    log.info(`${args.dryRun ? '[dry-run] would remove' : 'removed'} "new-arrival" (tag and New Arrivals category) from ${oldNew.length} product(s)`);
   }
 
   const section = (title: string, items: string[], ok: string) => `## ${title} (${items.length})\n${items.length ? items.map((i) => `- ${i}`).join('\n') : `✔ ${ok}`}\n`;

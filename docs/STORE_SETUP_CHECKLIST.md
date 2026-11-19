@@ -33,7 +33,7 @@ Admin API scopes (nothing more):
 | `read_metaobject_definitions` | (optional) future use |
 
 - [ ] Install the app → copy the **Admin API access token** once → put it in `.env` as `SHOPIFY_ADMIN_TOKEN` (never commit, never paste in chat).
-- [ ] For GitHub Actions, add it as repository secret `SHOPIFY_ADMIN_TOKEN`.
+- [ ] For GitHub Actions, add it as repository secret `SHOPIFY_ADMIN_TOKEN` (newer stores with a Dev Dashboard app: secrets `SHOPIFY_CLIENT_ID` + `SHOPIFY_CLIENT_SECRET` instead) and the variable `SHOPIFY_STORE_DOMAIN`.
 - [ ] Rotation: uninstall/reinstall the custom app to rotate (see RUNBOOK §Secrets).
 
 ## 2. Store details and rebrand (brief §11.4)
@@ -48,11 +48,10 @@ Admin API scopes (nothing more):
 ## 3. Metafields, collections, menus, pages 🤖
 
 - [ ] `npm run setup:store -- --dry-run` – read the log.
-- [ ] `npm run setup:store` – creates metafield definitions, collections **with products only**, "Collection only" shipping profile, hidden draft pages, menus.
+- [ ] `npm run setup:store` – creates metafield definitions, **every category in the launch pack site map (even before products)**, "Collection only" shipping profile, hidden draft pages, menus. Or GitHub → Actions → **Create categories** (`docs/CATEGORIES.md`).
   - **Location:** if the store has one location (e.g. the old DBS one) it is re-used, so stock is never split. Add `--rename-location` to rename it to "GBG Bargain Shop, Unit M10" with the Unit M10 address. With several locations, choose one with `--location-id <number>`; `--create-location` adds a new one.
   - **Menus** only link to *published* pages. After the owner approves and publishes the pages, run `npm run setup:store -- --only menus`.
-- [ ] Re-run after each import so new categories appear (it never creates empty collections).
-- [ ] Last Chance: tag-only by default. To also include every item with exactly 1 in stock, set `"lastChanceIncludesStockOfOne": true` in `config/collections.json` **before** the collection is first created (only sensible if most listings are NOT one-offs).
+- [ ] Categories are manual (tick on the product page / ticked by the importer from tags); Under £5 fills itself by price. The hourly *Create categories* run adds products from a sub-category to its main category.
 - [ ] Monthly backup: add repository variable `SHOPIFY_STORE_DOMAIN` and secret `SHOPIFY_ADMIN_TOKEN` – `.github/workflows/monthly-backup.yml` then exports on the 1st of each month (download the artifact and keep it safe).
 - [ ] ✋ Search & Discovery app (free, by Shopify) → **Filters**: add Availability, Price, **Condition** (custom.condition), **Colour** (custom.colour), Product type, Size (variant option, if used). Filters only show when data exists.
 - [ ] ✋ Online Store → Pages: after owner approval, set each page to **Visible**.

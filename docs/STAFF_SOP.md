@@ -12,6 +12,6 @@
 | 6 | **Approve** | Owner / manager | In Shopify → Products → Drafts: check title, price, condition, photos, faults. Change Status to **Active** (or set `active` in the CSV and re-import). | Product is Active and visible online. |
 | 7 | **Display** | Shop staff | Put the item on the shelf / online-stock area with the SKU label visible. | Findable in under a minute by SKU. |
 | 8 | **Sell** | Everyone | **With Shopify POS:** scan/search the SKU – stock updates online automatically. **Without POS:** straight after the sale, Shopify app → Products → item → Inventory → reduce by 1. Online orders: pick, pack (or set aside for pickup), mark fulfilled / ready for pickup **the same day**. | Online stock always matches the shelf. |
-| 9 | **Reconcile weekly** | Manager (Monday) | Run `npm run report:weekly`. Spot-check 10 random SKUs shelf vs Shopify. Remove sold-out items from featured collections. Clear New Arrival tags older than 30 days. | Report saved; differences corrected. |
+| 9 | **Reconcile weekly** | Manager (Monday) | Run `npm run report:weekly`. Spot-check 10 random SKUs shelf vs Shopify. Remove sold-out items from featured collections. Clear New Arrivals older than 30 days (`--remove-old-tags`). | Report saved; differences corrected. |
 
 **Never:** list an item without a condition · invent a "was" price · write "no refunds" · write "genuine/designer" unless proven · post a bulky item (set *Collection only*) · use the old DBS name.

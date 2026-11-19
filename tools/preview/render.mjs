@@ -175,8 +175,8 @@ async function renderTemplate(name, extra, file) {
 const req = (page_type, extra = {}) => ({ request: { page_type, design_mode: false, origin: 'https://www.gbgbargainshop.co.uk', locale: { iso_code: 'en' } }, ...extra });
 const productPage = products[0];
 await renderTemplate('index', { ...req('index'), page_title: 'GBG Bargain Shop' }, 'index.html');
-await renderTemplate('collection', { ...req('collection'), collection: collections.bags, page_title: 'Bags & Accessories' }, 'collection.html');
-await renderTemplate('product', { ...req('product'), product: productPage, collection: collections.bags, page_title: productPage.title, recommendations: { performed: true, products_count: 4, products: products.slice(5, 9) } }, 'product.html');
+await renderTemplate('collection', { ...req('collection'), collection: collections['bags-accessories'], page_title: 'Bags & Accessories' }, 'collection.html');
+await renderTemplate('product', { ...req('product'), product: productPage, collection: collections['bags-accessories'], page_title: productPage.title, recommendations: { performed: true, products_count: 4, products: products.slice(5, 9) } }, 'product.html');
 await renderTemplate('product', { ...req('product'), product: products[3], page_title: products[3].title, recommendations: { performed: false } }, 'product-variants.html');
 await renderTemplate('product', { ...req('product'), product: products[11], page_title: products[11].title, recommendations: { performed: false } }, 'product-electrical.html');
 await renderTemplate('product', { ...req('product'), product: products[10], page_title: products[10].title, recommendations: { performed: false } }, 'product-collection-only.html');
@@ -195,7 +195,7 @@ await renderTemplate('cart', { ...req('cart'), cart: cartFull, page_title: 'Your
 // Same product with the delivery/collection claims switched OFF (honesty check) and no VAT number.
 {
   const off = { ...settings, claim_uk_delivery: false, claim_free_collection: false, claim_free_delivery: false, claim_fast_track: false, vat_number: '' };
-  await renderTemplate('product', { ...req('product'), settings: off, product: products[0], collection: collections.bags, page_title: products[0].title, recommendations: { performed: false } }, 'product-claims-off.html');
+  await renderTemplate('product', { ...req('product'), settings: off, product: products[0], collection: collections['bags-accessories'], page_title: products[0].title, recommendations: { performed: false } }, 'product-claims-off.html');
   await renderTemplate('index', { ...req('index'), settings: off, page_title: 'GBG Bargain Shop' }, 'index-claims-off.html');
 }
 // Account login (password-reset box) and a search with results + filters.
@@ -208,6 +208,17 @@ await renderTemplate('customers/login', { ...req('customers/login'), page_title:
 
 // Site map (/collections)
 await renderTemplate('list-collections', { ...req('list-collections'), page_title: 'Site map' }, 'sitemap.html');
+
+// Empty category page (category created before its products – launch pack: categories first)
+await renderTemplate('collection', { ...req('collection'), collection: collections['beauty-personal-care'], page_title: 'Beauty & Personal Care' }, 'collection-empty.html');
+// "Categories first" store: every launch-pack category created, no products uploaded yet.
+{
+  const emptyCols = asShopifyList(Object.fromEntries(Object.entries(collections).map(([h, c]) => [h, { ...c, products: [], products_count: 0, all_products_count: 0, featured_image: null }])));
+  const g = { collections: emptyCols, __noHeroMock: true };
+  await renderTemplate('index', { ...req('index'), ...g, page_title: 'GBG Bargain Shop' }, 'categories-first-index.html');
+  await renderTemplate('list-collections', { ...req('list-collections'), ...g, page_title: 'Site map' }, 'categories-first-sitemap.html');
+  await renderTemplate('collection', { ...req('collection'), ...g, collection: emptyCols['bags-accessories'], page_title: 'Bags & Accessories' }, 'categories-first-collection.html');
+}
 
 // ---------- "Fresh store" scenario: what the client sees right after uploading the theme ----------
 // Old DBS menus and collections still in the store, none of the GBG collections, no new pages,

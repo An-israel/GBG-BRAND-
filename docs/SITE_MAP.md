@@ -1,21 +1,22 @@
 # GBG Bargain Shop – site map (plain English)
 
 The header follows the launch pack: **Shop · New Arrivals · Clearance · Visit Us** (+ search, account, basket).
-The menu builds itself: a category only appears once it has products, and a page only once it exists.
-Nothing in the menu can lead to an empty page.
+The categories are the launch pack site map, and they come **first**: every category shows as soon as it has
+been created (GitHub → Actions → *Create categories*, see `docs/CATEGORIES.md`), even before products are added.
+An empty category says "New stock coming soon". Pages only appear once they exist.
 
 ```
 GBG BARGAIN SHOP  (home page)        "Shop online • Visit us in Liverpool"
 │
 ├── Shop ▾                            every category, with its sub-categories
-│   ├── Bags                          Handbags · Backpacks · Purses · Travel
+│   ├── Bags & Accessories            Handbags · Backpacks · Purses · Travel
 │   ├── Shoes                         Women · Men · Kids
-│   ├── Jewellery                     Earrings · Necklaces · Bracelets · Watches
-│   ├── Clothing                      Women · Men · Kids
-│   ├── Home & Living                 Cookware · Storage · Household essentials
-│   ├── Electronics                   Speakers · Small electronics · Accessories
-│   ├── Beauty                        (only if there is stock)
-│   ├── Deals                         Under £5 · Clearance · Last chance · Best bargains
+│   ├── Jewellery & Watches           Earrings · Necklaces · Bracelets · Watches
+│   ├── Fashion                       Women · Men · Kids
+│   ├── Home & Kitchen                Cookware · Storage · Household Essentials
+│   ├── Electronics & Gadgets         Speakers · Small Electronics · Accessories
+│   ├── Beauty & Personal Care
+│   ├── Bargains / Clearance          Under £5 · Clearance · Last Chance (+ Best Bargains when stocked)
 │   └── All products
 │
 ├── New Arrivals                      newest stock first
@@ -33,7 +34,7 @@ Help (footer, phone menu, site map):  Contact us · FAQs · Click & Collect · D
 3. Bold banner – **BIG BARGAINS. SMALL PRICES.** + *Shop All Bargains* / *Visit Our Liverpool Store* + product photos
 4. Icon strip – **Click & Collect · Fast Track** (order by 2pm Mon–Fri, sent the same day) **· Free delivery over £80**
 5. Three promo tiles – Under £5 · Clearance · New Arrivals
-6. Shop by category – Bags · Shoes · Jewellery · Clothing · Home & Living · Electronics (the shop's own photos)
+6. Shop by category – Bags · Shoes · Jewellery · Fashion · Home & Kitchen · Electronics (the shop's own photos; *Coming soon* badge while empty)
 7. Today's finds – Best Bargains / New Arrivals
 8. Visit us – address, hours, directions, map, Click & Collect
 9. Clearance shortcuts, newsletter, footer
@@ -50,5 +51,5 @@ Help (footer, phone menu, site map):  Contact us · FAQs · Click & Collect · D
 
 ## Before the shop is fully set up
 
-Until the GBG collections exist, "Shop" lists the store's real existing collections, "New Arrivals" shows all products newest first,
+Until the categories are created, "Shop" lists the store's real existing collections, "New Arrivals" shows all products newest first,
 "Clearance" stays hidden until clearance stock exists, and "Visit Us" scrolls to the Visit us block on the home page.

@@ -1,9 +1,13 @@
-{%- comment -%} Category tiles. A tile only shows when its collection has products. {%- endcomment -%}
+{%- comment -%} Category tiles. A tile shows when its collection has products – or, with "Show categories before products" on, as soon as the category exists (marked "Coming soon"). {%- endcomment -%}
 {%- assign real_tiles = 0 -%}
 {%- capture tiles -%}
   {%- for block in section.blocks -%}
     {%- assign c = block.settings.collection -%}
-    {%- if c != blank and c.products_count > 0 -%}
+    {%- assign tile_ok = false -%}
+    {%- if c != blank -%}
+      {%- if c.products_count > 0 or settings.show_empty_categories -%}{%- assign tile_ok = true -%}{%- endif -%}
+    {%- endif -%}
+    {%- if tile_ok -%}
       {%- assign real_tiles = real_tiles | plus: 1 -%}
       {%- assign tile_image = block.settings.image | default: c.featured_image | default: c.products.first.featured_media.preview_image -%}
       <li class="category-tile reveal" {{ block.shopify_attributes }}>
@@ -21,12 +25,13 @@
               {{ 'collection-1' | placeholder_svg_tag: 'category-tile__img placeholder-svg' }}
             {%- endif -%}
           </span>
+          {%- if c.products_count == 0 -%}<span class="category-tile__soon">Coming soon</span>{%- endif -%}
           <span class="category-tile__label">{{ block.settings.label | default: c.title | escape }} {% render 'icon', name: 'arrow' %}</span>
         </a>
       </li>
     {%- elsif request.design_mode -%}
       <li class="category-tile category-tile--empty" {{ block.shopify_attributes }}>
-        <p class="placeholder-note">Hidden on the live site: choose a collection that has products.</p>
+        <p class="placeholder-note">Hidden on the live site: choose a collection (run "Create categories" first if the list is empty).</p>
       </li>
     {%- endif -%}
   {%- endfor -%}
@@ -54,6 +59,7 @@
               {{ 'collection-1' | placeholder_svg_tag: 'category-tile__img placeholder-svg' }}
             {%- endif -%}
           </span>
+          {%- if c.products_count == 0 -%}<span class="category-tile__soon">Coming soon</span>{%- endif -%}
           <span class="category-tile__label">{{ f[2] | escape }} {% render 'icon', name: 'arrow' %}</span>
         </a>
       </li>

@@ -44,21 +44,22 @@ const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v));
 /**
  * Renames made between versions. Applied to her settings so her blocks (and their photos)
  * keep working: collection handles always; a label only if she never changed it.
- * v1.2.0: categories renamed to the client mock-up.
+ * v1.3.0: back to the launch pack sitemap handles (v1.2.0 had used the mock-up's short handles).
  */
 export const COLLECTION_RENAMES: Record<string, string> = {
-  'bags-accessories': 'bags',
-  'jewellery-watches': 'jewellery',
-  fashion: 'clothing',
-  'womens-fashion': 'womens-clothing',
-  'mens-fashion': 'mens-clothing',
-  'kids-fashion': 'kids-clothing',
-  'home-kitchen': 'home-living',
-  'electronics-gadgets': 'electronics',
+  bags: 'bags-accessories',
+  jewellery: 'jewellery-watches',
+  clothing: 'fashion',
+  'womens-clothing': 'womens-fashion',
+  'mens-clothing': 'mens-fashion',
+  'kids-clothing': 'kids-fashion',
+  'home-living': 'home-kitchen',
+  electronics: 'electronics-gadgets',
 };
+/** Home page tile labels follow the launch pack (Bags, Shoes, Jewellery, Fashion, Home & Kitchen, Electronics). */
 export const LABEL_RENAMES: Record<string, string> = {
-  Fashion: 'Clothing',
-  'Home & Kitchen': 'Home & Living',
+  Clothing: 'Fashion',
+  'Home & Living': 'Home & Kitchen',
   'Bags & Accessories': 'Bags',
   'Jewellery & Watches': 'Jewellery',
   'Electronics & Gadgets': 'Electronics',

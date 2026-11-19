@@ -2,6 +2,22 @@
 
 All notable changes to the GBG Bargain Shop theme and scripts. Versions follow semantic versioning; each release is tagged `vX.Y.Z`.
 
+## [1.3.0] – 2026-11-19
+Client direction (Mrs. Lamy): the categories must be in place **before** any product is uploaded, exactly as the launch pack site map.
+### Changed
+- Categories are back to the **launch pack site map** names and addresses: Bags & Accessories (`bags-accessories`) · Shoes · Jewellery & Watches (`jewellery-watches`) · Fashion (`fashion`, Women/Men/Kids) · Home & Kitchen (`home-kitchen`, incl. Household Essentials) · Electronics & Gadgets (`electronics-gadgets`) · Beauty & Personal Care · **Bargains / Clearance** (Under £5 · Clearance · Last Chance). Home page tiles: Bags · Shoes · Jewellery · Fashion · Home & Kitchen · Electronics. Product tags `fashion`, `womens-fashion`… (v1.2.0's `clothing` tags are replaced).
+- Updating an existing theme carries her home page tiles (and their photos) over to the new addresses automatically.
+- **Categories show before products** (new Theme settings → *Categories*, on by default): every created category appears in the Shop menu, home page tiles (*Coming soon* badge), footer and site map even while empty. An empty category page says "New stock coming soon", lists its sub-categories and links to the Liverpool shop; filters are hidden there.
+- Categories are **manual collections** – staff tick them on the product page. Only *Under £5* fills itself (by price).
+### Added
+- GitHub button **Actions → Create categories** (`.github/workflows/create-categories.yml`): *Check only* / *Create the categories* / *Full store set-up*. Creates every category from `config/collections.json`, even empty, and publishes it. Runs hourly to add products ticked in a sub-category to its main category (`setup:store --only tidy`).
+- Bulk importer ticks each product into its categories from its tags (add-only, never removes a hand-made choice).
+- Scripts accept a Dev Dashboard app's `SHOPIFY_CLIENT_ID` + `SHOPIFY_CLIENT_SECRET` as well as `SHOPIFY_ADMIN_TOKEN`.
+- Weekly report `--remove-old-tags` also takes old items out of the hand-picked New Arrivals category.
+- Guide: `docs/CATEGORIES.md`. Previews `categories-first-*` and `collection-empty`; tests for both.
+### Removed
+- `lastChanceIncludesStockOfOne` option (Last Chance is hand-picked).
+
 ## [1.2.1] – 2026-11-14
 ### Fixed
 - Header showed only "Visit Us" on the store: a Liquid error inside the menu snippet (looping over the store's collections) was glued onto the first menu row, so "Shop" and the rows after it were dropped. Menus now ignore any stray text, the collections loop is capped at 50 (Shopify's limit), and the theme editor shows a "Menu note" if anything goes wrong. Reproduced and verified with Shopify's own Liquid engine (`tools/shopify-liquid/`).

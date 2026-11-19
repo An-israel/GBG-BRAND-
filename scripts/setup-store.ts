@@ -2,16 +2,17 @@
  * Creates the store structure from code (re-runnable, idempotent):
  *   1. product metafield definitions (with validations)
  *   2. the GBG shop location (checks / creates)
- *   3. smart collections from config/collections.json – ONLY when products match
+ *   3. EVERY category from config/collections.json (the launch pack sitemap) – created even before
+ *      products exist, as normal (manual) collections staff tick on the product page
  *   4. the "Collection only" shipping profile (no delivery zones)
  *   5. draft pages from content/pages/*.html (unpublished until approved)
- *   6. navigation menus (main-menu, footer, footer-shop) – empty collections left out
+ *   6. navigation menus (main-menu, footer, footer-shop) – every category that exists, even empty
  *   7. (optional, --policies) legal policy drafts from content/policies/*.html
  *
  *   npm run setup:store -- --dry-run          # show what would happen
  *   npm run setup:store                        # do it
  *   npm run setup:store -- --only metafields,collections
- *   npm run setup:store -- --force-empty      # also create collections with no products yet (not recommended)
+ *   npm run setup:store -- --only tidy        # put products ticked in a sub-category into its main category
  *   Location: re-uses the store's only location (or --location-id <n>); --rename-location renames it to the GBG shop; --create-location adds a new one.
  *
  * The structure version is stored on the shop as metafield gbg.structure_version.
@@ -22,7 +23,7 @@ import { parseArgs } from './lib/args.js';
 import { loadConfig } from './lib/config.js';
 import { createLogger } from './lib/logger.js';
 import { ShopifyClient, checkUserErrors } from './lib/shopify.js';
-import { loadStructure, type CollectionDef } from './lib/store-structure.js';
+import { loadStructure } from './lib/store-structure.js';
 import { CONDITIONS, TESTED } from './lib/products.js';
 
 export const STRUCTURE_VERSION = '1.0.0';
@@ -117,23 +118,6 @@ async function setupLocation() {
 // ---------------------------------------------------------------- collections
 const collectionIds = new Map<string, string>(); // handle -> id (cache, ENGINEERING #2)
 
-async function matchCount(c: CollectionDef): Promise<number> {
-  let total = 0;
-  for (const r of c.rules) {
-    if (r.column === 'TAG') {
-      const d = await client.query(`query($q: String!) { productsCount(query: $q) { count } }`, { q: `tag:'${r.condition}'` });
-      total = Math.max(total, d.productsCount.count);
-    } else if (r.column === 'VARIANT_INVENTORY') {
-      const d = await client.query(`query($q: String!) { productsCount(query: $q) { count } }`, { q: `inventory_total:${r.condition}` });
-      total = Math.max(total, d.productsCount.count);
-    } else if (r.column === 'VARIANT_PRICE' && r.relation === 'LESS_THAN') {
-      const d = await client.query(`query($q: String!) { productVariantsCount(query: $q) { count } }`, { q: `price:<${r.condition}` });
-      total = Math.max(total, d.productVariantsCount.count);
-    }
-  }
-  return total;
-}
-
 async function onlineStorePublicationId(): Promise<string | null> {
   const d = await client.query(`query { publications(first: 20) { nodes { id name } } }`);
   const p = d.publications.nodes.find((n: any) => n.name === 'Online Store');
@@ -141,26 +125,26 @@ async function onlineStorePublicationId(): Promise<string | null> {
 }
 
 async function setupCollections() {
+  // Launch pack: the whole category structure exists BEFORE any product is added, so staff can
+  // tick the category on the product page from day one. Existing collections are never changed.
   const publicationId = await onlineStorePublicationId();
   if (!publicationId) log.warn('Online Store publication not found – collections will not be published automatically.');
+  let created = 0;
   for (const c of structure.collections) {
-    const existing = await client.query(`query($h: String!) { collectionByHandle(handle: $h) { id title productsCount { count } } }`, { h: c.handle });
+    const existing = await client.query(`query($h: String!) { collectionByHandle(handle: $h) { id title ruleSet { rules { column } } productsCount { count } } }`, { h: c.handle });
     if (existing.collectionByHandle) {
       collectionIds.set(c.handle, existing.collectionByHandle.id);
-      log.info(`collection ${c.handle}: exists (${existing.collectionByHandle.productsCount?.count ?? '?'} products) – skipped`);
+      const isAuto = !!existing.collectionByHandle.ruleSet;
+      if (c.type === 'manual' && isAuto) log.warn(`collection ${c.handle}: exists as an AUTOMATED collection, so products can't be ticked into it. Delete it in Shopify and run this again to recreate it as a normal category.`);
+      log.info(`collection ${c.handle}: exists ("${existing.collectionByHandle.title}", ${existing.collectionByHandle.productsCount?.count ?? '?'} products) – left as it is`);
       continue;
     }
-    const count = await matchCount(c);
-    if (count === 0 && !args.flags['force-empty']) {
-      log.info(`collection ${c.handle}: no matching products yet – NOT created (never create empty collections). Re-run after import.`);
-      continue;
-    }
-    const input = {
+    const input: any = {
       title: c.title, handle: c.handle, descriptionHtml: `<p>${c.description}</p>`,
-      sortOrder: c.sortOrder || 'BEST_SELLING',
-      ruleSet: { appliedDisjunctively: !!c.disjunctive, rules: c.rules },
+      sortOrder: c.sortOrder || (c.type === 'manual' ? 'CREATED_DESC' : 'BEST_SELLING'),
       seo: { title: `${c.title} | GBG Bargain Shop`, description: c.seoDescription },
     };
+    if (c.type === 'automated') input.ruleSet = { appliedDisjunctively: false, rules: c.rules };
     const res = await client.mutate(
       `mutation($input: CollectionInput!) { collectionCreate(input: $input) { collection { id handle } userErrors { field message } } }`,
       { input }, { collectionCreate: { collection: { id: `gid://shopify/Collection/DRY_${c.handle}`, handle: c.handle }, userErrors: [] } }, `collectionCreate ${c.handle}`,
@@ -175,8 +159,48 @@ async function setupCollections() {
       );
       checkUserErrors(`publish ${c.handle}`, pub.publishablePublish);
     }
-    log.info(`collection ${c.handle}: ${did('created')} (${count} matching products) and published`);
+    created++;
+    log.info(`collection ${c.handle}: "${c.title}" ${did('created')} (${c.type === 'manual' ? 'tick it on the product page' : 'fills itself'}${c.parent ? `, inside ${c.parent}` : ''}) and published`);
   }
+  log.info(`collections: ${created} ${did('created')}, ${structure.collections.length - created} already existed.`);
+}
+
+// ---------------------------------------------------------------- tidy categories
+/**
+ * A product ticked into a sub-category (e.g. Handbags) is added to its main category
+ * (Bags & Accessories) automatically. Runs hourly from GitHub (create-categories.yml).
+ */
+async function tidyCategories() {
+  const productIds = async (id: string): Promise<Set<string>> => {
+    const ids = new Set<string>();
+    for await (const p of client.paginate<any>(`query($id: ID!, $after: String) { collection(id: $id) { products(first: 250, after: $after) { pageInfo { hasNextPage endCursor } edges { node { id } } } } }`, ['collection', 'products'], { id })) ids.add(p.id);
+    return ids;
+  };
+  const idOf = async (handle: string) => {
+    if (collectionIds.has(handle)) return collectionIds.get(handle)!;
+    const d = await client.query(`query($h: String!) { collectionByHandle(handle: $h) { id } }`, { h: handle });
+    if (d.collectionByHandle) collectionIds.set(handle, d.collectionByHandle.id);
+    return d.collectionByHandle?.id as string | undefined;
+  };
+  let added = 0;
+  for (const c of structure.collections.filter((x) => x.parent)) {
+    const childId = await idOf(c.handle);
+    const parentId = await idOf(c.parent!);
+    if (!childId || !parentId) continue;
+    const [child, parent] = [await productIds(childId), await productIds(parentId)];
+    const missing = [...child].filter((id) => !parent.has(id));
+    for (let i = 0; i < missing.length; i += 250) {
+      const batch = missing.slice(i, i + 250);
+      const r = await client.mutate(
+        `mutation($id: ID!, $productIds: [ID!]!) { collectionAddProducts(id: $id, productIds: $productIds) { userErrors { field message } } }`,
+        { id: parentId, productIds: batch }, { collectionAddProducts: { userErrors: [] } }, `add ${batch.length} product(s) from ${c.handle} to ${c.parent}`,
+      );
+      checkUserErrors(`tidy ${c.handle}`, r.collectionAddProducts);
+    }
+    if (missing.length) log.info(`tidy: ${missing.length} product(s) from ${c.title} ${did('added')} to ${c.parent}`);
+    added += missing.length;
+  }
+  log.info(`tidy: ${added ? `${added} product(s) ${did('added')} to their main category` : 'every product is already in its main category'}.`);
 }
 
 // ---------------------------------------------------------------- shipping profile
@@ -269,7 +293,7 @@ async function setupMenus() {
   for (const c of structure.collections) {
     if (collectionIds.has(c.handle)) continue;
     const d = await client.query(`query($h: String!) { collectionByHandle(handle: $h) { id productsCount { count } } }`, { h: c.handle });
-    if (d.collectionByHandle && (d.collectionByHandle.productsCount?.count ?? 0) > 0) collectionIds.set(c.handle, d.collectionByHandle.id);
+    if (d.collectionByHandle) collectionIds.set(c.handle, d.collectionByHandle.id);
   }
   for (const p of PAGES) {
     if (pageIds.has(p.handle)) continue;
@@ -280,8 +304,9 @@ async function setupMenus() {
     else if (f) hiddenPages.push(p.handle);
   }
   const shopChildren = clean([
-    categoryItem('bags'), categoryItem('shoes'), categoryItem('jewellery'), categoryItem('clothing'),
-    categoryItem('home-living'), categoryItem('electronics'), categoryItem('beauty-personal-care'),
+    categoryItem('bags-accessories'), categoryItem('shoes'), categoryItem('jewellery-watches'), categoryItem('fashion'),
+    categoryItem('home-kitchen'), categoryItem('electronics-gadgets'), categoryItem('beauty-personal-care'),
+    col('under-5', 'Bargains / Clearance', clean([col('under-5'), col('clearance'), col('last-chance')])),
     url('Shop all', '/collections/all'),
   ]);
   // Launch pack header: Shop, New Arrivals, Clearance, Visit Us (Help lives in the footer).
@@ -292,7 +317,7 @@ async function setupMenus() {
     page('visit-our-shop', 'Visit Us') ?? url('Visit Us', '/#visit'),
   ]);
   const footer = clean([page('contact', 'Contact us'), page('faqs', 'FAQs'), page('shipping-delivery', 'Delivery'), page('click-and-collect', 'Click & Collect'), url('Returns & refunds', '/policies/refund-policy'), page('about', 'About us')]);
-  const footerShop = clean([col('bags'), col('shoes'), col('jewellery'), col('clothing'), col('home-living'), col('electronics'), col('new-arrivals'), col('clearance')]);
+  const footerShop = clean([col('bags-accessories'), col('shoes'), col('jewellery-watches'), col('fashion'), col('home-kitchen'), col('electronics-gadgets'), col('beauty-personal-care'), col('new-arrivals'), col('clearance')]);
   if (hiddenPages.length) log.warn(`menus: left out hidden pages (customers would get "page not found"): ${[...new Set(hiddenPages)].join(', ')}. Publish them, then run: npm run setup:store -- --only menus`);
   await upsertMenu('main-menu', 'Main menu', main);
   await upsertMenu('footer', 'Customer care', footer);
@@ -334,6 +359,7 @@ try {
   if (step('shipping')) await setupCollectionOnlyProfile();
   if (step('pages')) await setupPages();
   if (step('menus')) await setupMenus();
+  if (step('tidy')) await tidyCategories();
   if (step('policies')) await setupPolicies();
   await recordVersion();
   log.info(`Finished. Log: ${log.file}`);

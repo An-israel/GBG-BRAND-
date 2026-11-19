@@ -1,0 +1,81 @@
+# "Create categories" button (Actions tab → Create categories → Run workflow).
+#
+# Creates every category from the launch pack site map (config/collections.json) in the
+# Shopify store – BEFORE any product is uploaded – and publishes each one to the Online Store.
+# Safe to run again: categories that already exist are left exactly as they are.
+#
+# Every hour it also tidies up: a product ticked into a sub-category (e.g. Handbags) is
+# added to its main category (Bags & Accessories) too, so staff only tick one box.
+#
+# Needs (Settings → Secrets and variables → Actions):
+#   variable SHOPIFY_STORE_DOMAIN   e.g. gbg-bargain-shop.myshopify.com
+#   secret   SHOPIFY_ADMIN_TOKEN    (custom app made in the Shopify admin)  – OR –
+#   secrets  SHOPIFY_CLIENT_ID + SHOPIFY_CLIENT_SECRET (app made in the Shopify Dev Dashboard)
+# See docs/CATEGORIES.md.
+name: Create categories
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'What to do'
+        type: choice
+        default: 'Check only (changes nothing)'
+        options:
+          - 'Check only (changes nothing)'
+          - 'Create the categories'
+          - 'Full store set-up (categories, pages, menus, location, shipping)'
+  schedule:
+    - cron: '23 * * * *' # hourly tidy
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shopify-store-structure
+  cancel-in-progress: false
+
+jobs:
+  categories:
+    if: vars.SHOPIFY_STORE_DOMAIN != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SHOPIFY_STORE_DOMAIN: ${{ vars.SHOPIFY_STORE_DOMAIN }}
+      SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+      SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+      SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
+      MODE: ${{ github.event_name == 'schedule' && 'tidy' || inputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Check the store key is saved
+        run: |
+          if [ -z "$SHOPIFY_ADMIN_TOKEN" ] && { [ -z "$SHOPIFY_CLIENT_ID" ] || [ -z "$SHOPIFY_CLIENT_SECRET" ]; }; then
+            echo "::error::No Shopify key saved. Add the secret SHOPIFY_ADMIN_TOKEN (or SHOPIFY_CLIENT_ID and SHOPIFY_CLIENT_SECRET) – see docs/CATEGORIES.md."
+            exit 1
+          fi
+      - name: Run
+        run: |
+          case "$MODE" in
+            tidy)              npm run setup:store -- --only tidy ;;
+            "Check only"*)     npm run setup:store -- --only metafields,collections,tidy --dry-run ;;
+            "Create the"*)     npm run setup:store -- --only metafields,collections,tidy ;;
+            "Full store"*)     npm run setup:store ;;
+            *) echo "::error::Unknown mode: $MODE"; exit 1 ;;
+          esac
+      - name: Summary
+        if: always() && env.MODE != 'tidy'
+        run: |
+          {
+            echo "## Create categories – $MODE"
+            echo
+            echo '```'
+            ls -t logs/*.log 2>/dev/null | head -1 | xargs -r grep -E '\[(INFO|WARN|ERROR)\]' | sed -E 's/^[^ ]+ //' | tail -80
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always() && env.MODE != 'tidy'
+        with: { name: create-categories-log, path: logs/, if-no-files-found: ignore }

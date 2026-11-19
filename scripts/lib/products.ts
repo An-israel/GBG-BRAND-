@@ -74,7 +74,7 @@ export interface ValidateOptions {
 }
 
 const IMAGE_EXT = /\.(jpe?g|png|webp|heic|heif)$/i;
-const COLOUR_EXPECTED = new Set(['bags', 'shoes', 'clothing', 'handbags', 'backpacks', 'purses', 'womens-shoes', 'mens-shoes', 'kids-shoes', 'womens-clothing', 'mens-clothing', 'kids-clothing']);
+const COLOUR_EXPECTED = new Set(['bags', 'shoes', 'fashion', 'handbags', 'backpacks', 'purses', 'womens-shoes', 'mens-shoes', 'kids-shoes', 'womens-fashion', 'mens-fashion', 'kids-fashion']);
 const DBS_RE = /\bdbs\b/i;
 
 export const splitTags = (t: string | undefined) => (t || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
@@ -179,7 +179,7 @@ export function validateRows(rows: Row[], opts: ValidateOptions): Issue[] {
         add(COL.colour, 'warning', 'Colour should be a short main colour name (e.g. "Tan", "Navy", "Multicolour") so the colour filter stays tidy.');
       }
       if (!colour && tags.some((t) => COLOUR_EXPECTED.has(t))) {
-        add(COL.colour, 'warning', 'Add the main colour – shoppers can filter bags, shoes and clothing by colour.');
+        add(COL.colour, 'warning', 'Add the main colour – shoppers can filter bags, shoes and fashion by colour.');
       }
 
       optionsByHandle.set(handle, { names: optionNames(r), seen: new Map() });

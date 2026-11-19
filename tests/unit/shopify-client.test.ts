@@ -63,3 +63,23 @@ describe('safety helpers', () => {
     expect(backoffDelay(20, 500)).toBe(30000);
   });
 });
+
+describe('ShopifyClient with a client ID + secret (Dev Dashboard app)', () => {
+  it('swaps them for an access token once, then sends it', async () => {
+    const fetchImpl = vi.fn()
+      .mockResolvedValueOnce(json({ access_token: 'tok123', expires_in: 86399 }))
+      .mockImplementation(async () => json({ data: { ok: true } }));
+    const c = new ShopifyClient({ storeDomain: 'gbg-test.myshopify.com', token: '', clientId: 'id', clientSecret: 'sec' }, { fetchImpl });
+    await c.query('{ ok }');
+    await c.query('{ ok }');
+    expect(fetchImpl).toHaveBeenCalledTimes(3);
+    expect(fetchImpl.mock.calls[0][0]).toBe('https://gbg-test.myshopify.com/admin/oauth/access_token');
+    expect(String(fetchImpl.mock.calls[0][1].body)).toContain('grant_type=client_credentials');
+    expect(fetchImpl.mock.calls[1][1].headers['X-Shopify-Access-Token']).toBe('tok123');
+  });
+  it('explains a rejected secret', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(json({}, 400));
+    const c = new ShopifyClient({ storeDomain: 'gbg-test.myshopify.com', token: '', clientId: 'id', clientSecret: 'bad' }, { fetchImpl });
+    await expect(c.query('{ ok }')).rejects.toThrow(/client ID\/secret|SHOPIFY_CLIENT_ID/);
+  });
+});

@@ -57,10 +57,10 @@
     "categories": {
       "type": "category-grid",
       "blocks": {
-        "cat-bags": {
+        "cat-bags-accessories": {
           "type": "category",
           "settings": {
-            "collection": "bags",
+            "collection": "bags-accessories",
             "label": "Bags"
           }
         },
@@ -71,42 +71,42 @@
             "label": "Shoes"
           }
         },
-        "cat-jewellery": {
+        "cat-jewellery-watches": {
           "type": "category",
           "settings": {
-            "collection": "jewellery",
+            "collection": "jewellery-watches",
             "label": "Jewellery"
           }
         },
-        "cat-clothing": {
+        "cat-fashion": {
           "type": "category",
           "settings": {
-            "collection": "clothing",
-            "label": "Clothing"
+            "collection": "fashion",
+            "label": "Fashion"
           }
         },
-        "cat-home-living": {
+        "cat-home-kitchen": {
           "type": "category",
           "settings": {
-            "collection": "home-living",
-            "label": "Home & Living"
+            "collection": "home-kitchen",
+            "label": "Home & Kitchen"
           }
         },
-        "cat-electronics": {
+        "cat-electronics-gadgets": {
           "type": "category",
           "settings": {
-            "collection": "electronics",
+            "collection": "electronics-gadgets",
             "label": "Electronics"
           }
         }
       },
       "block_order": [
-        "cat-bags",
+        "cat-bags-accessories",
         "cat-shoes",
-        "cat-jewellery",
-        "cat-clothing",
-        "cat-home-living",
-        "cat-electronics"
+        "cat-jewellery-watches",
+        "cat-fashion",
+        "cat-home-kitchen",
+        "cat-electronics-gadgets"
       ],
       "settings": {
         "heading": "Shop by category",

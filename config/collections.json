@@ -1,393 +1,281 @@
 {
-  "_comment": "Store structure as code. setup-store.ts creates these smart collections ONLY when matching products exist (never empty collections). Descriptions are draft copy [FOR APPROVAL]. Products join a category by tag.",
+  "_comment": "Store structure as code – the launch pack sitemap. scripts/setup-store.ts creates every collection (even before products exist) as a MANUAL collection: staff tick the sub-category on the product page and the 'Tidy categories' step adds the product to its main category automatically. 'Under £5' is automated (price below £5). 'tag' is the CSV tag the bulk importer uses to put a product into that collection. Descriptions are draft copy [FOR APPROVAL].",
   "collections": [
     {
-      "handle": "bags",
-      "title": "Bags",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "bags"
-        }
-      ],
+      "handle": "bags-accessories",
+      "title": "Bags & Accessories",
+      "group": "category",
+      "type": "manual",
+      "tag": "bags",
+      "description": "Handbags, backpacks, purses and travel bags at bargain prices – every one checked and clearly labelled with its condition. [FOR APPROVAL]",
       "seoDescription": "Bargain handbags, backpacks, purses and travel bags from GBG Bargain Shop, Liverpool. Every item clearly labelled with its condition.",
-      "description": "Handbags, backpacks, purses and travel bags at bargain prices – every one checked and clearly labelled with its condition. [FOR APPROVAL]"
+      "tileLabel": "Bags"
     },
     {
       "handle": "handbags",
       "title": "Handbags",
-      "parent": "bags",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "handbags"
-        }
-      ],
-      "seoDescription": "Bargain handbags and tote bags from GBG Bargain Shop in Liverpool. Shop online or collect free in store.",
-      "description": "Totes, shoulder bags and everyday handbags at bargain prices. [FOR APPROVAL]"
+      "group": "category",
+      "type": "manual",
+      "tag": "handbags",
+      "description": "Totes, shoulder bags and everyday handbags. [FOR APPROVAL]",
+      "seoDescription": "Bargain handbags and tote bags from GBG Bargain Shop, Liverpool.",
+      "parent": "bags-accessories"
     },
     {
       "handle": "backpacks",
       "title": "Backpacks",
-      "parent": "bags",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "backpacks"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "backpacks",
+      "description": "Backpacks for school, work and days out. [FOR APPROVAL]",
       "seoDescription": "Cheap backpacks for school, work and travel from GBG Bargain Shop, Liverpool.",
-      "description": "Backpacks for school, work and days out. [FOR APPROVAL]"
+      "parent": "bags-accessories"
     },
     {
       "handle": "purses",
       "title": "Purses",
-      "parent": "bags",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "purses"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "purses",
+      "description": "Purses and wallets at bargain prices. [FOR APPROVAL]",
       "seoDescription": "Purses and wallets at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Purses and wallets at bargain prices. [FOR APPROVAL]"
+      "parent": "bags-accessories"
     },
     {
       "handle": "travel",
       "title": "Travel",
-      "parent": "bags",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "travel"
-        }
-      ],
-      "seoDescription": "Travel bags, holdalls and accessories at bargain prices from GBG Bargain Shop.",
-      "description": "Holdalls, wash bags and travel accessories. [FOR APPROVAL]"
+      "group": "category",
+      "type": "manual",
+      "tag": "travel",
+      "description": "Holdalls, wash bags and travel accessories. [FOR APPROVAL]",
+      "seoDescription": "Travel bags and holdalls at bargain prices from GBG Bargain Shop, Liverpool.",
+      "parent": "bags-accessories"
     },
     {
       "handle": "shoes",
       "title": "Shoes",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "shoes"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "shoes",
+      "description": "Trainers, heels, boots and everyday shoes – sizes and condition shown on every pair. [FOR APPROVAL]",
       "seoDescription": "Bargain shoes, trainers and boots for women, men and kids from GBG Bargain Shop, Liverpool.",
-      "description": "Trainers, heels, boots and everyday shoes – sizes and condition shown on every pair. [FOR APPROVAL]"
+      "tileLabel": "Shoes"
     },
     {
       "handle": "womens-shoes",
-      "title": "Women's Shoes",
-      "parent": "shoes",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "womens-shoes"
-        }
-      ],
-      "seoDescription": "Women's shoes, trainers and heels at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Women's trainers, heels and everyday shoes. [FOR APPROVAL]"
+      "title": "Women",
+      "group": "category",
+      "type": "manual",
+      "tag": "womens-shoes",
+      "description": "Women's trainers, heels and everyday shoes. [FOR APPROVAL]",
+      "seoDescription": "Women's shoes and trainers at bargain prices from GBG Bargain Shop, Liverpool.",
+      "parent": "shoes"
     },
     {
       "handle": "mens-shoes",
-      "title": "Men's Shoes",
-      "parent": "shoes",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "mens-shoes"
-        }
-      ],
+      "title": "Men",
+      "group": "category",
+      "type": "manual",
+      "tag": "mens-shoes",
+      "description": "Men's trainers, boots and shoes. [FOR APPROVAL]",
       "seoDescription": "Men's shoes and trainers at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Men's trainers, boots and shoes. [FOR APPROVAL]"
+      "parent": "shoes"
     },
     {
       "handle": "kids-shoes",
-      "title": "Kids' Shoes",
-      "parent": "shoes",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "kids-shoes"
-        }
-      ],
+      "title": "Kids",
+      "group": "category",
+      "type": "manual",
+      "tag": "kids-shoes",
+      "description": "Kids' trainers and shoes. [FOR APPROVAL]",
       "seoDescription": "Kids' shoes and trainers at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Kids' trainers and shoes. [FOR APPROVAL]"
+      "parent": "shoes"
     },
     {
-      "handle": "jewellery",
-      "title": "Jewellery",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "jewellery"
-        }
-      ],
+      "handle": "jewellery-watches",
+      "title": "Jewellery & Watches",
+      "group": "category",
+      "type": "manual",
+      "tag": "jewellery",
+      "description": "Earrings, necklaces, bracelets and watches at small prices. [FOR APPROVAL]",
       "seoDescription": "Bargain earrings, necklaces, bracelets and watches from GBG Bargain Shop, Liverpool.",
-      "description": "Earrings, necklaces, bracelets and watches at small prices. [FOR APPROVAL]"
+      "tileLabel": "Jewellery"
     },
     {
       "handle": "earrings",
       "title": "Earrings",
-      "parent": "jewellery",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "earrings"
-        }
-      ],
-      "seoDescription": "Cheap earrings – hoops, studs and drops – from GBG Bargain Shop, Liverpool.",
-      "description": "Hoops, studs and drop earrings. [FOR APPROVAL]"
+      "group": "category",
+      "type": "manual",
+      "tag": "earrings",
+      "description": "Hoops, studs and drop earrings. [FOR APPROVAL]",
+      "seoDescription": "Earrings at bargain prices from GBG Bargain Shop, Liverpool.",
+      "parent": "jewellery-watches"
     },
     {
       "handle": "necklaces",
       "title": "Necklaces",
-      "parent": "jewellery",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "necklaces"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "necklaces",
+      "description": "Necklaces, chains and pendants. [FOR APPROVAL]",
       "seoDescription": "Necklaces and pendants at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Necklaces, chains and pendants. [FOR APPROVAL]"
+      "parent": "jewellery-watches"
     },
     {
       "handle": "bracelets",
       "title": "Bracelets",
-      "parent": "jewellery",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "bracelets"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "bracelets",
+      "description": "Bracelets and bangles. [FOR APPROVAL]",
       "seoDescription": "Bracelets and bangles at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Bracelets and bangles. [FOR APPROVAL]"
+      "parent": "jewellery-watches"
     },
     {
       "handle": "watches",
       "title": "Watches",
-      "parent": "jewellery",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "watches"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "watches",
+      "description": "Everyday watches at bargain prices. [FOR APPROVAL]",
       "seoDescription": "Watches at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Everyday watches at bargain prices. [FOR APPROVAL]"
+      "parent": "jewellery-watches"
     },
     {
-      "handle": "clothing",
-      "title": "Clothing",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "clothing"
-        }
-      ],
+      "handle": "fashion",
+      "title": "Fashion",
+      "group": "category",
+      "type": "manual",
+      "tag": "fashion",
+      "description": "Selected clothing – strong one-off pieces and repeatable styles. [FOR APPROVAL]",
       "seoDescription": "Bargain clothing for women, men and kids from GBG Bargain Shop, Liverpool.",
-      "description": "Selected clothing – strong one-off pieces and repeatable styles. [FOR APPROVAL]"
+      "tileLabel": "Fashion"
     },
     {
-      "handle": "womens-clothing",
-      "title": "Women's Clothing",
-      "parent": "clothing",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "womens-clothing"
-        }
-      ],
+      "handle": "womens-fashion",
+      "title": "Women",
+      "group": "category",
+      "type": "manual",
+      "tag": "womens-fashion",
+      "description": "Women's clothing and accessories. [FOR APPROVAL]",
       "seoDescription": "Women's clothing at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Women's clothing and accessories. [FOR APPROVAL]"
+      "parent": "fashion"
     },
     {
-      "handle": "mens-clothing",
-      "title": "Men's Clothing",
-      "parent": "clothing",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "mens-clothing"
-        }
-      ],
+      "handle": "mens-fashion",
+      "title": "Men",
+      "group": "category",
+      "type": "manual",
+      "tag": "mens-fashion",
+      "description": "Men's clothing and accessories. [FOR APPROVAL]",
       "seoDescription": "Men's clothing at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Men's clothing and accessories. [FOR APPROVAL]"
+      "parent": "fashion"
     },
     {
-      "handle": "kids-clothing",
-      "title": "Kids' Clothing",
-      "parent": "clothing",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "kids-clothing"
-        }
-      ],
+      "handle": "kids-fashion",
+      "title": "Kids",
+      "group": "category",
+      "type": "manual",
+      "tag": "kids-fashion",
+      "description": "Kids' clothing. [FOR APPROVAL]",
       "seoDescription": "Kids' clothing at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Kids' clothing. [FOR APPROVAL]"
+      "parent": "fashion"
     },
     {
-      "handle": "home-living",
-      "title": "Home & Living",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "home"
-        }
-      ],
+      "handle": "home-kitchen",
+      "title": "Home & Kitchen",
+      "group": "category",
+      "type": "manual",
+      "tag": "home",
+      "description": "Cookware, storage and household essentials for less. [FOR APPROVAL]",
       "seoDescription": "Bargain cookware, storage and household essentials from GBG Bargain Shop, Liverpool.",
-      "description": "Cookware, storage and household essentials for less. [FOR APPROVAL]"
+      "tileLabel": "Home & Kitchen"
     },
     {
       "handle": "cookware",
       "title": "Cookware",
-      "parent": "home-living",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "cookware"
-        }
-      ],
-      "seoDescription": "Pans, mugs and kitchenware at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Pans, mugs and kitchen kit. [FOR APPROVAL]"
+      "group": "category",
+      "type": "manual",
+      "tag": "cookware",
+      "description": "Pans, mugs and kitchen kit. [FOR APPROVAL]",
+      "seoDescription": "Cookware and kitchenware at bargain prices from GBG Bargain Shop, Liverpool.",
+      "parent": "home-kitchen"
     },
     {
       "handle": "storage",
       "title": "Storage",
-      "parent": "home-living",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "storage"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "storage",
+      "description": "Boxes, baskets and organisers. [FOR APPROVAL]",
       "seoDescription": "Storage boxes and organisers at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Boxes, baskets and organisers. [FOR APPROVAL]"
+      "parent": "home-kitchen"
     },
     {
       "handle": "household-essentials",
       "title": "Household Essentials",
-      "parent": "home-living",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "household"
-        }
-      ],
-      "seoDescription": "Everyday household essentials at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Everyday essentials for the home. [FOR APPROVAL]"
+      "group": "category",
+      "type": "manual",
+      "tag": "household",
+      "description": "Everyday essentials for the home. [FOR APPROVAL]",
+      "seoDescription": "Household essentials at bargain prices from GBG Bargain Shop, Liverpool.",
+      "parent": "home-kitchen"
     },
     {
-      "handle": "electronics",
-      "title": "Electronics",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "electronics"
-        }
-      ],
+      "handle": "electronics-gadgets",
+      "title": "Electronics & Gadgets",
+      "group": "category",
+      "type": "manual",
+      "tag": "electronics",
+      "description": "Speakers, small electricals and accessories. Every item shows whether it has been tested. [FOR APPROVAL]",
       "seoDescription": "Bargain speakers, small electronics and accessories from GBG Bargain Shop, Liverpool. Every electrical item's test status is shown.",
-      "description": "Speakers, small electricals and accessories. Every item shows whether it has been tested. [FOR APPROVAL]"
+      "tileLabel": "Electronics"
     },
     {
       "handle": "speakers",
       "title": "Speakers",
-      "parent": "electronics",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "speakers"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "speakers",
+      "description": "Portable and Bluetooth speakers. [FOR APPROVAL]",
       "seoDescription": "Bluetooth and portable speakers at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Portable and Bluetooth speakers. [FOR APPROVAL]"
+      "parent": "electronics-gadgets"
     },
     {
       "handle": "small-electronics",
       "title": "Small Electronics",
-      "parent": "electronics",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "small-electronics"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "small-electronics",
+      "description": "Lamps, gadgets and small electricals. [FOR APPROVAL]",
       "seoDescription": "Small electricals and gadgets at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Lamps, gadgets and small electricals. [FOR APPROVAL]"
+      "parent": "electronics-gadgets"
     },
     {
       "handle": "tech-accessories",
       "title": "Accessories",
-      "parent": "electronics",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "tech-accessories"
-        }
-      ],
+      "group": "category",
+      "type": "manual",
+      "tag": "tech-accessories",
+      "description": "Chargers, cables and accessories. [FOR APPROVAL]",
       "seoDescription": "Chargers, cables and tech accessories at bargain prices from GBG Bargain Shop, Liverpool.",
-      "description": "Chargers, cables and accessories. [FOR APPROVAL]"
+      "parent": "electronics-gadgets"
     },
     {
       "handle": "beauty-personal-care",
-      "title": "Beauty",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "beauty"
-        }
-      ],
+      "title": "Beauty & Personal Care",
+      "group": "category",
+      "type": "manual",
+      "tag": "beauty",
+      "description": "Beauty and personal care bargains. [FOR APPROVAL]",
       "seoDescription": "Beauty and personal care bargains from GBG Bargain Shop, Liverpool.",
-      "description": "Beauty and personal care bargains. [FOR APPROVAL]"
-    },
-    {
-      "handle": "bargains",
-      "title": "Best Bargains",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "best-bargain"
-        }
-      ],
-      "seoDescription": "The best bargains at GBG Bargain Shop, hand-picked by our team in Liverpool.",
-      "description": "Our team's pick of the best value in the shop right now. [FOR APPROVAL]"
+      "tileLabel": "Beauty"
     },
     {
       "handle": "under-5",
       "title": "Under £5",
+      "group": "bargains",
+      "type": "automated",
       "rules": [
         {
           "column": "VARIANT_PRICE",
@@ -395,48 +283,45 @@
           "condition": "5.00"
         }
       ],
-      "seoDescription": "Everything under £5 at GBG Bargain Shop, Liverpool.",
-      "description": "Everything under a fiver. [FOR APPROVAL]"
+      "description": "Everything under a fiver. [FOR APPROVAL]",
+      "seoDescription": "Everything under £5 from GBG Bargain Shop, Liverpool."
     },
     {
       "handle": "clearance",
       "title": "Clearance",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "clearance"
-        }
-      ],
-      "seoDescription": "Clearance stock at GBG Bargain Shop, Liverpool – condition clearly labelled on every item.",
-      "description": "Clearance stock with its condition clearly labelled. Your statutory rights always apply. [FOR APPROVAL]"
+      "group": "bargains",
+      "type": "manual",
+      "tag": "clearance",
+      "description": "Clearance stock with its condition clearly labelled. Your statutory rights always apply. [FOR APPROVAL]",
+      "seoDescription": "Clearance stock from GBG Bargain Shop, Liverpool. Condition clearly labelled on every item."
     },
     {
       "handle": "last-chance",
       "title": "Last Chance",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "last-chance"
-        }
-      ],
-      "seoDescription": "Last chance to buy – final pieces at GBG Bargain Shop, Liverpool.",
-      "description": "The final pieces – once they're gone, they're gone. [FOR APPROVAL]"
+      "group": "bargains",
+      "type": "manual",
+      "tag": "last-chance",
+      "description": "The final pieces – once they're gone, they're gone. [FOR APPROVAL]",
+      "seoDescription": "Last chance to buy – final pieces from GBG Bargain Shop, Liverpool."
+    },
+    {
+      "handle": "bargains",
+      "title": "Best Bargains",
+      "group": "promo",
+      "type": "manual",
+      "tag": "best-bargain",
+      "description": "Our team's pick of the best value in the shop right now. [FOR APPROVAL]",
+      "seoDescription": "The best bargains, hand-picked by our team from GBG Bargain Shop, Liverpool."
     },
     {
       "handle": "new-arrivals",
       "title": "New Arrivals",
-      "sortOrder": "CREATED_DESC",
-      "rules": [
-        {
-          "column": "TAG",
-          "relation": "EQUALS",
-          "condition": "new-arrival"
-        }
-      ],
-      "seoDescription": "The newest stock at GBG Bargain Shop, Liverpool. New finds every week.",
-      "description": "Just landed – the newest finds, newest first. [FOR APPROVAL]"
+      "group": "promo",
+      "type": "manual",
+      "tag": "new-arrival",
+      "description": "Just landed – the newest finds, newest first. [FOR APPROVAL]",
+      "seoDescription": "The newest stock from GBG Bargain Shop, Liverpool. New finds every week.",
+      "sortOrder": "CREATED_DESC"
     }
   ],
   "categoryTags": [
@@ -454,10 +339,10 @@
     "necklaces",
     "bracelets",
     "watches",
-    "clothing",
-    "womens-clothing",
-    "mens-clothing",
-    "kids-clothing",
+    "fashion",
+    "womens-fashion",
+    "mens-fashion",
+    "kids-fashion",
     "home",
     "cookware",
     "storage",
@@ -473,8 +358,5 @@
     "speakers",
     "small-electronics",
     "tech-accessories"
-  ],
-  "_lastChance": "Set \"lastChanceIncludesStockOfOne\": true to ALSO put every product with exactly 1 in stock into Last Chance. Leave false if most listings are one-offs (they would all land in Last Chance).",
-  "lastChanceIncludesStockOfOne": false,
-  "_categories": "Main categories (in menu order): bags, shoes, jewellery, clothing, home-living, electronics, beauty-personal-care. Names match the client mock-up."
+  ]
 }

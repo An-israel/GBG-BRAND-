@@ -15,7 +15,7 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 |---|---|
 | Change the yellow announcement bar | Header group → **Announcement bar** → message. Optional **End date** – `2026-12-05` or `05/12/2026` – hides it automatically after that day. Up to 3 messages: computers show them side by side, phones take turns every 6 seconds (with an arrow to skip). Only genuine messages. |
 | Change hero photos / headline / buttons | Home page → **Hero**. Use real product photos (square, 1200 px+). Price tag text must be the real current price. |
-| Change category tiles | Home page → **Category grid** → each Category → choose collection / image. Empty collections hide themselves. |
+| Change category tiles | Home page → **Category grid** → each Category → choose collection / image. Empty categories show a *Coming soon* badge (Theme settings → Categories). |
 | Change featured products | Home page → **Featured products** → each tab → collection. |
 | Switch "UK delivery" / "Free Liverpool collection" claims on or off | ⚙ **Theme settings → Trust claims**. Only switch on what is really set up. These switches also control the delivery note on product pages and in the basket, and the Click & Collect box in Visit Us. |
 | "Price includes VAT" on product pages | Appears only when a VAT number is filled in (Theme settings → Shop details) and Shopify prices include tax. |
@@ -37,7 +37,8 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 - **Add one product by hand:** Products → Add product. Fill title, description, photos (main photo on white first),
   price, **Cost per item**, SKU, weight, quantity at "GBG Bargain Shop, Unit M10". Untick *Continue selling when out of stock*.
   Scroll to **Metafields**: set **Condition** (required), Colour, Condition notes, Dimensions, Tested (electricals), Collection only.
-  Add tags (category + `new-arrival`). Status **Draft** → check → **Active**.
+  **Product organization → Collections:** tick its category, e.g. *Handbags* (the main category is added within the hour) and *New Arrivals*.
+  Add tags (category + `new-arrival`). Status **Draft** → check → **Active**. See `docs/CATEGORIES.md`.
 - **Add many products:** staff use the spreadsheet + scripts (STAFF_SOP, PRODUCT_CSV_GUIDE).
 - **Approve the sample:** Products → filter **Status: Draft** → open each → check → set **Active**.
 - **Sale price:** set *Compare-at price* **only** if the item was genuinely sold at that price. The site then shows a yellow sale tag.
@@ -48,8 +49,9 @@ Click any section on the left to edit it. **Save** (top right) publishes the cha
 
 ## 3. Menus and site map
 
-The menu builds itself (see `docs/SITE_MAP.md`): **Shop · New in · Deals · Visit us · Help**. A category appears as soon as it
-has products; empty ones are hidden. The site map is at `/collections`. To use a hand-made menu instead: Customize → Header →
+The menu builds itself (see `docs/SITE_MAP.md`): **Shop · New Arrivals · Clearance · Visit Us**, with the launch pack
+categories inside Shop. Categories show as soon as they are created, even before products (*Coming soon*); untick
+Theme settings → **Categories → Show categories before products** to hide empty ones later. The site map is at `/collections`. To use a hand-made menu instead: Customize → Header →
 Menu: "A Shopify menu".
 
 | I want to… | Where |
@@ -66,7 +68,7 @@ Menu: "A Shopify menu".
 - Collections are automatic: a product joins **Bags & Accessories** when it has the tag `bags`, **Clearance** with `clearance`,
   **Under £5** when its price is under £5, **New Arrivals** with `new-arrival`.
 - Best Bargains: tag `best-bargain`.
-- Menus: Online Store → **Navigation** → Main menu / Customer care / Shop. Empty collections are hidden on the site automatically.
+- Menus: Online Store → **Navigation** → Main menu / Customer care / Shop. Empty categories show while *Show categories before products* is on.
 
 ## 4. Orders
 

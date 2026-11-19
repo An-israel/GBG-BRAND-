@@ -56,7 +56,10 @@ export function backoffDelay(attempt: number, baseMs: number, retryAfterSec?: nu
 export class ShopifyClient {
   readonly endpoint: string;
   readonly dryRun: boolean;
-  private readonly token: string;
+  private token: string;
+  private readonly storeDomain: string;
+  private readonly clientId?: string;
+  private readonly clientSecret?: string;
   private readonly log?: Logger;
   private readonly timeoutMs: number;
   private readonly maxRetries: number;
@@ -65,10 +68,13 @@ export class ShopifyClient {
   private readonly sleep: (ms: number) => Promise<void>;
   private throttle?: ThrottleStatus;
 
-  constructor(config: Pick<Config, 'storeDomain' | 'token'>, opts: ClientOptions = {}) {
+  constructor(config: Pick<Config, 'storeDomain' | 'token'> & Partial<Pick<Config, 'clientId' | 'clientSecret'>>, opts: ClientOptions = {}) {
     this.endpoint = `https://${config.storeDomain}/admin/api/${API_VERSION}/graphql.json`;
     assertAllowedHost(this.endpoint);
     this.token = config.token;
+    this.storeDomain = config.storeDomain;
+    this.clientId = config.clientId;
+    this.clientSecret = config.clientSecret;
     this.dryRun = !!opts.dryRun;
     this.log = opts.logger;
     this.timeoutMs = opts.timeoutMs ?? 30_000;
@@ -103,7 +109,27 @@ export class ShopifyClient {
     await this.sleep(waitMs);
   }
 
+  /**
+   * Newer Shopify apps (Dev Dashboard, 2026) have no fixed token: exchange the client ID and
+   * secret for a short-lived one (client credentials grant). Only for the store's own app.
+   */
+  private async ensureToken(): Promise<void> {
+    if (this.token || !this.clientId || !this.clientSecret) return;
+    const url = `https://${this.storeDomain}/admin/oauth/access_token`;
+    assertAllowedHost(url);
+    const res = await this.fetchImpl(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'client_credentials', client_id: this.clientId, client_secret: this.clientSecret }).toString(),
+    });
+    if (!res.ok) throw new ShopifyError(`Could not get an access token with SHOPIFY_CLIENT_ID/SHOPIFY_CLIENT_SECRET (HTTP ${res.status}). Check the app is installed on the store and the secret is right.`);
+    const body: any = await res.json();
+    if (!body.access_token) throw new ShopifyError('Shopify did not return an access token for the client ID/secret.');
+    this.token = body.access_token;
+  }
+
   private async request<T>(query: string, variables: Record<string, unknown>): Promise<T> {
+    await this.ensureToken();
     let lastErr: unknown;
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
       await this.waitForBudget();

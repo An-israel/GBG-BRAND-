@@ -24,7 +24,7 @@ Items 2, 3, 4, 5, 6, 8, 9 and 11 were built after the first audit (2026-11-06). 
 | 3 | Colour | `custom.colour` metafield (filterable), shown on the product page, CSV column, validator warning for bags/shoes/clothing, importer, photo alt text. |
 | 4 | "You may also like" from the same collection | Uses the collection the shopper came from, else the product's most specific category; "More in …" link; falls back to Shopify recommendations if fewer than 2 products. Setting to switch source. Tested. |
 | 5 | Branded default social image | `theme/assets/og-default.png` (1200 × 630, GBG fonts/colours), used when no other image is set. |
-| 6 | Last Chance "inventory 1" | Optional rule (`lastChanceIncludesStockOfOne` in `config/collections.json`), off by default because one-off items would all qualify. Unit tested. |
+| 6 | Last Chance "inventory 1" | v1.3.0: Last Chance is a hand-picked category (staff tick it, or tag `last-chance`), because one-off items would all have stock 1. The weekly report lists items with only 1 left to help choose. |
 | 8 | Monthly backup | `.github/workflows/monthly-backup.yml`, 1st of each month, private 90-day artifact. |
 | 9 | Git tag | `v1.0.0` created on commit 12d7663. GitHub refused the tag push from this session, so add it on GitHub: Releases → Draft a new release → tag `v1.0.0` → target branch `gbg-shopify-theme-v1`. |
 | 11 | Launch Pack copy | "Find something you love?…" above Add to basket (editable); "Check our opening hours before visiting." in Visit Us. |

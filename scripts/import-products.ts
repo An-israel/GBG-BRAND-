@@ -19,6 +19,9 @@
  *     The stamp lives in Shopify, so imports work from any computer or from CI.
  *   - images are uploaded only when the product has no photos yet
  *   - "Continue selling when out of stock" is always OFF (inventoryPolicy DENY)
+ *   - each product is ticked into its categories (manual collections) from its tags,
+ *     e.g. tag "handbags" → Handbags + Bags & Accessories. Only ever ADDS: a category
+ *     staff ticked or unticked by hand on the product page is left alone.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -28,7 +31,7 @@ import { readCsv, writeCsv } from './lib/csv.js';
 import { createLogger } from './lib/logger.js';
 import { COL, CONDITIONS, TESTED, canonicalChoice, draftAltText, groupByHandle, isTrue, optionNames, optionValues, parseMoney, splitTags, validateRows, type ProductGroup, type Row } from './lib/products.js';
 import { ShopifyClient, assertAllowedHost, checkUserErrors } from './lib/shopify.js';
-import { loadStructure } from './lib/store-structure.js';
+import { collectionsForTags, loadStructure } from './lib/store-structure.js';
 
 const args = parseArgs();
 const file = args.positional[0];
@@ -50,12 +53,17 @@ const skippedReasons: string[] = [];
 let locationId = '';
 let publicationId = '';
 let collectionOnlyProfileId = '';
+const manualCollectionIds = new Map<string, string>(); // handle → id (categories created by setup-store)
 async function warmCaches() {
   const d = await client.query(`query {
     locations(first: 50) { nodes { id name address { address1 } } }
     publications(first: 20) { nodes { id name } }
     deliveryProfiles(first: 20) { nodes { id name } }
+    collections(first: 250) { nodes { id handle ruleSet { appliedDisjunctively } } }
   }`);
+  for (const c of d.collections.nodes) if (!c.ruleSet) manualCollectionIds.set(c.handle, c.id);
+  const missing = structure.collections.filter((c) => c.type === 'manual' && !manualCollectionIds.has(c.handle)).map((c) => c.handle);
+  if (missing.length) log.warn(`Categories not created yet: ${missing.join(', ')}. Run "Create categories" (npm run setup:store) first, or products won't appear in them.`);
   const loc = d.locations.nodes.find((l: any) => l.name === config.locationName) || d.locations.nodes.find((l: any) => /m10/i.test(`${l.name} ${l.address?.address1}`));
   if (!loc) throw new Error(`Location "${config.locationName}" not found. Run npm run setup:store first.`);
   locationId = loc.id;
@@ -157,8 +165,8 @@ async function findExisting(group: ProductGroup) {
   const sku = group.rows[0][COL.sku].trim();
   const d = await client.query(
     `query($q: String!, $h: String!) {
-      productVariants(first: 1, query: $q) { nodes { product { id handle updatedAt mediaCount { count } importedAt: metafield(namespace: "gbg", key: "imported_at") { value } } } }
-      productByHandle(handle: $h) { id handle updatedAt mediaCount { count } importedAt: metafield(namespace: "gbg", key: "imported_at") { value } }
+      productVariants(first: 1, query: $q) { nodes { product { id handle updatedAt mediaCount { count } importedAt: metafield(namespace: "gbg", key: "imported_at") { value } collections(first: 100) { nodes { handle } } } } }
+      productByHandle(handle: $h) { id handle updatedAt mediaCount { count } importedAt: metafield(namespace: "gbg", key: "imported_at") { value } collections(first: 100) { nodes { handle } } }
     }`,
     { q: `sku:'${sku.replace(/'/g, "\\'")}'`, h: group.handle },
   );
@@ -235,6 +243,18 @@ async function importGroup(group: ProductGroup, status: 'ACTIVE' | 'DRAFT') {
       { deliveryProfileUpdate: { userErrors: [] } }, `collection-only profile ${sku}`,
     );
     checkUserErrors(`collection-only ${sku}`, dp.deliveryProfileUpdate);
+  }
+
+  // Tick the product into its categories (add-only; see header).
+  const already = new Set<string>((existing?.collections?.nodes ?? []).map((c: any) => c.handle));
+  for (const handle of collectionsForTags(structure, input.tags)) {
+    const id = manualCollectionIds.get(handle);
+    if (!id || already.has(handle)) continue;
+    const add = await client.mutate(
+      `mutation($id: ID!, $productIds: [ID!]!) { collectionAddProducts(id: $id, productIds: $productIds) { userErrors { field message } } }`,
+      { id, productIds: [product.id] }, { collectionAddProducts: { userErrors: [] } }, `add ${sku} to ${handle}`,
+    );
+    checkUserErrors(`add ${sku} to ${handle}`, add.collectionAddProducts);
   }
 
   if (isCreate) summary.created++; else summary.updated++;

@@ -30,7 +30,8 @@ scenarios = {
   'empty store' => {},
   'store with products, no GBG collections' => { 'all' => coll('all', 'All', 12), 'frontpage' => coll('frontpage', 'Home page', 3), 'old-dbs' => coll('old-dbs', 'Handbags', 4) },
   'store where looping collections errors' => :fail,
-  'set-up store' => { 'all' => coll('all', 'All', 12), 'bags' => coll('bags', 'Bags', 4), 'handbags' => coll('handbags', 'Handbags', 2), 'new-arrivals' => coll('new-arrivals', 'New Arrivals', 3), 'clearance' => coll('clearance', 'Clearance', 2) },
+  'set-up store' => { 'all' => coll('all', 'All', 12), 'bags-accessories' => coll('bags-accessories', 'Bags & Accessories', 4), 'handbags' => coll('handbags', 'Handbags', 2), 'new-arrivals' => coll('new-arrivals', 'New Arrivals', 3), 'clearance' => coll('clearance', 'Clearance', 2) },
+  'categories created, no products yet' => { 'all' => coll('all', 'All', 0), 'bags-accessories' => coll('bags-accessories', 'Bags & Accessories', 0), 'handbags' => coll('handbags', 'Handbags', 0), 'shoes' => coll('shoes', 'Shoes', 0), 'beauty-personal-care' => coll('beauty-personal-care', 'Beauty & Personal Care', 0), 'new-arrivals' => coll('new-arrivals', 'New Arrivals', 0), 'clearance' => coll('clearance', 'Clearance', 0), 'under-5' => coll('under-5', 'Under £5', 0) },
 }
 section = { 'id' => 'header', 'settings' => { 'nav_source' => 'gbg', 'menu' => nil, 'show_quick_links' => true, 'search_placeholder' => 'Search', 'show_tagline' => true, 'tagline' => 'Big bargains. Small prices.' } }
 src = File.read("#{THEME}/sections/header.liquid")
@@ -38,7 +39,7 @@ scenarios.each do |name, cols|
   assigns = {
     'section' => section, 'collections' => (cols == :fail ? Collections.new({ 'all' => coll('all', 'All', 0) }, true) : Collections.new(cols)), 'pages' => {}, 'linklists' => {},
     'routes' => { 'root_url' => '/', 'all_products_collection_url' => '/collections/all', 'collections_url' => '/collections', 'search_url' => '/search', 'cart_url' => '/cart', 'account_login_url' => '/account/login' },
-    'settings' => { 'phone' => '07344 670317', 'phone_international' => '447344670317' },
+    'settings' => { 'phone' => '07344 670317', 'phone_international' => '447344670317', 'show_empty_categories' => true },
     'shop' => { 'customer_accounts_enabled' => true }, 'request' => { 'path' => '/' }, 'cart' => { 'item_count' => 0 },
   }
   t = Liquid::Template.parse(src, environment: Liquid::Environment.default, error_mode: :lax)
@@ -49,5 +50,6 @@ scenarios.each do |name, cols|
   top = nav.scan(/class="nav__link[^"]*"[^>]*>([^<]+)/).flatten.map(&:strip)
   errs = html.scan(/Liquid (?:syntax )?error[^<]*/).uniq
   note = html[/Menu note[^<]*/]
-  puts "#{name.ljust(42)} TOP MENU: #{top.inspect} #{errs.empty? ? '' : 'ERRORS: ' + errs.inspect} #{note}"
+  shop = nav.scan(/class="mega__heading[^"]*"[^>]*>(?:<a[^>]*>)?([^<]+)/).flatten.map(&:strip)
+  puts "#{name.ljust(42)} TOP MENU: #{top.inspect} SHOP: #{shop.inspect} #{errs.empty? ? '' : 'ERRORS: ' + errs.inspect} #{note}"
 end

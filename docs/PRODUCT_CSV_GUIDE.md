@@ -24,17 +24,18 @@ can also be imported in Shopify admin if needed.
 | **Condition** | One of: `New`, `New with tags`, `Open box`, `Customer return`, `Used`, `Unchecked` (capital letters are fixed automatically). | `New with tags` |
 | **Condition notes** | Faults, missing parts, wear. Required in practice for Open box / Customer return / Used / Unchecked. | `Small mark on the lining.` |
 | **Dimensions** | Size or measurements. | `38 x 30 x 14 cm` |
-| **Colour** | The main colour in one or two words. Used for the colour filter and photo alt text. Expected for bags, shoes and clothing. | `Tan` |
+| **Colour** | The main colour in one or two words. Used for the colour filter and photo alt text. Expected for bags, shoes and fashion. | `Tan` |
 | **Collection only** | `TRUE` for bulky items that can't be posted. Otherwise `FALSE`. | `FALSE` |
 | **Tested** | Electricals: `Tested working` / `Untested`. Others: `Not applicable`. | `Tested working` |
 | **Internal notes** | Staff only – never shown. Shelf, pallet, supplier. | `Shelf B2` |
 | SEO Title / SEO Description | Optional. Up to 70 / 160 characters. | |
 
-**Category tags** (the website's categories: Bags · Shoes · Jewellery · Clothing · Home & Living · Electronics · Beauty):
+**Category tags** (the launch pack site map: Bags & Accessories · Shoes · Jewellery & Watches · Fashion · Home & Kitchen · Electronics & Gadgets · Beauty & Personal Care):
 `bags`, `handbags`, `backpacks`, `purses`, `travel`, `shoes`, `womens-shoes`, `mens-shoes`, `kids-shoes`,
-`jewellery`, `earrings`, `necklaces`, `bracelets`, `watches`, `clothing`, `womens-clothing`, `mens-clothing`, `kids-clothing`,
-`home` (Home & Living), `cookware`, `storage`, `household`, `electronics`, `speakers`, `small-electronics`, `tech-accessories`, `beauty`.
-Use the main tag **and** the sub-tag (e.g. `bags, handbags`).
+`jewellery`, `earrings`, `necklaces`, `bracelets`, `watches`, `fashion`, `womens-fashion`, `mens-fashion`, `kids-fashion`,
+`home` (Home & Kitchen), `cookware`, `storage`, `household`, `electronics`, `speakers`, `small-electronics`, `tech-accessories`, `beauty`.
+Use the main tag **and** the sub-tag (e.g. `bags, handbags`). Offers: `clearance`, `last-chance`, `best-bargain`, `new-arrival`.
+The importer ticks each product into those categories – they must exist first (GitHub → Actions → *Create categories*, see `docs/CATEGORIES.md`).
 
 ## Check it
 

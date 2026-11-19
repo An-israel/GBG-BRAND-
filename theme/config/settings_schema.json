@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "GBG Bargain Shop",
-    "theme_version": "1.2.1",
+    "theme_version": "1.3.0",
     "theme_author": "GBG Bargain Shop",
     "theme_documentation_url": "https://www.gbgbargainshop.co.uk",
     "theme_support_url": "https://www.gbgbargainshop.co.uk/pages/contact"
@@ -385,6 +385,34 @@
         "id": "collection_only_note",
         "label": "Collection-only note",
         "default": "Collection only – this item is too large to post. Collect it free from Unit M10."
+      }
+    ]
+  },
+  {
+    "name": "Categories",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "The shop's categories follow the launch pack site map (Bags & Accessories, Shoes, Jewellery & Watches, Fashion, Home & Kitchen, Electronics & Gadgets, Beauty & Personal Care, Bargains / Clearance). They are created by the \"Create categories\" button on GitHub – see docs/CATEGORIES.md."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_empty_categories",
+        "label": "Show categories before products",
+        "default": true,
+        "info": "On: every category shows in the menus, home page tiles, footer and site map even while it has no products yet (its page says new stock is coming soon). Turn off later to hide categories that are empty."
+      },
+      {
+        "type": "text",
+        "id": "empty_category_heading",
+        "label": "Empty category heading",
+        "default": "New stock coming soon"
+      },
+      {
+        "type": "textarea",
+        "id": "empty_category_text",
+        "label": "Empty category message",
+        "default": "We're adding items to this category now. Pop into our Liverpool shop or check back soon."
       }
     ]
   },
