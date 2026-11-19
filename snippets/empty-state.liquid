@@ -1,6 +1,6 @@
 {%- comment -%}
   On-brand empty state with links to Bargains and New Arrivals.
-  Params: heading, text, show_search (boolean)
+  Params: heading, text, show_search (boolean), visit (boolean – adds a Visit Us button)
 {%- endcomment -%}
 <div class="empty-state">
   <div class="empty-state__tag" aria-hidden="true">{% render 'icon', name: 'tag' %}</div>
@@ -24,6 +24,11 @@
     {%- endif -%}
     {%- if new_arrivals.products_count > 0 -%}
       <a href="{{ new_arrivals.url }}" class="button button--secondary">New arrivals</a>
+    {%- endif -%}
+    {%- if visit -%}
+      {%- assign visit_url = routes.root_url | append: '#visit' -%}
+      {%- if pages['visit-our-shop'].url != blank -%}{%- assign visit_url = pages['visit-our-shop'].url -%}{%- endif -%}
+      <a href="{{ visit_url }}" class="button button--secondary">Visit us in Liverpool</a>
     {%- endif -%}
   </div>
 </div>

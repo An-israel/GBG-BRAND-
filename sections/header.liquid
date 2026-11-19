@@ -167,7 +167,7 @@
         {%- endfor -%}
         {%- for row in nav_rows -%}
           {%- assign f = row | split: '~~' -%}
-          {%- if f[0] == '2' and f[1] == 'shop' and f[4] != 'all' -%}
+          {%- if f[0] == '2' and f[1] == 'shop' and f[4] == blank -%}
             <li><a href="{{ f[3] }}" class="quick-links__chip">{{ f[2] | escape }}</a></li>
           {%- endif -%}
         {%- endfor -%}

@@ -60,7 +60,7 @@
         "cat-bags": {
           "type": "category",
           "settings": {
-            "collection": "bags",
+            "collection": "bags-accessories",
             "label": "Bags"
           }
         },
@@ -74,28 +74,28 @@
         "cat-jewellery": {
           "type": "category",
           "settings": {
-            "collection": "jewellery",
+            "collection": "jewellery-watches",
             "label": "Jewellery"
           }
         },
         "cat-clothing": {
           "type": "category",
           "settings": {
-            "collection": "clothing",
-            "label": "Clothing"
+            "collection": "fashion",
+            "label": "Fashion"
           }
         },
         "cat-home-living": {
           "type": "category",
           "settings": {
-            "collection": "home-living",
-            "label": "Home & Living"
+            "collection": "home-kitchen",
+            "label": "Home & Kitchen"
           }
         },
         "cat-electronics": {
           "type": "category",
           "settings": {
-            "collection": "electronics",
+            "collection": "electronics-gadgets",
             "label": "Electronics"
           }
         }

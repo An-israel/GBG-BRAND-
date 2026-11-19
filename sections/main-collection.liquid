@@ -14,15 +14,19 @@
     </div>
   </div>
 
-  <div class="container collection__layout{% if collection.filters.size > 0 %} collection__layout--filters{% endif %}">
-    {%- render 'facets-panel', results: collection, url: collection.url -%}
+  {%- assign is_empty_category = false -%}
+  {%- if collection.all_products_count == 0 -%}{%- assign is_empty_category = true -%}{%- endif -%}
+  <div class="container collection__layout{% if collection.filters.size > 0 and is_empty_category == false %} collection__layout--filters{% endif %}">
+    {%- unless is_empty_category -%}{%- render 'facets-panel', results: collection, url: collection.url -%}{%- endunless -%}
     <div class="collection__results">
+    {%- unless is_empty_category -%}
     <div class="collection__toolbar">
       <p class="collection__count" role="status">
         {{ collection.products_count }} {{ collection.products_count | pluralize: 'product', 'products' }}
       </p>
       {%- render 'facets', results: collection, url: collection.url -%}
     </div>
+    {%- endunless -%}
 
     {%- if collection.products.size > 0 -%}
       <ul class="product-grid" role="list" data-product-grid id="ProductGrid-{{ section.id }}">
@@ -45,6 +49,25 @@
           <a href="{{ paginate.next.url }}" class="button button--secondary button--large" data-load-more data-grid="ProductGrid-{{ section.id }}" data-section="{{ section.id }}">Load more</a>
         </div>
       {%- endif -%}
+    {%- elsif collection.all_products_count == 0 -%}
+      {%- comment -%} A category that exists before its products (launch pack: categories first). {%- endcomment -%}
+      {%- capture nav_raw -%}{%- render 'nav-tree', source: 'gbg' -%}{%- endcapture -%}
+      {%- assign nav_rows = nav_raw | split: '^^' -%}
+      <div class="coming-soon" data-coming-soon>
+        {%- render 'empty-state', heading: settings.empty_category_heading, text: settings.empty_category_text, visit: true -%}
+        {%- capture sub_links -%}
+          {%- for row in nav_rows -%}
+            {%- assign f = row | split: '~~' -%}
+            {%- if f[0] == '3' and f[1] == collection.handle -%}<li><a href="{{ f[3] }}" class="chip">{{ f[2] | escape }}</a></li>{%- endif -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {%- if sub_links != blank -%}
+          <nav class="coming-soon__subs" aria-label="{{ collection.title | escape }} categories">
+            <h2 class="coming-soon__subs-heading">Browse {{ collection.title | escape }}</h2>
+            <ul class="chips" role="list">{{ sub_links }}</ul>
+          </nav>
+        {%- endif -%}
+      </div>
     {%- else -%}
       {%- render 'empty-state', heading: 'No products match those filters', text: 'Try removing a filter, or browse our bargains and newest stock.' -%}
     {%- endif -%}
