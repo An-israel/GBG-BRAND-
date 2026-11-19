@@ -40,7 +40,7 @@ jobs:
       SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
       SHOPIFY_THEME_ID: ${{ inputs.theme_id || vars.SHOPIFY_THEME_ID }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci

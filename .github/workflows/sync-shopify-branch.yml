@@ -28,7 +28,7 @@ jobs:
       TARGET: shopify-theme
       HEAD_MSG: ${{ github.event.head_commit.message || 'manual sync' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with: { path: source }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm, cache-dependency-path: source/package-lock.json }
