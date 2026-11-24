@@ -1,5 +1,36 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
-  "current": "Default",
+  "current": {
+    "logo_width": 150,
+    "whatsapp_enabled": false,
+    "claim_free_collection": true,
+    "claim_fast_track": true,
+    "fast_track_cutoff": "2pm",
+    "fast_track_days": "Monday–Friday",
+    "claim_free_delivery": true,
+    "free_delivery_threshold": 80,
+    "claim_uk_delivery": true,
+    "cart_type": "drawer",
+    "show_empty_categories": true,
+    "empty_category_heading": "New stock coming soon",
+    "empty_category_text": "We're adding items to this category now. Pop into our Liverpool shop or check back soon.",
+    "newsletter_popup_enabled": false,
+    "blocks": {
+      "10653092989201779468": {
+        "type": "shopify://apps/managed-markets/blocks/adaptive_pricing_banner/01a04a8f-9b00-7a7d-a048-ecae6789cdfc",
+        "disabled": false,
+        "settings": {}
+      }
+    }
+  },
   "presets": {
     "Default": {
       "logo_width": 150,
