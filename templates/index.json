@@ -127,7 +127,7 @@
         "cat-jewellery": {
           "type": "category",
           "settings": {
-            "collection": "jewellery-watches",
+            "collection": "jewellery-accessories",
             "label": "Jewellery"
           }
         },
