@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -37,13 +46,14 @@
       "settings": {
         "eyebrow": "Liverpool's bargain shop – online and in store",
         "heading": "Big bargains. Small prices.",
-        "text": "Discover great-value bags, shoes, jewellery, home essentials and everyday finds at GBG Bargain Shop. Shop online or visit our Liverpool store.",
+        "text": "Discover great value bags, shoes, jewellery, home essentials and everyday finds at GBG Bargain Shop. Shop online or visit our Liverpool store.",
         "button_1_label": "Shop All Bargains",
         "button_1_link": "/collections/all",
         "button_2_label": "Visit Our Liverpool Store",
         "button_2_link": "",
         "show_stripe": true,
-        "auto_fill": true
+        "auto_fill": true,
+        "fill_collection": ""
       }
     },
     "value-strip": {
@@ -52,6 +62,49 @@
         "collect_title": "Click & Collect",
         "collect_text": "Order online and collect free from our Liverpool store.",
         "fast_title": "Fast Track"
+      }
+    },
+    "promos": {
+      "type": "promo-tiles",
+      "blocks": {
+        "promo-under5": {
+          "type": "tile",
+          "settings": {
+            "heading": "Under £5",
+            "text": "Everyday finds for less",
+            "collection": "under-5",
+            "badge": "",
+            "button_label": "Shop now"
+          }
+        },
+        "promo-clearance": {
+          "type": "tile",
+          "settings": {
+            "heading": "Clearance",
+            "text": "Last chance to grab a bargain",
+            "collection": "clearance",
+            "badge": "",
+            "button_label": "Shop now"
+          }
+        },
+        "promo-new": {
+          "type": "tile",
+          "settings": {
+            "heading": "New Arrivals",
+            "text": "Fresh stock every week",
+            "collection": "new-arrivals",
+            "badge": "",
+            "button_label": "See what's new"
+          }
+        }
+      },
+      "block_order": [
+        "promo-under5",
+        "promo-clearance",
+        "promo-new"
+      ],
+      "settings": {
+        "label": "Offers"
       }
     },
     "categories": {
@@ -144,8 +197,13 @@
     "visit": {
       "type": "visit-us",
       "settings": {
-        "show_map": true,
+        "eyebrow": "Visit the shop",
+        "heading": "Come and see the bargains in person",
+        "text": "New stock lands all the time, and there's always more on the shelves than online. Find us inside Stanley Meat Market on Prescot Road. Check our opening hours before visiting.",
         "show_collection": true,
+        "collection_text": "Order online, choose Pickup at checkout and collect free from Unit M10. We'll email you when it's ready.",
+        "collection_page": "",
+        "show_map": true,
         "structured_data": false
       }
     },
@@ -171,55 +229,17 @@
         "under-5",
         "last-chance"
       ],
-      "settings": {}
+      "settings": {
+        "heading": "Last chance to grab a bargain",
+        "text": "Clearance stock is clearly labelled with its condition. Your statutory rights always apply."
+      }
     },
     "newsletter": {
       "type": "newsletter",
       "settings": {
+        "heading": "Be first to the bargains",
+        "text": "New stock arrives every week. Get an email when the best finds land – no spam.",
         "background": "gold-soft"
-      }
-    },
-    "promos": {
-      "type": "promo-tiles",
-      "blocks": {
-        "promo-under5": {
-          "type": "tile",
-          "settings": {
-            "heading": "Under £5",
-            "text": "Everyday finds for less",
-            "collection": "under-5",
-            "badge": "",
-            "button_label": "Shop now"
-          }
-        },
-        "promo-clearance": {
-          "type": "tile",
-          "settings": {
-            "heading": "Clearance",
-            "text": "Last chance to grab a bargain",
-            "collection": "clearance",
-            "badge": "",
-            "button_label": "Shop now"
-          }
-        },
-        "promo-new": {
-          "type": "tile",
-          "settings": {
-            "heading": "New Arrivals",
-            "text": "Fresh stock every week",
-            "collection": "new-arrivals",
-            "badge": "",
-            "button_label": "See what's new"
-          }
-        }
-      },
-      "block_order": [
-        "promo-under5",
-        "promo-clearance",
-        "promo-new"
-      ],
-      "settings": {
-        "label": "Offers"
       }
     }
   },
