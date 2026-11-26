@@ -40,7 +40,7 @@
     "liquidjs": "^10.30.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   },
   "dependencies": {
     "csv-parse": "^7.0.3",
